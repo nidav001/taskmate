@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
       <div className="h-20 w-full bg-main"></div>
       <nav className="absolute flex h-full w-60 flex-col border bg-white bg-dark/10 px-5 shadow-md">
-        <div className="py-3 pl-3 text-2xl font-bold tracking-tight text-dark">
+        <div className="py-3 pl-3 text-2xl font-bold tracking-tight text-black">
           <span className="text-main">T3</span>Todo
         </div>
         <Link
@@ -32,22 +32,11 @@ const Home: NextPage = () => {
           Todos
         </Link>
       </nav>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-light">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-dark sm:text-[5rem]">
-            Create <span className="text-laccent">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-8">
-            <DashboardCard title="Todos" href="/" />
-            <DashboardCard title="Done" href="/" />
-            <DashboardCard title="Deleted" href="/" />
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-dark">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
-            </p>
-            <AuthShowcase />
-          </div>
+      <main className="flex min-h-screen flex-col justify-start bg-light pt-5">
+        <div className="flex justify-evenly ">
+          <DashboardCard title="Todos" href="/" />
+          <DashboardCard title="Done" href="/" />
+          <DashboardCard title="Deleted" href="/" />
         </div>
       </main>
     </>
@@ -62,7 +51,7 @@ const DashboardCard: React.FC<{ title: string; href: string }> = ({
 }) => {
   return (
     <Link
-      className="flex max-w-xs flex-col gap-4 rounded-xl bg-dark/10 p-4 text-dark hover:bg-dark/20"
+      className="flex max-w-xs flex-col gap-4 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
       href={href}
     >
       <h3 className="text-2xl font-bold">{title}</h3>
