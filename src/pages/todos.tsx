@@ -13,6 +13,45 @@ function classNames(...classes: string[]) {
 
 const Todos: NextPage = () => {
   const todos = trpc.todo.getTodos.useQuery();
+  const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
+  const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
+
+  const currentlyDoneTodoIds =
+    todos?.data?.length && todos?.data?.length > 0
+      ? todos?.data?.filter((todo) => todo.done).map((todo) => todo.id)
+      : [];
+
+  const currentlyNotDoneTodoIds =
+    todos?.data?.length && todos?.data?.length > 0
+      ? todos?.data?.filter((todo) => !todo.done).map((todo) => todo.id)
+      : [];
+
+  const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
+    onSuccess: () => {
+      todos.refetch();
+    },
+  });
+
+  const archiveTodos = trpc.todo.archiveTodos.useMutation({
+    onSuccess: () => {
+      todos.refetch();
+    },
+  });
+
+  function handleOnClickFinalize() {
+    finalizeTodos.mutate({
+      ids: currentlyDoneTodoIds,
+      done: true,
+    });
+  }
+
+  function handleOnClickArchive() {
+    handleOnClickFinalize();
+    archiveTodos.mutate({
+      ids: currentlyNotDoneTodoIds,
+      done: true,
+    });
+  }
 
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -70,10 +109,16 @@ const Todos: NextPage = () => {
               />
             </div>
             <div className="flex gap-2">
-              <button className="w-min rounded-3xl bg-daccent p-2">
-                In Done verschieben
+              <button
+                onClick={() => handleOnClickFinalize()}
+                className="h-12 w-28 rounded-3xl bg-laccent p-2"
+              >
+                Finalisieren
               </button>
-              <button className="w-min rounded-3xl bg-daccent p-2">
+              <button
+                onClick={() => handleOnClickArchive()}
+                className="h-12 w-28 rounded-3xl bg-laccent p-2"
+              >
                 Neue Woche
               </button>
             </div>
@@ -84,8 +129,6 @@ const Todos: NextPage = () => {
                   {todos.data
                     ?.filter(
                       (todo) =>
-                        !todo.archivedDone &&
-                        !todo.archivedNotDone &&
                         todo.day === day &&
                         todo.content
                           .toLowerCase()

@@ -8,6 +8,8 @@ import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const todos = trpc.todo.getTodos.useQuery();
+  const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
+  const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
 
   return (
     <>
@@ -22,7 +24,17 @@ const Home: NextPage = () => {
           <div className="flex flex-wrap justify-center gap-2 pt-5">
             <DashboardCard
               content={todos.data?.length ?? 0}
-              title="My Todos"
+              title="Todos"
+              href="/todos"
+            />
+            <DashboardCard
+              content={archivedTodos.data?.length ?? 0}
+              title="Archiviert"
+              href="/todos"
+            />
+            <DashboardCard
+              content={finalizedTodos.data?.length ?? 0}
+              title="Finalisiert"
               href="/todos"
             />
           </div>

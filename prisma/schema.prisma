@@ -26,8 +26,8 @@ model Todo {
   // sharedWith   User?     @relation(fields: [sharedWithId], references: [id], name: "sharedWith")
   // sharedWithId String?
   day String
-  archivedDone Boolean @default(false)
-  archivedNotDone Boolean @default(false)
+  finalized Boolean @default(false)
+  archived Boolean @default(false)
 }
 
 // Necessary for Next auth

@@ -14,6 +14,28 @@ export const todoRouter = router({
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
+        finalized: false,
+        archived: false,
+      },
+    });
+  }),
+  getFinalizedTodos: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        done: true,
+        finalized: true,
+        archived: false,
+      },
+    });
+  }),
+  getArchivedTodos: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        done: false,
+        finalized: false,
+        archived: true,
       },
     });
   }),
@@ -47,6 +69,30 @@ export const todoRouter = router({
         },
         data: {
           done: input.done,
+        },
+      });
+    }),
+  finalizeTodos: protectedProcedure
+    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.updateMany({
+        where: {
+          id: { in: input.ids },
+        },
+        data: {
+          finalized: input.done,
+        },
+      });
+    }),
+  archiveTodos: protectedProcedure
+    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.updateMany({
+        where: {
+          id: { in: input.ids },
+        },
+        data: {
+          archived: input.done,
         },
       });
     }),
