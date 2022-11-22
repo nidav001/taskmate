@@ -4,13 +4,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        light: "#F5F1F0",
-        dark: "#181D3E",
-        laccent: "#3F52D3",
-        daccent: "#5C5086",
-        main: "#3480C5",
+        light: "#E6E8E4",
+        dark: "#243351",
+        laccent: "#6EB4EF",
+        daccent: "#6263C0",
+        main: "#3F52D3",
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };

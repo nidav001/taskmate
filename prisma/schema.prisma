@@ -14,10 +14,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
+model Todo {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  author   User     @relation(fields: [authorId], references: [id], name: "author")
+  authorId String
+  title    String?
+  content  String?
+  type    String
+  done     Boolean   @default(false)
+  sharedWith   User?     @relation(fields: [sharedWithId], references: [id], name: "sharedWith")
+  sharedWithId String?
+  dueDate DateTime?
 }
 
 // Necessary for Next auth
@@ -55,6 +64,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  todos         Todo[]   @relation("author")
+  sharedTodos   Todo[]   @relation("sharedWith")
 }
 
 model VerificationToken {
