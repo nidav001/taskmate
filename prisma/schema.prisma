@@ -20,13 +20,12 @@ model Todo {
   updatedAt DateTime @updatedAt
   author   User     @relation(fields: [authorId], references: [id], name: "author")
   authorId String
-  title    String?
   content  String?
-  type    String
+  // type    String
   done     Boolean   @default(false)
-  sharedWith   User?     @relation(fields: [sharedWithId], references: [id], name: "sharedWith")
-  sharedWithId String?
-  dueDate DateTime?
+  // sharedWith   User?     @relation(fields: [sharedWithId], references: [id], name: "sharedWith")
+  // sharedWithId String?
+  day String?
 }
 
 // Necessary for Next auth
@@ -65,7 +64,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   todos         Todo[]   @relation("author")
-  sharedTodos   Todo[]   @relation("sharedWith")
+  // sharedTodos   Todo[]   @relation("sharedWith")
 }
 
 model VerificationToken {
