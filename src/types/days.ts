@@ -1,9 +1,9 @@
 export enum Days {
-  Monday = "Monday",
-  Tuesday = "Tuesday",
-  Wednesday = "Wednesday",
-  Thursday = "Thursday",
-  Friday = "Friday",
-  Saturday = "Saturday",
-  Sunday = "Sunday",
+  Montag = "Montag",
+  Dienstag = "Dienstag",
+  Mittwoch = "Mittwoch",
+  Donnerstag = "Donnerstag",
+  Freitag = "Freitag",
+  Samstag = "Samstag",
+  Sonntag = "Sonntag",
 }

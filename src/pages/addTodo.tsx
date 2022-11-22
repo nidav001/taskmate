@@ -9,13 +9,13 @@ import TopNaviagtion from "../components/topNavigation";
 import { Days } from "../types/days";
 import { trpc } from "../utils/trpc";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+function getTodaysDateName() {
+  const date = new Date();
+  return date.toLocaleDateString("de-DE", { weekday: "long" }) as Days;
 }
 
 const AddTodo: NextPage = () => {
-  //!Get current day and set accordingly
-  const [selected, setSelected] = useState<Days>(Days.Monday);
+  const [selected, setSelected] = useState<Days>(getTodaysDateName());
 
   const addTodo = trpc.todo.addTodo.useMutation();
 
@@ -28,8 +28,7 @@ const AddTodo: NextPage = () => {
 
   const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
     defaultValues: {
-      //!Get current day and set accordingly
-      day: Days.Monday,
+      day: getTodaysDateName(),
     },
   });
 
@@ -54,7 +53,7 @@ const AddTodo: NextPage = () => {
           />
         </span>
       </Listbox.Button>
-      <Listbox.Options className="rounded-xl bg-daccent">
+      <Listbox.Options className="flex flex-col rounded-xl">
         {(Object.keys(Days) as Array<keyof typeof Days>).map((key) => (
           <Listbox.Option
             className="p-2 hover:bg-laccent"
@@ -86,7 +85,7 @@ const AddTodo: NextPage = () => {
               <input
                 className={inputStyle}
                 type="text"
-                placeholder="Content"
+                placeholder="Todo..."
                 {...register("content", { required: true })}
               />
               <input

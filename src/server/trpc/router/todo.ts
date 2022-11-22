@@ -20,23 +20,33 @@ export const todoRouter = router({
   addTodo: protectedProcedure
     .input(
       z.object({
-        title: z.string().nullish(),
-        content: z.string().nullish(),
-        type: z.string(),
-        sharedWithId: z.string().nullish(),
-        dueDate: z.string().nullish(),
+        content: z.string(),
+        day: z.string(),
       })
     )
     .mutation(({ ctx, input }) => {
-      console.log(input.type);
       return ctx.prisma.todo.create({
         data: {
           authorId: ctx.session.user.id,
-          title: input.title ?? "",
-          content: input.content ?? "",
-          type: input.type,
-          sharedWithId: input.sharedWithId ?? null,
-          dueDate: input.dueDate ?? null,
+          content: input.content,
+          day: input.day,
+        },
+      });
+    }),
+  setTodoDone: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        done: z.boolean(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          done: input.done,
         },
       });
     }),
