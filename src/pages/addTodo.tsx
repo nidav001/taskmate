@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Navigation from "../components/navigation";
 import TopNaviagtion from "../components/topNavigation";
-import { TodoType } from "../types/todoType";
+import { Days } from "../types/days";
 import { trpc } from "../utils/trpc";
 
 function classNames(...classes: string[]) {
@@ -14,25 +14,22 @@ function classNames(...classes: string[]) {
 }
 
 const AddTodo: NextPage = () => {
-  const [selectedTodoType, setSelectedTodoType] = useState<string>(
-    TodoType.Private
-  );
+  //!Get current day and set accordingly
+  const [selected, setSelected] = useState<Days>(Days.Monday);
 
   const addTodo = trpc.todo.addTodo.useMutation();
 
   const inputStyle = "rounded-xl py-3 pl-3 shadow-md hover:border-laccent";
 
   type FormValues = {
-    title: string;
     content: string;
-    type: TodoType;
-    sharedWith: string;
-    dueDate: string;
+    day: Days;
   };
 
   const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
     defaultValues: {
-      type: TodoType.Private,
+      //!Get current day and set accordingly
+      day: Days.Monday,
     },
   });
 
@@ -42,14 +39,14 @@ const AddTodo: NextPage = () => {
   };
   const TypeCombobox = (
     <Listbox
-      value={selectedTodoType}
-      onChange={(val: TodoType) => {
-        setSelectedTodoType(val);
-        setValue("type", val);
+      value={selected}
+      onChange={(val: Days) => {
+        setSelected(val);
+        setValue("day", val);
       }}
     >
       <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white p-3 pr-10 text-left shadow-md">
-        <span className="block truncate">{selectedTodoType}</span>
+        <span className="block truncate">{selected}</span>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-400"
@@ -58,7 +55,7 @@ const AddTodo: NextPage = () => {
         </span>
       </Listbox.Button>
       <Listbox.Options className="rounded-xl bg-daccent">
-        {(Object.keys(TodoType) as Array<keyof typeof TodoType>).map((key) => (
+        {(Object.keys(Days) as Array<keyof typeof Days>).map((key) => (
           <Listbox.Option
             className="p-2 hover:bg-laccent"
             key={key}
@@ -89,30 +86,15 @@ const AddTodo: NextPage = () => {
               <input
                 className={inputStyle}
                 type="text"
-                placeholder="Title"
-                {...register("title", { required: true, maxLength: 80 })}
-              />
-              <input
-                className={inputStyle}
-                type="text"
                 placeholder="Content"
                 {...register("content", { required: true })}
               />
               <input
                 className="hidden"
                 type="text"
-                {...register("type", { required: true })}
+                {...register("day", { required: true })}
               />
               {TypeCombobox}
-              <input
-                placeholder="Shared with"
-                className={classNames(
-                  selectedTodoType === TodoType.Shared ? "" : "hidden",
-                  inputStyle
-                )}
-                type="text"
-                {...register("sharedWith")}
-              />
               <button className="w-20 rounded-3xl bg-main p-2" type="submit">
                 Send
               </button>
