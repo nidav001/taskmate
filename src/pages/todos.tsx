@@ -99,7 +99,7 @@ const Todos: NextPage = () => {
         <Navigation />
         <main className="min-h-screen w-full bg-light lg:flex lg:flex-col">
           <TopNaviagtion />
-          <div className="flex flex-col items-center justify-center gap-2 pt-5">
+          <div className="flex flex-col items-center gap-2 pt-5">
             <div className="flex flex-col items-center">
               <input
                 type="text"
@@ -122,21 +122,27 @@ const Todos: NextPage = () => {
                 Neue Woche
               </button>
             </div>
-            <div className="flex flex-col items-center pl-5">
+            <div className="flex w-full flex-col items-start pl-5 lg:flex-row">
               {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
-                <div className="flex flex-col gap-4" key={day}>
+                <div key={day} className="w-full">
                   <h1 className="text-xl font-bold">{day}</h1>
-                  {todos.data
-                    ?.filter(
-                      (todo) =>
-                        todo.day === day &&
-                        todo.content
-                          .toLowerCase()
-                          .includes(searchValue.toLowerCase())
-                    )
-                    .map((todo) => (
-                      <TodoCard key={todo.id} todo={todo} />
-                    ))}
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    {todos.data
+                      ?.filter(
+                        (todo) =>
+                          todo.day === day &&
+                          todo.content
+                            .toLowerCase()
+                            .includes(searchValue.toLowerCase())
+                      )
+                      .sort(
+                        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+                      )
+                      .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1))
+                      .map((todo) => (
+                        <TodoCard key={todo.id} todo={todo} />
+                      ))}
+                  </div>
                 </div>
               ))}
             </div>
