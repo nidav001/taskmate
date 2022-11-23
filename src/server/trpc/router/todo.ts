@@ -16,6 +16,7 @@ export const todoRouter = router({
         authorId: ctx.session?.user?.id,
         finalized: false,
         archived: false,
+        deleted: false,
       },
     });
   }),
@@ -85,6 +86,7 @@ export const todoRouter = router({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
+          authorId: ctx.session.user.id,
           id: { in: input.ids },
         },
         data: {
@@ -97,6 +99,7 @@ export const todoRouter = router({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
+          authorId: ctx.session.user.id,
           id: { in: input.ids },
         },
         data: {
@@ -121,8 +124,20 @@ export const todoRouter = router({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.delete({
         where: {
-          authorId: ctx.session?.user?.id,
           id: input.id,
+        },
+      });
+    }),
+  deleteTodos: protectedProcedure
+    .input(z.object({ ids: z.string().array() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.updateMany({
+        where: {
+          authorId: ctx.session?.user?.id,
+          id: { in: input.ids },
+        },
+        data: {
+          deleted: true,
         },
       });
     }),

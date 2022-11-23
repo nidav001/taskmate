@@ -1,7 +1,7 @@
 import { protectedProcedure, router } from "../trpc";
 
 export const adminRouter = router({
-  dearchiveTodos: protectedProcedure.mutation(({ ctx }) => {
+  deArchiveTodos: protectedProcedure.mutation(({ ctx }) => {
     return ctx.prisma.todo.updateMany({
       where: {
         authorId: ctx.session?.user?.id,
@@ -9,6 +9,17 @@ export const adminRouter = router({
       },
       data: {
         archived: false,
+      },
+    });
+  }),
+  restoreTodos: protectedProcedure.mutation(({ ctx }) => {
+    return ctx.prisma.todo.updateMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        deleted: true,
+      },
+      data: {
+        deleted: false,
       },
     });
   }),

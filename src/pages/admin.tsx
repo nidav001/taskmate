@@ -6,10 +6,15 @@ import { buttonStyle } from "../styles/buttonStyle";
 import { trpc } from "../utils/trpc";
 
 const Admin: NextPage = () => {
-  const dearchiveTodos = trpc.admin.dearchiveTodos.useMutation();
+  const deArchiveTodos = trpc.admin.deArchiveTodos.useMutation();
+  const restoreTodos = trpc.admin.restoreTodos.useMutation();
 
-  const handleClickArchive = () => {
-    dearchiveTodos.mutate();
+  const handleClickDeArchive = () => {
+    deArchiveTodos.mutate();
+  };
+
+  const handleClickRestore = () => {
+    restoreTodos.mutate();
   };
 
   return (
@@ -24,10 +29,16 @@ const Admin: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <button
-              onClick={() => handleClickArchive()}
+              onClick={() => handleClickDeArchive()}
               className={buttonStyle}
             >
               Archivierte Todos ent-archivieren
+            </button>
+            <button
+              onClick={() => handleClickRestore()}
+              className={buttonStyle}
+            >
+              Gelöschte Todos wiederherstellen
             </button>
           </div>
         </main>

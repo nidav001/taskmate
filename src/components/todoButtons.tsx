@@ -29,6 +29,12 @@ const TodoButtons: React.FC<{
     },
   });
 
+  const deleteTodos = trpc.todo.deleteTodos.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
   function handleOnClickFinalize() {
     finalizeTodos.mutate({
       ids: currentlyDoneTodoIds,
@@ -41,6 +47,13 @@ const TodoButtons: React.FC<{
     archiveTodos.mutate({
       ids: currentlyNotDoneTodoIds,
       done: true,
+    });
+  }
+
+  function handleOnClickDelete() {
+    handleOnClickFinalize();
+    deleteTodos.mutate({
+      ids: currentlyNotDoneTodoIds,
     });
   }
 
@@ -60,6 +73,9 @@ const TodoButtons: React.FC<{
         </button>
         <button onClick={() => handleOnClickArchive()} className={buttonStyle}>
           Neue Woche
+        </button>
+        <button onClick={() => handleOnClickDelete()} className={buttonStyle}>
+          Neue Woche und verwerfen
         </button>
       </div>
     </>
