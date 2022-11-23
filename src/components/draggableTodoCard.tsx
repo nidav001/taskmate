@@ -39,6 +39,15 @@ const DraggableTodoCard: React.FC<{
     delay: 500,
   };
 
+  function onBlurTextArea(newContent: string) {
+    if (newContent !== todo.content) {
+      setTodoContent.mutate({
+        id: todo.id,
+        content: newContent,
+      });
+    }
+  }
+
   const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
   return (
@@ -51,7 +60,7 @@ const DraggableTodoCard: React.FC<{
           {...provided.dragHandleProps}
           {...provided.draggableProps}
         >
-          <div className="group flex flex-col rounded-xl bg-gray-300 p-4 text-black hover:bg-newGray">
+          <div className="group flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-newGray">
             <div className="group flex items-center justify-between gap-2">
               <input
                 type="checkbox"
@@ -69,16 +78,12 @@ const DraggableTodoCard: React.FC<{
               >
                 <textarea
                   onBlur={(e) => {
-                    setTodoContent.mutate({
-                      id: todo.id,
-                      content: e.target.value,
-                    });
+                    onBlurTextArea(e.target.value);
                   }}
                   defaultValue={todo.content}
                   className={classNames(
                     todo.done ? "line-through" : "",
-                    "w-96 text-lg",
-                    "w-48 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
+                    "h-20 w-48 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
                   )}
                 />
               </div>
