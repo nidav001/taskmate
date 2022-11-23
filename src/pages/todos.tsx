@@ -95,7 +95,7 @@ const Todos: NextPage = () => {
   const DroppableDayArea: React.FC<{ day: string }> = ({ day }) => {
     return (
       <Droppable key={day} droppableId={day}>
-        {(provided, snapshot) => (
+        {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
@@ -115,7 +115,7 @@ const Todos: NextPage = () => {
                 .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1))
                 .map((todo, index) => (
                   <DraggableTodoCard
-                    todos={todos}
+                    refetch={todos.refetch}
                     index={index}
                     key={todo.id}
                     todo={todo}

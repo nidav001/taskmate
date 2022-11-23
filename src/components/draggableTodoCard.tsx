@@ -4,17 +4,17 @@ import { Draggable } from "react-beautiful-dnd";
 import classNames from "../utils/classNames";
 import { trpc } from "../utils/trpc";
 
-const DraggableTodoCard: React.FC<{ todo: Todo; index: number; todos }> = ({
-  todo,
-  index,
-  todos,
-}) => {
+const DraggableTodoCard: React.FC<{
+  todo: Todo;
+  index: number;
+  refetch: () => void;
+}> = ({ todo, index, refetch }) => {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
 
   const setTodoDone = trpc.todo.setTodoDone.useMutation({
     onSuccess: () => {
       setTodoDoneState(!todoDone);
-      todos.refetch();
+      refetch();
     },
   });
 
