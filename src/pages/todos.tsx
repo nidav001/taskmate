@@ -2,14 +2,16 @@ import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import {
+  DragDropContext,
+  Droppable,
+  type DraggableProvidedDraggableProps,
+} from "react-beautiful-dnd";
+import DraggableTodoCard from "../components/draggableTodoCard";
 import Navigation from "../components/navigation";
 import TopNaviagtion from "../components/topNavigation";
 import { Days } from "../types/days";
 import { trpc } from "../utils/trpc";
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const Todos: NextPage = () => {
   const todos = trpc.todo.getTodos.useQuery();
@@ -55,37 +57,79 @@ const Todos: NextPage = () => {
 
   const [searchValue, setSearchValue] = useState<string>("");
 
-  const TodoCard: React.FC<{ todo: Todo }> = ({ todo }) => {
-    const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
+  const reorder = (list: Todo[], startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    if (removed) {
+      result.splice(endIndex, 0, removed);
+    }
 
-    const setTodoDone = trpc.todo.setTodoDone.useMutation({
-      onSuccess: () => {
-        setTodoDoneState(!todoDone);
-        todos.refetch();
-      },
-    });
+    return result;
+  };
 
+  const [items, setItems] = useState<Todo[]>(todos?.data ?? []);
+
+  const getListStyle = (isDraggingOver: boolean) => ({
+    background: isDraggingOver ? "lightblue" : "",
+    width: 250,
+  });
+
+  function onDragEnd(result) {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+
+    const localItems = reorder(
+      items,
+      result.source.index,
+      result.destination.index
+    );
+
+    setItems(localItems);
+  }
+
+  const getItemStyle = (
+    draggableStyle: DraggableProvidedDraggableProps,
+    isDragging: boolean
+  ) => ({
+    // change background colour if dragging
+    background: isDragging ? "lightgreen" : "",
+
+    // styles we need to apply on draggables
+    ...draggableStyle,
+  });
+
+  const DroppableDayArea: React.FC<{ day: string }> = ({ day }) => {
     return (
-      <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20">
-        <div className="flex items-center justify-between">
+      <Droppable key={day} droppableId={day}>
+        {(provided, snapshot) => (
           <div
-            className={classNames(
-              todo.done ? "line-through" : "",
-              "w-96 text-lg"
-            )}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            style={getListStyle(snapshot.isDraggingOver)}
+            className="w-full"
           >
-            {todo.content}
+            <h1 className="text-xl font-bold">{day}</h1>
+            <div className="flex w-full flex-col items-center gap-2 py-4">
+              {todos.data
+                ?.filter(
+                  (todo) =>
+                    todo.day === day &&
+                    todo.content
+                      .toLowerCase()
+                      .includes(searchValue.toLowerCase())
+                )
+                .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+                .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1))
+                .map((todo, index) => (
+                  <DraggableTodoCard index={index} key={todo.id} todo={todo} />
+                ))}
+              {provided.placeholder}
+            </div>
           </div>
-          <input
-            type="checkbox"
-            checked={todoDone}
-            onChange={() =>
-              setTodoDone.mutate({ id: todo.id, done: !todo.done })
-            }
-            className="h-6 w-6 rounded-full"
-          />
-        </div>
-      </div>
+        )}
+      </Droppable>
     );
   };
 
@@ -122,29 +166,12 @@ const Todos: NextPage = () => {
                 Neue Woche
               </button>
             </div>
-            <div className="flex w-full flex-col items-start pl-5 lg:flex-row">
-              {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
-                <div key={day} className="w-full">
-                  <h1 className="text-xl font-bold">{day}</h1>
-                  <div className="flex flex-col items-center gap-2 py-4">
-                    {todos.data
-                      ?.filter(
-                        (todo) =>
-                          todo.day === day &&
-                          todo.content
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
-                      )
-                      .sort(
-                        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-                      )
-                      .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1))
-                      .map((todo) => (
-                        <TodoCard key={todo.id} todo={todo} />
-                      ))}
-                  </div>
-                </div>
-              ))}
+            <div className="flex w-full flex-col items-center justify-center gap-6 pl-5 2xl:flex-row 2xl:items-start">
+              <DragDropContext onDragEnd={onDragEnd}>
+                {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
+                  <DroppableDayArea key={day} day={day} />
+                ))}
+              </DragDropContext>
             </div>
           </div>
         </main>
