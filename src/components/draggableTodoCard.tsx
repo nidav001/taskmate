@@ -4,9 +4,10 @@ import { Draggable } from "react-beautiful-dnd";
 import classNames from "../utils/classNames";
 import { trpc } from "../utils/trpc";
 
-const DraggableTodoCard: React.FC<{ todo: Todo; index: number }> = ({
+const DraggableTodoCard: React.FC<{ todo: Todo; index: number; todos }> = ({
   todo,
   index,
+  todos,
 }) => {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
 
@@ -19,14 +20,14 @@ const DraggableTodoCard: React.FC<{ todo: Todo; index: number }> = ({
 
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
-      {(provided, snapshot) => (
+      {(provided) => (
         <div
-          className="w-full"
+          className="m-2 w-full select-none"
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
         >
-          <div className="flex flex-col gap-4 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20">
+          <div className="flex flex-col rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20">
             <div className="flex items-center justify-between">
               <div
                 className={classNames(

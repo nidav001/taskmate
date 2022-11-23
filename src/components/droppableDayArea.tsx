@@ -1,9 +1,10 @@
 import { Droppable } from "react-beautiful-dnd";
 import DraggableTodoCard from "../components/draggableTodoCard";
 
+//!NOT WORKING AS COMPONENT IN OTHER FILE
 const DroppableDayArea: React.FC<{
   day: string;
-  todos: Todo[];
+  todos: any;
   searchValue: string;
 }> = ({ day, todos, searchValue }) => {
   const getListStyle = (isDraggingOver: boolean) => ({
@@ -22,7 +23,7 @@ const DroppableDayArea: React.FC<{
         >
           <h1 className="text-xl font-bold">{day}</h1>
           <div className="flex w-full flex-col items-center gap-2 py-4">
-            {todos
+            {todos?.data
               ?.filter(
                 (todo) =>
                   todo.day === day &&

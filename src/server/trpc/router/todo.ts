@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { any, z } from "zod";
 
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
@@ -93,6 +93,18 @@ export const todoRouter = router({
         },
         data: {
           archived: input.done,
+        },
+      });
+    }),
+  changeDayAfterDnD: protectedProcedure
+    .input(z.object({ id: z.string(), day: z.string(), result: any() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          day: input.day,
         },
       });
     }),
