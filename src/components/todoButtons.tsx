@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import { buttonStyle } from "../styles/buttonStyle";
 import { trpc } from "../utils/trpc";
 
 const TodoButtons: React.FC<{
@@ -54,16 +55,10 @@ const TodoButtons: React.FC<{
         />
       </div>
       <div className="flex gap-2">
-        <button
-          onClick={() => handleOnClickFinalize()}
-          className="h-12 w-28 rounded-3xl bg-laccent p-2"
-        >
+        <button onClick={() => handleOnClickFinalize()} className={buttonStyle}>
           Finalisieren
         </button>
-        <button
-          onClick={() => handleOnClickArchive()}
-          className="h-12 w-28 rounded-3xl bg-laccent p-2"
-        >
+        <button onClick={() => handleOnClickArchive()} className={buttonStyle}>
           Neue Woche
         </button>
       </div>

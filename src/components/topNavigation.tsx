@@ -1,9 +1,13 @@
 import { Menu, Transition } from "@headlessui/react";
+import { Bars3Icon } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
+import { LogoPosition } from "../types/enums";
 import classNames from "../utils/classNames";
+import Logo from "./logo";
+import NavigationMenu from "./navigationMenu";
 
 const TopNaviagtion: React.FC = () => {
   const sessionData = useSession().data;
@@ -22,49 +26,79 @@ const TopNaviagtion: React.FC = () => {
     },
   ];
 
-  return (
-    <div className="min-w-screen flex h-20 items-center justify-end gap-2 bg-dark">
-      <Menu as="div" className="pr-4">
-        <div>
-          <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-            <Image
-              width="40"
-              height="40"
-              className="h-8 w-8 rounded-full"
-              src={sessionData?.user?.image ?? "/guestIcon.svg"}
-              alt=""
-            />
+  const ProfileMenu = (
+    <Menu as="div">
+      <div>
+        <Menu.Button className="flex rounded-full bg-gray-800 text-sm outline-none ring-2 ring-laccent/60 ring-offset-2 ring-offset-gray-800 hover:ring-laccent">
+          <Image
+            width="40"
+            height="40"
+            className="h-8 w-8 rounded-full"
+            src={sessionData?.user?.image ?? "/guestIcon.svg"}
+            alt=""
+          />
+        </Menu.Button>
+      </div>
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          {menuItems.map((item) => (
+            <Menu.Item key={item.name}>
+              {({ active }) => (
+                <Link
+                  href={item.href}
+                  legacyBehavior={false}
+                  className={classNames(
+                    active ? "bg-gray-100" : "",
+                    "block px-4 py-2 text-sm text-gray-700"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              )}
+            </Menu.Item>
+          ))}
+        </Menu.Items>
+      </Transition>
+    </Menu>
+  );
+
+  const MenuButton = (
+    <Menu>
+      {({ open }) => (
+        <div className="md:hidden">
+          <Menu.Button className="rounded-md p-1 ring-2 ring-laccent/60 hover:ring-laccent">
+            <Bars3Icon className="h-6 w-6 text-laccent" />
           </Menu.Button>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="absolute left-0 top-20 z-10 h-full w-full origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <NavigationMenu logoShown={LogoPosition.Menu} />
+            </Menu.Items>
+          </Transition>
         </div>
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            {menuItems.map((item) => (
-              <Menu.Item key={item.name}>
-                {({ active }) => (
-                  <Link
-                    href={item.href}
-                    legacyBehavior={false}
-                    className={classNames(
-                      active ? "bg-gray-100" : "",
-                      "block px-4 py-2 text-sm text-gray-700"
-                    )}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </Menu.Item>
-            ))}
-          </Menu.Items>
-        </Transition>
-      </Menu>
+      )}
+    </Menu>
+  );
+  return (
+    <div className="min-w-screen flex h-20 items-center justify-between gap-2 bg-dark px-4 shadow-lg md:justify-end">
+      {MenuButton}
+      <Logo logoShown={LogoPosition.Top} />
+      {ProfileMenu}
     </div>
   );
 };

@@ -6,7 +6,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Navigation from "../components/navigation";
 import TopNaviagtion from "../components/topNavigation";
-import { Days } from "../types/days";
+import { buttonStyle } from "../styles/buttonStyle";
+import { Days } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
@@ -19,7 +20,7 @@ const AddTodo: NextPage = () => {
 
   const addTodo = trpc.todo.addTodo.useMutation();
 
-  const inputStyle = "rounded-xl py-3 pl-3 shadow-md hover:border-laccent";
+  const inputStyle = "rounded-xl py-3 pl-3 shadow-md outline-none border-0";
 
   type FormValues = {
     content: string;
@@ -28,13 +29,15 @@ const AddTodo: NextPage = () => {
 
   const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
     defaultValues: {
-      day: getTodaysDateName(),
+      day: selected,
     },
   });
 
   const onSubmit = (data: FormValues) => {
+    console.log(data.day);
     addTodo.mutate(data);
     reset();
+    setValue("day", selected);
   };
   const TypeCombobox = (
     <Listbox
@@ -44,7 +47,7 @@ const AddTodo: NextPage = () => {
         setValue("day", val);
       }}
     >
-      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white p-3 pr-10 text-left shadow-md">
+      <Listbox.Button className="relative w-full cursor-default rounded-xl bg-white p-3 pr-10 text-left shadow-md">
         <span className="block truncate">{selected}</span>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
           <ChevronUpDownIcon
@@ -75,7 +78,7 @@ const AddTodo: NextPage = () => {
       </Head>
       <div className="flex flex-row">
         <Navigation />
-        <main className="min-h-screen w-full bg-light lg:flex lg:flex-col">
+        <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form
@@ -94,7 +97,7 @@ const AddTodo: NextPage = () => {
                 {...register("day", { required: true })}
               />
               {TypeCombobox}
-              <button className="w-20 rounded-3xl bg-main p-2" type="submit">
+              <button className={buttonStyle} type="submit">
                 Send
               </button>
             </form>

@@ -12,7 +12,7 @@ const Profile: NextPage = () => {
       </Head>
       <div className="flex flex-row">
         <Navigation />
-        <main className="min-h-screen w-full bg-light lg:flex lg:flex-col">
+        <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <h1>Profile</h1>
         </main>

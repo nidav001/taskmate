@@ -10,7 +10,7 @@ import DraggableTodoCard from "../components/draggableTodoCard";
 import Navigation from "../components/navigation";
 import TodoButtons from "../components/todoButtons";
 import TopNaviagtion from "../components/topNavigation";
-import { Days } from "../types/days";
+import { Days } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
@@ -103,9 +103,8 @@ const Todos: NextPage = () => {
       </Head>
       <div className="flex flex-row">
         <Navigation />
-        <main className="min-h-screen w-full bg-light lg:flex lg:flex-col">
+        <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
-
           <div className="flex flex-col items-center gap-2 pt-5">
             <TodoButtons
               refetch={todos.refetch}

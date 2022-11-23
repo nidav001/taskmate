@@ -19,9 +19,9 @@ const Home: NextPage = () => {
       </Head>
       <div className="flex flex-row">
         <Navigation />
-        <main className="min-h-screen w-full bg-light lg:flex lg:flex-col">
+        <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
-          <div className="flex flex-wrap justify-center gap-2 pt-5">
+          <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard
               content={todos.data?.length ?? 0}
               title="Todos"
@@ -53,11 +53,11 @@ const DashboardCard: React.FC<{
 }> = ({ title, href, content }) => {
   return (
     <Link
-      className="flex min-w-min flex-col gap-4 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
+      className="min-w-content flex max-w-sm flex-1 flex-col gap-3 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
       href={href}
     >
       <h3 className="text-2xl font-bold">{title}</h3>
-      <div className="w-80 text-lg">{content}</div>
+      <div className="w-40 text-lg">{content}</div>
     </Link>
   );
 };
