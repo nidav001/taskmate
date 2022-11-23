@@ -5,6 +5,7 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
+
 const Navigation: React.FC = () => {
   const todoItemStyle =
     "rounded-xl py-3 pl-1 hover:bg-laccent hover:text-white flex items-center";
