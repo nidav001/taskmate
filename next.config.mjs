@@ -10,8 +10,8 @@ const config = {
   reactStrictMode: false,
   swcMinify: true,
   i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
+    locales: ["de"],
+    defaultLocale: "de",
   },
   images: {
     domains: ["cdn.discordapp.com", "lh3.googleusercontent.com"],

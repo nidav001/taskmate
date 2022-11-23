@@ -20,6 +20,12 @@ const DraggableTodoCard: React.FC<{
     },
   });
 
+  const setTodoContent = trpc.todo.updateTodoContent.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
   const onLongPress = () => {
     console.log("longpress is triggered");
   };
@@ -45,8 +51,8 @@ const DraggableTodoCard: React.FC<{
           {...provided.dragHandleProps}
           {...provided.draggableProps}
         >
-          <div className="flex flex-col rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20">
-            <div className="flex items-center justify-between gap-2">
+          <div className="group flex flex-col rounded-xl bg-gray-300 p-4 text-black hover:bg-newGray">
+            <div className="group flex items-center justify-between gap-2">
               <input
                 type="checkbox"
                 checked={todoDone}
@@ -61,9 +67,22 @@ const DraggableTodoCard: React.FC<{
                   "w-96 text-lg"
                 )}
               >
-                {todo.content}
+                <textarea
+                  onBlur={(e) => {
+                    setTodoContent.mutate({
+                      id: todo.id,
+                      content: e.target.value,
+                    });
+                  }}
+                  defaultValue={todo.content}
+                  className={classNames(
+                    todo.done ? "line-through" : "",
+                    "w-96 text-lg",
+                    "w-48 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
+                  )}
+                />
               </div>
-              <EllipsisVerticalIcon className="h-8 w-8" />
+              <EllipsisVerticalIcon className="h-10 w-10" />
             </div>
           </div>
         </div>

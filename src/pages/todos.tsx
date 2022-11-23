@@ -78,7 +78,7 @@ const Todos: NextPage = () => {
                       .includes(searchValue.toLowerCase())
                 )
                 .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-                .sort((a, b) => (a.done === b.done ? 0 : a.done ? -1 : 1))
+                .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
                 .map((todo, index) => (
                   <DraggableTodoCard
                     refetch={todos.refetch}

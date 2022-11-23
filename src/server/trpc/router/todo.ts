@@ -119,6 +119,18 @@ export const todoRouter = router({
         },
       });
     }),
+  updateTodoContent: protectedProcedure
+    .input(z.object({ id: z.string(), content: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          content: input.content,
+        },
+      });
+    }),
   deleteTodo: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
