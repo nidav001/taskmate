@@ -39,6 +39,14 @@ export const todoRouter = router({
       },
     });
   }),
+  getDeletedTodos: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        deleted: true,
+      },
+    });
+  }),
   addTodo: protectedProcedure
     .input(
       z.object({
@@ -105,6 +113,16 @@ export const todoRouter = router({
         },
         data: {
           day: input.day,
+        },
+      });
+    }),
+  deleteTodo: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.delete({
+        where: {
+          authorId: ctx.session?.user?.id,
+          id: input.id,
         },
       });
     }),

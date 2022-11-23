@@ -28,6 +28,7 @@ model Todo {
   day String
   finalized Boolean @default(false)
   archived Boolean @default(false)
+  deleted Boolean @default(false)
 }
 
 // Necessary for Next auth

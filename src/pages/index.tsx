@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const todos = trpc.todo.getTodos.useQuery();
   const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
   const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
+  const deletedTodos = trpc.todo.getDeletedTodos.useQuery();
 
   return (
     <>
@@ -37,6 +38,11 @@ const Home: NextPage = () => {
               title="Finalisiert"
               href="/todos"
             />
+            <DashboardCard
+              content={deletedTodos.data?.length ?? 0}
+              title="Gelöscht"
+              href="/todos"
+            />
           </div>
         </main>
       </div>
@@ -61,27 +67,3 @@ const DashboardCard: React.FC<{
     </Link>
   );
 };
-
-// const AuthShowcase: React.FC = () => {
-//   const { data: sessionData } = useSession();
-
-//   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
-//     undefined, // no input
-//     { enabled: sessionData?.user !== undefined }
-//   );
-
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-4">
-//       <p className="text-center text-2xl text-white">
-//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-//         {secretMessage && <span> - {secretMessage}</span>}
-//       </p>
-//       <button
-//         className="rounded-full bg-dark/10 px-10 py-3 font-semibold text-dark no-underline transition hover:bg-dark/20"
-//         onClick={sessionData ? () => signOut() : () => signIn()}
-//       >
-//         {sessionData ? "Sign out" : "Sign in"}
-//       </button>
-//     </div>
-//   );
-// };
