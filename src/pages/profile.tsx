@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Navigation from "../components/navigation";
+import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 
 const Profile: NextPage = () => {
@@ -11,7 +11,7 @@ const Profile: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-row">
-        <Navigation />
+        <SideNavigation />
         <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <h1>Profile</h1>

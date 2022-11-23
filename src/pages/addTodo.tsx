@@ -4,7 +4,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Navigation from "../components/navigation";
+import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 import { buttonStyle } from "../styles/buttonStyle";
 import { Days } from "../types/enums";
@@ -77,7 +77,7 @@ const AddTodo: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-row">
-        <Navigation />
+        <SideNavigation />
         <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <div className="flex justify-center pt-5">

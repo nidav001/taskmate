@@ -1,5 +1,6 @@
 import {
   CheckCircleIcon,
+  Cog6ToothIcon,
   HomeIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
@@ -31,6 +32,12 @@ const NavigationMenu: React.FC<{ logoShown: string }> = ({ logoShown }) => {
         <div className="flex gap-1">
           <PlusCircleIcon className={iconStyle} />
           Add Todo
+        </div>
+      </Link>
+      <Link href="/admin" className={todoItemStyle}>
+        <div className="flex gap-1">
+          <Cog6ToothIcon className={iconStyle} />
+          Admin
         </div>
       </Link>
     </div>

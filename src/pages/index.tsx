@@ -2,7 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-import Navigation from "../components/navigation";
+import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 import { trpc } from "../utils/trpc";
 
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-row">
-        <Navigation />
+        <SideNavigation />
         <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">

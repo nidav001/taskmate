@@ -7,7 +7,7 @@ import {
   type DropResult,
 } from "react-beautiful-dnd";
 import DraggableTodoCard from "../components/draggableTodoCard";
-import Navigation from "../components/navigation";
+import SideNavigation from "../components/sideNavigation";
 import TodoButtons from "../components/todoButtons";
 import TopNaviagtion from "../components/topNavigation";
 import { Days } from "../types/enums";
@@ -102,7 +102,7 @@ const Todos: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-row">
-        <Navigation />
+        <SideNavigation />
         <main className="min-h-screen w-full bg-light">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-2 pt-5">
