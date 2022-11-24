@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -10,10 +10,16 @@ import DraggableTodoCard from "../components/draggableTodoCard";
 import SideNavigation from "../components/sideNavigation";
 import TodoButtons from "../components/todoButtons";
 import TopNaviagtion from "../components/topNavigation";
+import useMarkedTodoStore from "../hoooks/markedTodoStore";
 import { Days } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
+  const markedTodoStore = useMarkedTodoStore();
+  useEffect(() => {
+    markedTodoStore.resetMarkedTodos();
+  }, []);
+
   const todos = trpc.todo.getTodos.useQuery();
 
   const changeDay = trpc.todo.changeDayAfterDnD.useMutation({

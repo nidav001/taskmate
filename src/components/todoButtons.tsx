@@ -1,4 +1,6 @@
+import { TrashIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
+import useMarkedTodoStore from "../hoooks/markedTodoStore";
 import { buttonStyle } from "../styles/buttonStyle";
 import { trpc } from "../utils/trpc";
 
@@ -7,15 +9,22 @@ const TodoButtons: React.FC<{
   refetch: () => void;
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
-  const validTodos = todos && todos.length && todos.length > 0;
+  const areTodosValid = (todos: Todo[] | undefined) =>
+    todos && todos.length && todos.length > 0;
 
-  const currentlyDoneTodoIds = validTodos
-    ? todos.filter((todo) => todo.done).map((todo) => todo.id)
-    : [];
+  const markedTodoStore = useMarkedTodoStore();
 
-  const currentlyNotDoneTodoIds = validTodos
-    ? todos.filter((todo) => !todo.done).map((todo) => todo.id)
-    : [];
+  const getDoneTodoIds = (todos: Todo[] | undefined) => {
+    areTodosValid(todos)
+      ? todos?.filter((todo) => todo.done).map((todo) => todo.id)
+      : [];
+  };
+
+  const getNotDoneTodoIds = (todos: Todo[] | undefined) => {
+    areTodosValid(todos)
+      ? todos?.filter((todo) => !todo.done).map((todo) => todo.id)
+      : [];
+  };
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onSuccess: () => {
@@ -37,7 +46,7 @@ const TodoButtons: React.FC<{
 
   function handleOnClickFinalize() {
     finalizeTodos.mutate({
-      ids: currentlyDoneTodoIds,
+      ids: getDoneTodoIds(todos),
       done: true,
     });
   }
@@ -45,16 +54,23 @@ const TodoButtons: React.FC<{
   function handleOnClickArchive() {
     handleOnClickFinalize();
     archiveTodos.mutate({
-      ids: currentlyNotDoneTodoIds,
+      ids: getNotDoneTodoIds(todos),
       done: true,
     });
   }
 
-  function handleOnClickDelete() {
+  function handleOnClickDeleteMany() {
     handleOnClickFinalize();
     deleteTodos.mutate({
-      ids: currentlyNotDoneTodoIds,
+      ids: getNotDoneTodoIds,
     });
+  }
+
+  function handleOnClickDelete() {
+    deleteTodos.mutate({
+      ids: markedTodoStore.markedTodos.map((todo) => todo.id),
+    });
+    markedTodoStore.resetMarkedTodos();
   }
 
   return (
@@ -74,9 +90,17 @@ const TodoButtons: React.FC<{
         <button onClick={() => handleOnClickArchive()} className={buttonStyle}>
           Neue Woche
         </button>
-        <button onClick={() => handleOnClickDelete()} className={buttonStyle}>
+        <button
+          onClick={() => handleOnClickDeleteMany()}
+          className={buttonStyle}
+        >
           Neue Woche und verwerfen
         </button>
+        {markedTodoStore.markedTodos.length > 0 ? (
+          <button onClick={() => handleOnClickDelete()} className={buttonStyle}>
+            <TrashIcon className="h-6 w-6" />
+          </button>
+        ) : null}
       </div>
     </>
   );
