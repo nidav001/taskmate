@@ -15,14 +15,6 @@ const useMarkedTodoStore = create<TodoState>()(
         markedTodos: [],
         addMarkedTodo: (newTodo) => {
           set((state) => {
-            console.log(
-              "🚀 ~ file: markedTodoStore.tsx ~ line 17 ~ newTodo",
-              newTodo
-            );
-            console.log(
-              "🚀 ~ file: markedTodoStore.tsx ~ line 17 ~ Store",
-              state.markedTodos
-            );
             return { markedTodos: [...state.markedTodos, newTodo] };
           });
         },

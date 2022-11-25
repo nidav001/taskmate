@@ -36,7 +36,6 @@ const DraggableTodoCard: React.FC<{
     if (!isMarked) {
       markedTodoStore.addMarkedTodo(todo);
     }
-    console.log(markedTodoStore.markedTodos.length);
   };
 
   const onClick = () => {

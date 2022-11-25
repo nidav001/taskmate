@@ -1,12 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import {
-  DragDropContext,
-  Droppable,
-  type DropResult,
-} from "react-beautiful-dnd";
-import DraggableTodoCard from "../components/draggableTodoCard";
+import { DragDropContext, type DropResult } from "react-beautiful-dnd";
+import DroppableDayArea from "../components/droppableDayArea";
 import SideNavigation from "../components/sideNavigation";
 import TodoButtons from "../components/todoButtons";
 import TopNaviagtion from "../components/topNavigation";
@@ -15,7 +11,9 @@ import { Days } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
+  const [searchValue, setSearchValue] = useState<string>("");
   const markedTodoStore = useMarkedTodoStore();
+
   useEffect(() => {
     markedTodoStore.resetMarkedTodos();
   }, []);
@@ -37,8 +35,6 @@ const Todos: NextPage = () => {
     },
   });
 
-  const [searchValue, setSearchValue] = useState<string>("");
-
   // const reorder = (list: Todo[], startIndex: number, endIndex: number) => {
   //   const result = Array.from(list);
   //   const [removed] = result.splice(startIndex, 1);
@@ -58,6 +54,7 @@ const Todos: NextPage = () => {
       return;
     }
 
+    //Persist changes in database (onMutation will display changes immediately)
     changeDay.mutate({
       id: result.draggableId,
       day: result.destination.droppableId,
@@ -66,43 +63,6 @@ const Todos: NextPage = () => {
 
     markedTodoStore.resetMarkedTodos();
   }
-
-  const DroppableDayArea: React.FC<{ day: string }> = ({ day }) => {
-    return (
-      <Droppable key={day} droppableId={day}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="w-80"
-          >
-            <h1 className="text-xl font-bold">{day}</h1>
-            <div className="flex flex-col py-4">
-              {todos.data
-                ?.filter(
-                  (todo) =>
-                    todo.day === day &&
-                    todo.content
-                      .toLowerCase()
-                      .includes(searchValue.toLowerCase())
-                )
-                .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-                .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
-                .map((todo, index) => (
-                  <DraggableTodoCard
-                    refetch={todos.refetch}
-                    index={index}
-                    key={todo.id}
-                    todo={todo}
-                  />
-                ))}
-              {provided.placeholder}
-            </div>
-          </div>
-        )}
-      </Droppable>
-    );
-  };
 
   return (
     <>
@@ -123,7 +83,13 @@ const Todos: NextPage = () => {
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
-                  <DroppableDayArea key={day} day={day} />
+                  <DroppableDayArea
+                    refetch={todos.refetch}
+                    searchValue={searchValue}
+                    todos={todos.data ?? []}
+                    key={day}
+                    day={day}
+                  />
                 ))}
               </DragDropContext>
             </div>
