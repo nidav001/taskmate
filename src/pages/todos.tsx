@@ -1,3 +1,4 @@
+import { Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -35,21 +36,22 @@ const Todos: NextPage = () => {
     },
   });
 
-  // const reorder = (list: Todo[], startIndex: number, endIndex: number) => {
-  //   const result = Array.from(list);
-  //   const [removed] = result.splice(startIndex, 1);
-  //   if (removed) {
-  //     result.splice(endIndex, 0, removed);
-  //   }
+  const reorder = (list: Todo[], startIndex: number, endIndex: number) => {
+    const [removed] = list.splice(startIndex, 1);
+    if (removed) {
+      list.splice(endIndex, 0, removed);
+    }
 
-  //   return result;
-  // };
+    return list;
+  };
 
   function onDragEnd(result: DropResult) {
     //If dropped outside list or dropped in same place
+    if (!result.destination) return;
+
     if (
-      !result.destination ||
-      result.destination.droppableId === result.source.droppableId
+      result.destination.droppableId === result.source.droppableId &&
+      result.destination.index === result.source.index
     ) {
       return;
     }
