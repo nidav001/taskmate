@@ -36,6 +36,7 @@ const DraggableTodoCard: React.FC<{
     if (!isMarked) {
       markedTodoStore.addMarkedTodo(todo);
     }
+    console.log(markedTodoStore.markedTodos.length);
   };
 
   const onClick = () => {
@@ -63,7 +64,7 @@ const DraggableTodoCard: React.FC<{
       {(provided) => (
         <div
           {...longPressEvent}
-          className="m-2 w-full select-none"
+          className="my-1 select-none"
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
@@ -90,7 +91,7 @@ const DraggableTodoCard: React.FC<{
                 defaultValue={todo.content}
                 className={classNames(
                   todo.done ? "line-through" : "",
-                  "h-20 w-48 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
+                  "resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
                 )}
               />
 

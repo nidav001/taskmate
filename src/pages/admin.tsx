@@ -23,9 +23,9 @@ const Admin: NextPage = () => {
         <title>T3Todo</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-row">
+      <div className="flex h-screen flex-row">
         <SideNavigation />
-        <main className="min-h-screen w-full bg-light">
+        <main className="h-auto w-full bg-light">
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <button
