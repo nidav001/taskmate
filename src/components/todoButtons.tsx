@@ -4,7 +4,8 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
-import useMarkedTodoStore from "../hoooks/markedTodoStore";
+import useMarkedTodoStore from "../hooks/markedTodoStore";
+import useTodoOrderStore from "../hooks/todoOrderStore";
 import { buttonStyle } from "../styles/buttonStyle";
 import { trpc } from "../utils/trpc";
 
@@ -13,7 +14,8 @@ const TodoButtons: React.FC<{
   refetch: () => void;
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
-  const markedTodoStore = useMarkedTodoStore();
+  const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
+  const { todoOrder, setTodoOrder, resetTodoOrder } = useTodoOrderStore();
 
   const getDoneTodoIds = (todos: Todo[] | undefined): string[] => {
     return todos?.filter((todo) => todo.done).map((todo) => todo.id) ?? [];
@@ -25,18 +27,21 @@ const TodoButtons: React.FC<{
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onSuccess: () => {
+      resetTodoOrder();
       refetch();
     },
   });
 
   const archiveTodos = trpc.todo.archiveTodos.useMutation({
     onSuccess: () => {
+      resetTodoOrder();
       refetch();
     },
   });
 
   const deleteTodos = trpc.todo.deleteTodos.useMutation({
     onSuccess: () => {
+      resetTodoOrder();
       refetch();
     },
   });
@@ -72,12 +77,12 @@ const TodoButtons: React.FC<{
   }
 
   function handleOnClickDeleteMarked() {
-    const markedTodoIds = markedTodoStore.markedTodos.map((todo) => todo.id);
+    const markedTodoIds = markedTodos.map((todo) => todo.id);
     if (markedTodoIds.length > 0) {
       deleteTodos.mutate({
         ids: markedTodoIds,
       });
-      markedTodoStore.resetMarkedTodos();
+      resetMarkedTodos();
     }
   }
 
@@ -113,7 +118,7 @@ const TodoButtons: React.FC<{
         >
           Neue Woche und verwerfen
         </button>
-        {markedTodoStore.markedTodos.length > 0 ? (
+        {markedTodos.length > 0 ? (
           <button
             title="Löschen"
             onClick={() => handleOnClickDeleteMarked()}

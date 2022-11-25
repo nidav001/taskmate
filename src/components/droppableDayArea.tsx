@@ -1,6 +1,7 @@
 import { type Todo } from "@prisma/client";
 import { Droppable } from "react-beautiful-dnd";
 import DraggableTodoCard from "../components/draggableTodoCard";
+import useTodoOrderStore from "../hooks/todoOrderStore";
 
 const DroppableDayArea: React.FC<{
   day: string;
@@ -8,6 +9,8 @@ const DroppableDayArea: React.FC<{
   searchValue: string;
   refetch: () => void;
 }> = ({ day, todos, searchValue, refetch }) => {
+  const { todoOrder } = useTodoOrderStore();
+
   return (
     <Droppable key={day} droppableId={day}>
       {(provided) => (
@@ -24,8 +27,10 @@ const DroppableDayArea: React.FC<{
                   todo.day === day &&
                   todo.content.toLowerCase().includes(searchValue.toLowerCase())
               )
+
               .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
               .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
+              .sort((a, b) => todoOrder.indexOf(a.id) - todoOrder.indexOf(b.id))
               .map((todo, index) => (
                 <DraggableTodoCard
                   refetch={refetch}

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
+import useTodoOrderStore from "../hooks/todoOrderStore";
 import { buttonStyle } from "../styles/buttonStyle";
 import { Days } from "../types/enums";
 import { trpc } from "../utils/trpc";
@@ -16,9 +17,18 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
+  const { todoOrder, setTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Days>(getTodaysDateName());
 
-  const addTodo = trpc.todo.addTodo.useMutation();
+  const addTodo = trpc.todo.addTodo.useMutation({
+    onSettled(data, error, variables, context) {
+      reset();
+      setValue("day", selected);
+
+      // const createdRecordId = trpc.todo.getTodos.useQuery()
+      // if (createdRecordId) setTodoOrder([...todoOrder, createdRecordId]);
+    },
+  });
 
   const inputStyle = "rounded-xl py-3 pl-3 shadow-md outline-none border-0";
 
@@ -34,10 +44,9 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    addTodo.mutate(data);
-    reset();
-    setValue("day", selected);
+    console.log(addTodo.mutate(data));
   };
+
   const TypeCombobox = (
     <Listbox
       value={selected}

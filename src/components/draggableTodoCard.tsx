@@ -2,7 +2,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import useMarkedTodoStore from "../hoooks/markedTodoStore";
+import useMarkedTodoStore from "../hooks/markedTodoStore";
 import classNames from "../utils/classNames";
 import { trpc } from "../utils/trpc";
 import useLongPress from "../utils/useLongPress";
@@ -14,7 +14,7 @@ const DraggableTodoCard: React.FC<{
 }> = ({ todo, index, refetch }) => {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
 
-  const markedTodoStore = useMarkedTodoStore();
+  const { markedTodos, addMarkedTodo } = useMarkedTodoStore();
 
   const setTodoDone = trpc.todo.setTodoDone.useMutation({
     onSuccess: () => {
@@ -29,12 +29,12 @@ const DraggableTodoCard: React.FC<{
     },
   });
 
-  const isMarked = markedTodoStore.markedTodos.includes(todo);
+  const isMarked = markedTodos.includes(todo);
 
   const onLongPress = () => {
     console.log("longpress is triggered");
     if (!isMarked) {
-      markedTodoStore.addMarkedTodo(todo);
+      addMarkedTodo(todo);
     }
   };
 
