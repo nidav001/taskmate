@@ -64,7 +64,7 @@ const DraggableTodoCard: React.FC<{
       {(provided) => (
         <div
           {...longPressEvent}
-          className="my-1 select-none"
+          className="my-1 "
           ref={provided.innerRef}
           {...provided.dragHandleProps}
           {...provided.draggableProps}
@@ -91,7 +91,7 @@ const DraggableTodoCard: React.FC<{
                 defaultValue={todo.content}
                 className={classNames(
                   todo.done ? "line-through" : "",
-                  "resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
+                  "w-5/6 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
                 )}
               />
 

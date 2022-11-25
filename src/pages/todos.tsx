@@ -71,9 +71,13 @@ const Todos: NextPage = () => {
     return (
       <Droppable key={day} droppableId={day}>
         {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="w-80"
+          >
             <h1 className="text-xl font-bold">{day}</h1>
-            <div className="flex flex-col items-center py-4">
+            <div className="flex flex-col py-4">
               {todos.data
                 ?.filter(
                   (todo) =>
@@ -116,7 +120,7 @@ const Todos: NextPage = () => {
               setSearchValue={setSearchValue}
               todos={todos.data}
             />
-            <div className="flex flex-row flex-wrap items-start justify-center gap-4 pl-5">
+            <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
                   <DroppableDayArea key={day} day={day} />
