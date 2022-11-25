@@ -13,9 +13,6 @@ const TodoButtons: React.FC<{
   refetch: () => void;
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
-  const areTodosValid = (todos: Todo[] | undefined) =>
-    todos && todos.length && todos.length > 0;
-
   const markedTodoStore = useMarkedTodoStore();
 
   const getDoneTodoIds = (todos: Todo[] | undefined): string[] => {
