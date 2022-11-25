@@ -73,11 +73,6 @@ const TodoButtons: React.FC<{
 
   function handleOnClickDeleteMarked() {
     const markedTodoIds = markedTodoStore.markedTodos.map((todo) => todo.id);
-    console.log(
-      "🚀 ~ file: todoButtons.tsx ~ line 79 ~ handleOnClickDeleteMarked ~ markedTodoIds",
-      markedTodoIds
-    );
-
     if (markedTodoIds.length > 0) {
       deleteTodos.mutate({
         ids: markedTodoIds,

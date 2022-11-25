@@ -26,8 +26,8 @@ const TopNaviagtion: React.FC = () => {
     },
   ];
 
-  const ProfileMenu = (
-    <Menu as="div">
+  const ProfileMenuButton = (
+    <Menu>
       <div>
         <Menu.Button className="flex rounded-full bg-gray-800 text-sm outline-none ring-2 ring-laccent/60 ring-offset-2 ring-offset-gray-800 hover:ring-laccent">
           <Image
@@ -70,7 +70,7 @@ const TopNaviagtion: React.FC = () => {
     </Menu>
   );
 
-  const MenuButton = (
+  const MainMenuButton = (
     <Menu>
       {({ open }) => (
         <div className="md:hidden">
@@ -96,9 +96,9 @@ const TopNaviagtion: React.FC = () => {
   );
   return (
     <div className="min-w-screen flex h-20 items-center justify-between gap-2 bg-dark px-4 shadow-lg md:justify-end">
-      {MenuButton}
+      {MainMenuButton}
       <Logo logoShown={LogoPosition.Top} />
-      {ProfileMenu}
+      {ProfileMenuButton}
     </div>
   );
 };

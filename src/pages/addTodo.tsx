@@ -34,7 +34,6 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log(data.day);
     addTodo.mutate(data);
     reset();
     setValue("day", selected);
