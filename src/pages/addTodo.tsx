@@ -17,7 +17,7 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
-  const { todoOrder, setTodoOrder } = useTodoOrderStore();
+  const { columns, setColumnTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Days>(getTodaysDateName());
 
   const addTodo = trpc.todo.addTodo.useMutation({
@@ -44,7 +44,7 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    console.log(addTodo.mutate(data));
+    addTodo.mutate(data);
   };
 
   const TypeCombobox = (

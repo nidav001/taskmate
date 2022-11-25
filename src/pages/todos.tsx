@@ -15,13 +15,13 @@ const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery]);
 
-  const { todoOrder, setTodoOrder } = useTodoOrderStore();
+  const { columns, setColumnTodoOrder } = useTodoOrderStore();
 
   const [searchValue, setSearchValue] = useState<string>("");
   const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
-    sortTodos();
+    // initializeTodoOrder();
   }, [todos]);
 
   useEffect(() => {
@@ -52,17 +52,10 @@ const Todos: NextPage = () => {
     return result;
   };
 
-  function sortTodos() {
-    if (todoOrder.length === 0) {
-      console.log("initializing todoOrder");
-      todos.map((todo) => {
-        todoOrder.push(todo.id);
-      });
-    }
-  }
-
   function onDragEnd(result: DropResult) {
     const { destination, source, draggableId } = result;
+    console.log("🚀 ~ file: todos.tsx ~ line 66 ~ onDragEnd ~ result", result);
+
     //If dropped outside list or dropped in same place
     if (!destination) return;
 
@@ -73,19 +66,28 @@ const Todos: NextPage = () => {
       return;
     }
 
-    const newTodoOrder = reorder(todoOrder, source.index, destination.index);
-    setTodoOrder(newTodoOrder);
+    console.log(columns.length);
+    const start = columns?.find((col) => col.id === source.droppableId);
+    const finish = columns?.find((col) => col.id === destination.droppableId);
 
-    sortTodos();
+    if (start && finish && start === finish) {
+      const newTodoOrder = reorder(
+        start?.todoOrder ?? [],
+        source.index,
+        destination.index
+      );
 
-    //Persist changes in database (onMutation will display changes immediately)
-    changeDay.mutate({
-      id: draggableId,
-      day: destination.droppableId,
-      result: result,
-    });
+      setColumnTodoOrder(start.id, newTodoOrder);
 
-    resetMarkedTodos();
+      //Persist changes in database (onMutation will display changes immediately)
+      changeDay.mutate({
+        id: draggableId,
+        day: destination.droppableId,
+        result: result,
+      });
+
+      resetMarkedTodos();
+    }
   }
 
   return (

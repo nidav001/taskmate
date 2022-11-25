@@ -1,9 +1,14 @@
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
-interface TodoState {
+interface Column {
+  id: string;
   todoOrder: string[];
-  setTodoOrder: (newOrder: string[]) => void;
+}
+
+interface TodoState {
+  columns: Column[];
+  setColumnTodoOrder: (columnId: string, newTodoOrder: string[]) => void;
   resetTodoOrder: () => void;
 }
 
@@ -11,15 +16,44 @@ const useTodoOrderStore = create<TodoState>()(
   devtools(
     persist(
       (set) => ({
-        todoOrder: [],
-        setTodoOrder: (newOrder) => {
-          set(() => {
-            return { todoOrder: newOrder };
+        columns: [
+          { id: "Montag", todoOrder: [] },
+          { id: "Dienstag", todoOrder: [] },
+          { id: "Mittwoch", todoOrder: [] },
+          { id: "Donnerstag", todoOrder: [] },
+          { id: "Freitag", todoOrder: [] },
+          { id: "Samstag", todoOrder: [] },
+          { id: "Sonntag", todoOrder: [] },
+        ],
+        setColumnTodoOrder: (columnId: string, newTodoOrder: string[]) => {
+          set((state) => {
+            const newColumns = state.columns.map((column) => {
+              if (column.id === columnId) {
+                return {
+                  ...column,
+                  todoOrder: newTodoOrder,
+                };
+              }
+              return column;
+            });
+
+            return {
+              columns: newColumns,
+            };
           });
         },
         resetTodoOrder: () => {
-          set(() => {
-            return { todoOrder: [] };
+          set((state) => {
+            const newColumns = state.columns.map((column) => {
+              return {
+                ...column,
+                todoOrder: [],
+              };
+            });
+
+            return {
+              columns: newColumns,
+            };
           });
         },
       }),

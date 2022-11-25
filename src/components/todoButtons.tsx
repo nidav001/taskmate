@@ -15,7 +15,7 @@ const TodoButtons: React.FC<{
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
   const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
-  const { todoOrder, setTodoOrder, resetTodoOrder } = useTodoOrderStore();
+  const { columns, setColumnTodoOrder, resetTodoOrder } = useTodoOrderStore();
 
   const getDoneTodoIds = (todos: Todo[] | undefined): string[] => {
     return todos?.filter((todo) => todo.done).map((todo) => todo.id) ?? [];
