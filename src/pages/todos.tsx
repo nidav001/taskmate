@@ -36,13 +36,13 @@ const Todos: NextPage = () => {
     },
   });
 
-  const reorder = (list: Todo[], startIndex: number, endIndex: number) => {
-    const [removed] = list.splice(startIndex, 1);
+  const reorder = (result: Todo[], startIndex: number, endIndex: number) => {
+    const [removed] = result.splice(startIndex, 1);
     if (removed) {
-      list.splice(endIndex, 0, removed);
+      result.splice(endIndex, 0, removed);
     }
 
-    return list;
+    return result;
   };
 
   function onDragEnd(result: DropResult) {
