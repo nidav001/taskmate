@@ -1,4 +1,8 @@
-import { TrashIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  TrashIcon,
+} from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import useMarkedTodoStore from "../hoooks/markedTodoStore";
 import { buttonStyle } from "../styles/buttonStyle";
@@ -14,16 +18,12 @@ const TodoButtons: React.FC<{
 
   const markedTodoStore = useMarkedTodoStore();
 
-  const getDoneTodoIds = (todos: Todo[] | undefined) => {
-    areTodosValid(todos)
-      ? todos?.filter((todo) => todo.done).map((todo) => todo.id)
-      : [];
+  const getDoneTodoIds = (todos: Todo[] | undefined): string[] => {
+    return todos?.filter((todo) => todo.done).map((todo) => todo.id) ?? [];
   };
 
-  const getNotDoneTodoIds = (todos: Todo[] | undefined) => {
-    areTodosValid(todos)
-      ? todos?.filter((todo) => !todo.done).map((todo) => todo.id)
-      : [];
+  const getNotDoneTodoIds = (todos: Todo[] | undefined): string[] => {
+    return todos?.filter((todo) => !todo.done).map((todo) => todo.id) ?? [];
   };
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
@@ -45,32 +45,48 @@ const TodoButtons: React.FC<{
   });
 
   function handleOnClickFinalize() {
-    finalizeTodos.mutate({
-      ids: getDoneTodoIds(todos),
-      done: true,
-    });
+    const doneTodoIds = getDoneTodoIds(todos);
+
+    if (doneTodoIds.length > 0) {
+      finalizeTodos.mutate({
+        ids: doneTodoIds,
+        done: true,
+      });
+    }
   }
 
   function handleOnClickArchive() {
     handleOnClickFinalize();
-    archiveTodos.mutate({
-      ids: getNotDoneTodoIds(todos),
-      done: true,
-    });
+    const notDoneTodoIds = getNotDoneTodoIds(todos);
+
+    if (notDoneTodoIds.length > 0) {
+      archiveTodos.mutate({
+        ids: getNotDoneTodoIds(todos),
+        done: true,
+      });
+    }
   }
 
   function handleOnClickDeleteMany() {
     handleOnClickFinalize();
     deleteTodos.mutate({
-      ids: getNotDoneTodoIds,
+      ids: getNotDoneTodoIds(todos),
     });
   }
 
-  function handleOnClickDelete() {
-    deleteTodos.mutate({
-      ids: markedTodoStore.markedTodos.map((todo) => todo.id),
-    });
-    markedTodoStore.resetMarkedTodos();
+  function handleOnClickDeleteMarked() {
+    const markedTodoIds = markedTodoStore.markedTodos.map((todo) => todo.id);
+    console.log(
+      "🚀 ~ file: todoButtons.tsx ~ line 79 ~ handleOnClickDeleteMarked ~ markedTodoIds",
+      markedTodoIds
+    );
+
+    if (markedTodoIds.length > 0) {
+      deleteTodos.mutate({
+        ids: markedTodoIds,
+      });
+      markedTodoStore.resetMarkedTodos();
+    }
   }
 
   return (
@@ -83,22 +99,35 @@ const TodoButtons: React.FC<{
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </div>
-      <div className="flex gap-2">
-        <button onClick={() => handleOnClickFinalize()} className={buttonStyle}>
-          Finalisieren
-        </button>
-        <button onClick={() => handleOnClickArchive()} className={buttonStyle}>
-          Neue Woche
+      <div className="flex gap-2 px-3">
+        <button
+          title="Finalisieren"
+          onClick={() => handleOnClickFinalize()}
+          className={buttonStyle}
+        >
+          <CheckIcon className="h-8 w-8" />
         </button>
         <button
+          title="Archivieren"
+          onClick={() => handleOnClickArchive()}
+          className={buttonStyle}
+        >
+          <ArrowRightIcon className="h-8 w-8" />
+        </button>
+        <button
+          title="Neue Woche und verwerfen"
           onClick={() => handleOnClickDeleteMany()}
           className={buttonStyle}
         >
           Neue Woche und verwerfen
         </button>
         {markedTodoStore.markedTodos.length > 0 ? (
-          <button onClick={() => handleOnClickDelete()} className={buttonStyle}>
-            <TrashIcon className="h-6 w-6" />
+          <button
+            title="Löschen"
+            onClick={() => handleOnClickDeleteMarked()}
+            className={buttonStyle}
+          >
+            <TrashIcon className="h-8 w-8" />
           </button>
         ) : null}
       </div>

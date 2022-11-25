@@ -26,6 +26,7 @@ const Todos: NextPage = () => {
     onSuccess: () => {
       todos.refetch();
     },
+
     //Display changes immediately, before the server responds
     onMutate(data) {
       todos?.data?.forEach((todo) => {
@@ -62,19 +63,17 @@ const Todos: NextPage = () => {
       day: result.destination.droppableId,
       result: result,
     });
+
+    markedTodoStore.resetMarkedTodos();
   }
 
   const DroppableDayArea: React.FC<{ day: string }> = ({ day }) => {
     return (
       <Droppable key={day} droppableId={day}>
         {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="w-72"
-          >
+          <div ref={provided.innerRef} {...provided.droppableProps}>
             <h1 className="text-xl font-bold">{day}</h1>
-            <div className="flex w-full flex-col items-center py-4">
+            <div className="flex flex-col items-center py-4">
               {todos.data
                 ?.filter(
                   (todo) =>
@@ -107,9 +106,9 @@ const Todos: NextPage = () => {
         <title>My Todos</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-row">
+      <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="min-h-screen w-full bg-light">
+        <main className="w-full bg-light">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-2 pt-5">
             <TodoButtons
@@ -117,7 +116,7 @@ const Todos: NextPage = () => {
               setSearchValue={setSearchValue}
               todos={todos.data}
             />
-            <div className="flex w-full flex-col items-center justify-center gap-6 pl-5 2xl:flex-row 2xl:items-start">
+            <div className="flex flex-row flex-wrap items-start justify-center gap-4 pl-5">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
                   <DroppableDayArea key={day} day={day} />

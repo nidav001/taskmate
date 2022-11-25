@@ -13,10 +13,23 @@ const useMarkedTodoStore = create<TodoState>()(
     persist(
       (set) => ({
         markedTodos: [],
-        addMarkedTodo: (newTodo) =>
-          set((state) => ({ markedTodos: [...state.markedTodos, newTodo] })),
+        addMarkedTodo: (newTodo) => {
+          set((state) => {
+            console.log(
+              "🚀 ~ file: markedTodoStore.tsx ~ line 17 ~ newTodo",
+              newTodo
+            );
+            console.log(
+              "🚀 ~ file: markedTodoStore.tsx ~ line 17 ~ Store",
+              state.markedTodos
+            );
+            return { markedTodos: [...state.markedTodos, newTodo] };
+          });
+        },
+
         resetMarkedTodos: () => set(() => ({ markedTodos: [] })),
       }),
+
       {
         name: "marked-todo-storage",
       }
