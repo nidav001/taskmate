@@ -47,18 +47,6 @@ const Todos: NextPage = () => {
     onSuccess: () => {
       todoQuery.refetch();
     },
-
-    //Display changes immediately, before the server responds
-    onMutate(data) {
-      console.log("onMutate triggered");
-
-      setLocalTodos((prev) => {
-        const newTodos = [...prev];
-        const todoIndex = newTodos.findIndex((todo) => todo.id === data.id);
-        newTodos[todoIndex].day = data.day;
-        return newTodos;
-      });
-    },
   });
 
   const reorder = (result: string[], startIndex: number, endIndex: number) => {
@@ -127,10 +115,17 @@ const Todos: NextPage = () => {
         taskIds: finishTodoIds,
       };
 
+      setLocalTodos((prev) => {
+        const newTodos = [...prev];
+        const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
+        newTodos[todoIndex].day = destination.droppableId as Day;
+        return newTodos;
+      });
+
       setColumnTodoOrder(newStart.id, newStart.taskIds);
       setColumnTodoOrder(newFinish.id, newFinish.taskIds);
 
-      //Persist changes in database (onMutation will display changes immediately)
+      // Persist changes in database (onMutate will display changes immediately)
       changeDay.mutate({
         id: draggableId,
         day: destination.droppableId,
