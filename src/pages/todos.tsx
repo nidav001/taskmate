@@ -1,21 +1,21 @@
-import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import { DragDropContext, type DropResult } from "react-beautiful-dnd";
 import DroppableDayArea from "../components/droppableDayArea";
 import SideNavigation from "../components/sideNavigation";
-import TodoButtons from "../components/todoButtons";
+import Toolbar from "../components/toolbar";
 import TopNaviagtion from "../components/topNavigation";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
+import useTodoStore from "../hooks/todoStore";
 import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery]);
-  const [localTodos, setLocalTodos] = useState<Todo[]>(todos);
+  const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
 
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
 
@@ -78,15 +78,7 @@ const Todos: NextPage = () => {
 
     if (start && finish) {
       const startTodoIds = start.todoOrder;
-      console.log(
-        "🚀 ~ file: todos.tsx ~ line 87 ~ onDragEnd ~ startTodoIds",
-        startTodoIds
-      );
       const finishTodoIds = finish.todoOrder;
-      console.log(
-        "🚀 ~ file: todos.tsx ~ line 89 ~ onDragEnd ~ finishTodoIds",
-        finishTodoIds
-      );
 
       //reorder in same column
       if (start === finish) {
@@ -115,12 +107,10 @@ const Todos: NextPage = () => {
         taskIds: finishTodoIds,
       };
 
-      setLocalTodos((prev) => {
-        const newTodos = [...prev];
-        const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
-        newTodos[todoIndex].day = destination.droppableId as Day;
-        return newTodos;
-      });
+      const newTodos = [...localTodos];
+      const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
+      newTodos[todoIndex].day = destination.droppableId as Day;
+      setLocalTodos(newTodos);
 
       setColumnTodoOrder(newStart.id, newStart.taskIds);
       setColumnTodoOrder(newFinish.id, newFinish.taskIds);
@@ -145,7 +135,7 @@ const Todos: NextPage = () => {
         <main className="w-full bg-light">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-2 pt-5">
-            <TodoButtons
+            <Toolbar
               refetch={todoQuery.refetch}
               setSearchValue={setSearchValue}
               todos={todos}

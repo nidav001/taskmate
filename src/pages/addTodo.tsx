@@ -22,12 +22,15 @@ const AddTodo: NextPage = () => {
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
 
   const addTodo = trpc.todo.addTodo.useMutation({
-    onSettled(data, error, variables, context) {
+    onMutate(data) {
+      // Optimistically reset the form. Better use onSuccess if form gets more complex
       reset();
       setValue("day", selected);
 
-      // const createdRecordId = trpc.todo.getTodos.useQuery()
-      // if (createdRecordId) setTodoOrder([...todoOrder, createdRecordId]);
+      setColumnTodoOrder(data.day, [
+        ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
+        data.id,
+      ]);
     },
   });
 
@@ -45,15 +48,10 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    const id = uuidv4();
-    addTodo.mutate({ id: id, ...data });
-    setColumnTodoOrder(data.day, [
-      ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
-      id,
-    ]);
+    addTodo.mutate({ id: uuidv4(), ...data });
   };
 
-  const TypeCombobox = (
+  const DayCombobox = (
     <Listbox
       value={selected}
       onChange={(val: Day) => {
@@ -110,7 +108,7 @@ const AddTodo: NextPage = () => {
                 type="text"
                 {...register("day", { required: true })}
               />
-              {TypeCombobox}
+              {DayCombobox}
               <button className={buttonStyle} type="submit">
                 Send
               </button>

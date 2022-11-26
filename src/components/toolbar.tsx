@@ -6,29 +6,37 @@ import {
 import { type Todo } from "@prisma/client";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
+import useTodoStore from "../hooks/todoStore";
 import { buttonStyle } from "../styles/buttonStyle";
 import { trpc } from "../utils/trpc";
 
-const TodoButtons: React.FC<{
+const Toolbar: React.FC<{
   todos: Todo[] | undefined;
   refetch: () => void;
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
   const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
-  const { columns, setColumnTodoOrder, resetTodoOrder } = useTodoOrderStore();
+  const { resetTodoOrder } = useTodoOrderStore();
+  const { todos: localTodos, setTodos } = useTodoStore();
 
-  const getDoneTodoIds = (todos: Todo[] | undefined): string[] => {
-    return todos?.filter((todo) => todo.done).map((todo) => todo.id) ?? [];
+  const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
+    return (
+      todos?.filter((todo) => todo.done === done).map((todo) => todo.id) ?? []
+    );
   };
 
-  const getNotDoneTodoIds = (todos: Todo[] | undefined): string[] => {
-    return todos?.filter((todo) => !todo.done).map((todo) => todo.id) ?? [];
+  const refreshLocalTodos = (ids: string[]) => {
+    const newTodos = localTodos?.filter((todo) => !ids.includes(todo.id));
+    setTodos(newTodos);
   };
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onSuccess: () => {
       resetTodoOrder();
       refetch();
+    },
+    onMutate: (data) => {
+      refreshLocalTodos(data.ids);
     },
   });
 
@@ -37,6 +45,9 @@ const TodoButtons: React.FC<{
       resetTodoOrder();
       refetch();
     },
+    onMutate: () => {
+      setTodos([]);
+    },
   });
 
   const deleteTodos = trpc.todo.deleteTodos.useMutation({
@@ -44,10 +55,13 @@ const TodoButtons: React.FC<{
       resetTodoOrder();
       refetch();
     },
+    onMutate: (data) => {
+      refreshLocalTodos(data.ids);
+    },
   });
 
   function handleOnClickFinalize() {
-    const doneTodoIds = getDoneTodoIds(todos);
+    const doneTodoIds = getTodoIds(todos, true);
 
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({
@@ -59,11 +73,11 @@ const TodoButtons: React.FC<{
 
   function handleOnClickArchive() {
     handleOnClickFinalize();
-    const notDoneTodoIds = getNotDoneTodoIds(todos);
+    const notDoneTodoIds = getTodoIds(todos, false);
 
     if (notDoneTodoIds.length > 0) {
       archiveTodos.mutate({
-        ids: getNotDoneTodoIds(todos),
+        ids: getTodoIds(todos, false),
         done: true,
       });
     }
@@ -72,7 +86,7 @@ const TodoButtons: React.FC<{
   function handleOnClickDeleteMany() {
     handleOnClickFinalize();
     deleteTodos.mutate({
-      ids: getNotDoneTodoIds(todos),
+      ids: getTodoIds(todos, false),
     });
   }
 
@@ -132,4 +146,4 @@ const TodoButtons: React.FC<{
   );
 };
 
-export default TodoButtons;
+export default Toolbar;
