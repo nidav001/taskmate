@@ -4,6 +4,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 import useTodoOrderStore from "../hooks/todoOrderStore";
@@ -44,7 +45,12 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    addTodo.mutate(data);
+    const id = uuidv4();
+    addTodo.mutate({ id: id, ...data });
+    setColumnTodoOrder(data.day, [
+      ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
+      id,
+    ]);
   };
 
   const TypeCombobox = (

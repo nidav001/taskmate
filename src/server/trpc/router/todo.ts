@@ -51,6 +51,7 @@ export const todoRouter = router({
   addTodo: protectedProcedure
     .input(
       z.object({
+        id: z.string().uuid(),
         content: z.string(),
         day: z.string(),
       })
@@ -58,6 +59,7 @@ export const todoRouter = router({
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.create({
         data: {
+          id: input.id,
           authorId: ctx.session.user.id,
           content: input.content,
           day: input.day,
