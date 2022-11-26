@@ -1,8 +1,9 @@
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { Day } from "../types/enums";
 
 interface Column {
-  id: string;
+  id: Day;
   todoOrder: string[];
 }
 
@@ -17,13 +18,13 @@ const useTodoOrderStore = create<TodoState>()(
     persist(
       (set) => ({
         columns: [
-          { id: "Montag", todoOrder: [] },
-          { id: "Dienstag", todoOrder: [] },
-          { id: "Mittwoch", todoOrder: [] },
-          { id: "Donnerstag", todoOrder: [] },
-          { id: "Freitag", todoOrder: [] },
-          { id: "Samstag", todoOrder: [] },
-          { id: "Sonntag", todoOrder: [] },
+          { id: Day.Montag, todoOrder: [] },
+          { id: Day.Dienstag, todoOrder: [] },
+          { id: Day.Mittwoch, todoOrder: [] },
+          { id: Day.Donnerstag, todoOrder: [] },
+          { id: Day.Freitag, todoOrder: [] },
+          { id: Day.Samstag, todoOrder: [] },
+          { id: Day.Sonntag, todoOrder: [] },
         ],
         setColumnTodoOrder: (columnId: string, newTodoOrder: string[]) => {
           set((state) => {

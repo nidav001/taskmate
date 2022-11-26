@@ -1,3 +1,4 @@
+import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
@@ -8,12 +9,13 @@ import TodoButtons from "../components/todoButtons";
 import TopNaviagtion from "../components/topNavigation";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
-import { Days } from "../types/enums";
+import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery]);
+  const [localTodos, setLocalTodos] = useState<Todo[]>(todos);
 
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
 
@@ -21,16 +23,17 @@ const Todos: NextPage = () => {
   const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
-    initializeTodoOrder();
+    validateColumnTodoOrders();
+    setLocalTodos(todos);
   }, [todos]);
 
-  const initializeTodoOrder = () => {
+  const validateColumnTodoOrders = () => {
     columns.map((col) => {
       const columnTodos = todos
         .filter((todo) => todo.day === col.id)
         .map((todo) => todo.id);
 
-      if (columnTodos.length > 0 && col.todoOrder.length === 0) {
+      if (columnTodos.length !== col.todoOrder.length) {
         setColumnTodoOrder(col.id, columnTodos);
       }
     });
@@ -47,10 +50,13 @@ const Todos: NextPage = () => {
 
     //Display changes immediately, before the server responds
     onMutate(data) {
-      todoQuery?.data?.forEach((todo) => {
-        if (todo.id === data.result.draggableId) {
-          todo.day = data.result.destination.droppableId as Days;
-        }
+      console.log("onMutate triggered");
+
+      setLocalTodos((prev) => {
+        const newTodos = [...prev];
+        const todoIndex = newTodos.findIndex((todo) => todo.id === data.id);
+        newTodos[todoIndex].day = data.day;
+        return newTodos;
       });
     },
   });
@@ -66,6 +72,7 @@ const Todos: NextPage = () => {
 
   function onDragEnd(result: DropResult) {
     const { destination, source, draggableId } = result;
+    console.log("🚀 ~ file: todos.tsx ~ line 69 ~ onDragEnd ~ result", result);
 
     //If dropped outside list or dropped in same place
     if (!destination) return;
@@ -83,7 +90,15 @@ const Todos: NextPage = () => {
 
     if (start && finish) {
       const startTodoIds = start.todoOrder;
+      console.log(
+        "🚀 ~ file: todos.tsx ~ line 87 ~ onDragEnd ~ startTodoIds",
+        startTodoIds
+      );
       const finishTodoIds = finish.todoOrder;
+      console.log(
+        "🚀 ~ file: todos.tsx ~ line 89 ~ onDragEnd ~ finishTodoIds",
+        finishTodoIds
+      );
 
       //reorder in same column
       if (start === finish) {
@@ -96,30 +111,31 @@ const Todos: NextPage = () => {
         setColumnTodoOrder(start.id, newTodoOrder);
 
         resetMarkedTodos();
-      } else {
-        //reorder in different column
-        startTodoIds.splice(source.index, 1);
-        const newStart = {
-          ...start,
-          taskIds: startTodoIds,
-        };
-
-        finishTodoIds.splice(destination.index, 0, draggableId);
-        const newFinish = {
-          ...finish,
-          taskIds: finishTodoIds,
-        };
-
-        setColumnTodoOrder(newStart.id, newStart.taskIds);
-        setColumnTodoOrder(newFinish.id, newFinish.taskIds);
-
-        //Persist changes in database (onMutation will display changes immediately)
-        changeDay.mutate({
-          id: draggableId,
-          day: destination.droppableId,
-          result: result,
-        });
+        return;
       }
+
+      //reorder in different column
+      startTodoIds.splice(source.index, 1);
+      const newStart = {
+        ...start,
+        taskIds: startTodoIds,
+      };
+
+      finishTodoIds.splice(destination.index, 0, draggableId);
+      const newFinish = {
+        ...finish,
+        taskIds: finishTodoIds,
+      };
+
+      setColumnTodoOrder(newStart.id, newStart.taskIds);
+      setColumnTodoOrder(newFinish.id, newFinish.taskIds);
+
+      //Persist changes in database (onMutation will display changes immediately)
+      changeDay.mutate({
+        id: draggableId,
+        day: destination.droppableId,
+        result: result,
+      });
     }
   }
 
@@ -141,11 +157,11 @@ const Todos: NextPage = () => {
             />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
-                {(Object.keys(Days) as Array<keyof typeof Days>).map((day) => (
+                {(Object.keys(Day) as Array<keyof typeof Day>).map((day) => (
                   <DroppableDayArea
                     refetch={todoQuery.refetch}
                     searchValue={searchValue}
-                    todos={todos}
+                    todos={localTodos.filter((todo) => todo.day === day)}
                     key={day}
                     day={day}
                   />

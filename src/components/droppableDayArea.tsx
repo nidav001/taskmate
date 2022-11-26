@@ -16,22 +16,18 @@ const DroppableDayArea: React.FC<{
   return (
     <Droppable key={day} droppableId={day}>
       {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className="w-80"
-        >
+        <div className="w-80">
           <h1 className="text-xl font-bold">{day}</h1>
-          <div className="flex flex-col py-4">
+          <div
+            className="flex flex-col py-4"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
             {todos
-              ?.filter(
-                (todo) =>
-                  todo.day === day &&
-                  todo.content.toLowerCase().includes(searchValue.toLowerCase())
+              ?.filter((todo) =>
+                todo.content.toLowerCase().includes(searchValue.toLowerCase())
               )
 
-              // .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-              // .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
               .sort((a, b) => todoOrder.indexOf(a.id) - todoOrder.indexOf(b.id))
               .map((todo, index) => (
                 <DraggableTodoCard

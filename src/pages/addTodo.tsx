@@ -9,17 +9,17 @@ import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import { buttonStyle } from "../styles/buttonStyle";
-import { Days } from "../types/enums";
+import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
   const date = new Date();
-  return date.toLocaleDateString("de-DE", { weekday: "long" }) as Days;
+  return date.toLocaleDateString("de-DE", { weekday: "long" }) as Day;
 }
 
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
-  const [selected, setSelected] = useState<Days>(getTodaysDateName());
+  const [selected, setSelected] = useState<Day>(getTodaysDateName());
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onSettled(data, error, variables, context) {
@@ -35,7 +35,7 @@ const AddTodo: NextPage = () => {
 
   type FormValues = {
     content: string;
-    day: Days;
+    day: Day;
   };
 
   const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
@@ -56,7 +56,7 @@ const AddTodo: NextPage = () => {
   const TypeCombobox = (
     <Listbox
       value={selected}
-      onChange={(val: Days) => {
+      onChange={(val: Day) => {
         setSelected(val);
         setValue("day", val);
       }}
@@ -71,7 +71,7 @@ const AddTodo: NextPage = () => {
         </span>
       </Listbox.Button>
       <Listbox.Options className="flex flex-col rounded-xl">
-        {(Object.keys(Days) as Array<keyof typeof Days>).map((key) => (
+        {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
           <Listbox.Option
             className="p-2 hover:bg-laccent"
             key={key}

@@ -60,7 +60,7 @@ const DraggableTodoCard: React.FC<{
 
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <div
           {...longPressEvent}
           className="my-1 "
