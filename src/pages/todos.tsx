@@ -70,6 +70,7 @@ const Todos: NextPage = () => {
     //If dropped outside list or dropped in same place
     if (!destination) return;
 
+    //If dropped in same place
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -77,36 +78,49 @@ const Todos: NextPage = () => {
       return;
     }
 
-    const start = columns?.find((col) => col.id === source.droppableId);
-    const finish = columns?.find((col) => col.id === destination.droppableId);
+    const start = columns.find((col) => col.id === source.droppableId);
+    const finish = columns.find((col) => col.id === destination.droppableId);
 
-    if (start && finish && start === finish) {
-      console.log(
-        "🚀 ~ file: todos.tsx ~ line 75 ~ onDragEnd ~ start?.todoOrder",
-        start?.todoOrder
-      );
+    if (start && finish) {
+      const startTodoIds = start.todoOrder;
+      const finishTodoIds = finish.todoOrder;
 
-      const newTodoOrder = reorder(
-        start?.todoOrder ?? [],
-        source.index,
-        destination.index
-      );
-      console.log(
-        "🚀 ~ file: todos.tsx ~ line 82 ~ onDragEnd ~ newTodoOrder",
-        newTodoOrder
-      );
+      //reorder in same column
+      if (start === finish) {
+        const newTodoOrder = reorder(
+          start?.todoOrder ?? [],
+          source.index,
+          destination.index
+        );
 
-      setColumnTodoOrder(start.id, newTodoOrder);
+        setColumnTodoOrder(start.id, newTodoOrder);
 
-      resetMarkedTodos();
-      return;
+        resetMarkedTodos();
+      } else {
+        //reorder in different column
+        startTodoIds.splice(source.index, 1);
+        const newStart = {
+          ...start,
+          taskIds: startTodoIds,
+        };
+
+        finishTodoIds.splice(destination.index, 0, draggableId);
+        const newFinish = {
+          ...finish,
+          taskIds: finishTodoIds,
+        };
+
+        setColumnTodoOrder(newStart.id, newStart.taskIds);
+        setColumnTodoOrder(newFinish.id, newFinish.taskIds);
+
+        //Persist changes in database (onMutation will display changes immediately)
+        changeDay.mutate({
+          id: draggableId,
+          day: destination.droppableId,
+          result: result,
+        });
+      }
     }
-    //Persist changes in database (onMutation will display changes immediately)
-    changeDay.mutate({
-      id: draggableId,
-      day: destination.droppableId,
-      result: result,
-    });
   }
 
   return (
