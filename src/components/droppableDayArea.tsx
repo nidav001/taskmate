@@ -9,7 +9,9 @@ const DroppableDayArea: React.FC<{
   searchValue: string;
   refetch: () => void;
 }> = ({ day, todos, searchValue, refetch }) => {
-  const { todoOrder } = useTodoOrderStore();
+  const todoOrder =
+    useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
+      ?.todoOrder ?? [];
 
   return (
     <Droppable key={day} droppableId={day}>
@@ -28,8 +30,8 @@ const DroppableDayArea: React.FC<{
                   todo.content.toLowerCase().includes(searchValue.toLowerCase())
               )
 
-              .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-              .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
+              // .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+              // .sort((a, b) => (a.done === b.done ? 0 : b.done ? -1 : 1))
               .sort((a, b) => todoOrder.indexOf(a.id) - todoOrder.indexOf(b.id))
               .map((todo, index) => (
                 <DraggableTodoCard

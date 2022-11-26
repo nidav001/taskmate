@@ -21,8 +21,20 @@ const Todos: NextPage = () => {
   const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
-    // initializeTodoOrder();
+    initializeTodoOrder();
   }, [todos]);
+
+  const initializeTodoOrder = () => {
+    columns.map((col) => {
+      const columnTodos = todos
+        .filter((todo) => todo.day === col.id)
+        .map((todo) => todo.id);
+
+      if (columnTodos.length > 0 && col.todoOrder.length === 0) {
+        setColumnTodoOrder(col.id, columnTodos);
+      }
+    });
+  };
 
   useEffect(() => {
     resetMarkedTodos();
@@ -54,7 +66,6 @@ const Todos: NextPage = () => {
 
   function onDragEnd(result: DropResult) {
     const { destination, source, draggableId } = result;
-    console.log("🚀 ~ file: todos.tsx ~ line 66 ~ onDragEnd ~ result", result);
 
     //If dropped outside list or dropped in same place
     if (!destination) return;
@@ -66,28 +77,36 @@ const Todos: NextPage = () => {
       return;
     }
 
-    console.log(columns.length);
     const start = columns?.find((col) => col.id === source.droppableId);
     const finish = columns?.find((col) => col.id === destination.droppableId);
 
     if (start && finish && start === finish) {
+      console.log(
+        "🚀 ~ file: todos.tsx ~ line 75 ~ onDragEnd ~ start?.todoOrder",
+        start?.todoOrder
+      );
+
       const newTodoOrder = reorder(
         start?.todoOrder ?? [],
         source.index,
         destination.index
       );
+      console.log(
+        "🚀 ~ file: todos.tsx ~ line 82 ~ onDragEnd ~ newTodoOrder",
+        newTodoOrder
+      );
 
       setColumnTodoOrder(start.id, newTodoOrder);
 
-      //Persist changes in database (onMutation will display changes immediately)
-      changeDay.mutate({
-        id: draggableId,
-        day: destination.droppableId,
-        result: result,
-      });
-
       resetMarkedTodos();
+      return;
     }
+    //Persist changes in database (onMutation will display changes immediately)
+    changeDay.mutate({
+      id: draggableId,
+      day: destination.droppableId,
+      result: result,
+    });
   }
 
   return (
