@@ -21,5 +21,8 @@ const config = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 export default config;
