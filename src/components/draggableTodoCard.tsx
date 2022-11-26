@@ -17,8 +17,10 @@ const DraggableTodoCard: React.FC<{
   const { markedTodos, addMarkedTodo } = useMarkedTodoStore();
 
   const setTodoDone = trpc.todo.setTodoDone.useMutation({
-    onSuccess: () => {
+    onMutate: () => {
       setTodoDoneState(!todoDone);
+    },
+    onSuccess: () => {
       refetch();
     },
   });
@@ -89,7 +91,7 @@ const DraggableTodoCard: React.FC<{
                 }}
                 defaultValue={todo.content}
                 className={classNames(
-                  todo.done ? "line-through" : "",
+                  todoDone ? "line-through" : "",
                   "w-5/6 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
                 )}
               />
