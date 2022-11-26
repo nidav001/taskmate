@@ -60,7 +60,6 @@ const Todos: NextPage = () => {
 
   function onDragEnd(result: DropResult) {
     const { destination, source, draggableId } = result;
-    console.log("🚀 ~ file: todos.tsx ~ line 69 ~ onDragEnd ~ result", result);
 
     //If dropped outside list or dropped in same place
     if (!destination) return;
@@ -109,6 +108,7 @@ const Todos: NextPage = () => {
 
       const newTodos = [...localTodos];
       const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
+
       newTodos[todoIndex].day = destination.droppableId as Day;
       setLocalTodos(newTodos);
 
