@@ -6,7 +6,7 @@ generator client {
   previewFeatures = ["referentialIntegrity"]
 }
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
   // Further reading:
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -22,10 +22,7 @@ model Todo {
   author   User     @relation(fields: [authorId], references: [id])
   authorId String
   content  String
-  // type    String
   done     Boolean   @default(false)
-  // sharedWith   User?     @relation(fields: [sharedWithId], references: [id], name: "sharedWith")
-  // sharedWithId String?
   day String
   finalized Boolean @default(false)
   archived Boolean @default(false)
@@ -39,12 +36,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? // @db.Text
-  access_token      String? // @db.Text
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? // @db.Text
+  id_token          String? @db.Text
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -68,7 +65,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   todos         Todo[] 
-  // sharedTodos   Todo[]   @relation("sharedWith")
+
 }
 
 model VerificationToken {
