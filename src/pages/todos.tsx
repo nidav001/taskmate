@@ -14,7 +14,7 @@ import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
-  const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery]);
+  const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
 
   const { columns, setColumnTodoOrder } = useTodoOrderStore();

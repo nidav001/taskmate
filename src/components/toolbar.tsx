@@ -17,7 +17,7 @@ const Toolbar: React.FC<{
 }> = ({ refetch, todos, setSearchValue }) => {
   const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
   const { resetTodoOrder } = useTodoOrderStore();
-  const { todos: localTodos, setTodos } = useTodoStore();
+  const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
 
   const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
     return (
@@ -46,7 +46,7 @@ const Toolbar: React.FC<{
       refetch();
     },
     onMutate: () => {
-      setTodos([]);
+      resetTodos();
     },
   });
 

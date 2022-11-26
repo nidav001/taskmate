@@ -15,6 +15,7 @@ const useTodoStore = create<TodoState>()(
         todos: [],
         setTodos: (newTodos) => {
           set(() => {
+            console.log("newTodos", newTodos);
             return { todos: newTodos };
           });
         },
