@@ -3,6 +3,7 @@ import { type Todo } from "@prisma/client";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
+import useTodoStore from "../hooks/todoStore";
 import classNames from "../utils/classNames";
 import { trpc } from "../utils/trpc";
 
@@ -14,13 +15,20 @@ const DraggableTodoCard: React.FC<{
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
 
   const { markedTodos, addMarkedTodo } = useMarkedTodoStore();
+  const { todos, setTodos } = useTodoStore();
 
   const setTodoDone = trpc.todo.setTodoDone.useMutation({
     onMutate: () => {
       setTodoDoneState(!todoDone);
-    },
-    onSuccess: () => {
-      refetch();
+
+      // Update local state
+      const newTodos = todos?.map((mappedTodo) => {
+        if (todo.id === mappedTodo.id) {
+          return { ...mappedTodo, done: !mappedTodo.done };
+        }
+        return mappedTodo;
+      });
+      setTodos(newTodos);
     },
   });
 
