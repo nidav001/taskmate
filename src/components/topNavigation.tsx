@@ -29,7 +29,7 @@ const TopNaviagtion: React.FC = () => {
   const ProfileMenuButton = (
     <Menu>
       <div>
-        <Menu.Button className="flex rounded-full bg-gray-800 text-sm outline-none ring-2 ring-laccent/60 ring-offset-2 ring-offset-gray-800 hover:ring-laccent">
+        <Menu.Button className="outline-non flex rounded-full text-sm ring-2 ring-daccent/60 ring-offset-1  hover:ring-daccent">
           <Image
             width="40"
             height="40"
@@ -74,8 +74,8 @@ const TopNaviagtion: React.FC = () => {
     <Menu>
       {({ close }) => (
         <div className="md:hidden">
-          <Menu.Button className="rounded-md p-1 ring-2 ring-laccent/60 hover:ring-laccent">
-            <Bars3Icon className="h-6 w-6 text-laccent" />
+          <Menu.Button className="rounded-md p-1 ring-2 ring-daccent/60 hover:ring-daccent">
+            <Bars3Icon className="h-6 w-6 text-daccent" />
           </Menu.Button>
           <Transition
             as={Fragment}
@@ -95,7 +95,7 @@ const TopNaviagtion: React.FC = () => {
     </Menu>
   );
   return (
-    <div className="min-w-screen sticky top-0 z-50 flex h-20 items-center justify-between gap-2 bg-dark px-4 shadow-lg md:justify-end">
+    <div className="min-w-screen sticky top-0 z-50 flex h-20 items-center justify-between gap-2 border-b bg-newGray2 px-4 md:justify-end">
       {MainMenuButton}
       <Logo logoShown={LogoPosition.Top} />
       {ProfileMenuButton}

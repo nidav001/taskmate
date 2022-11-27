@@ -88,9 +88,9 @@ const AddTodo: NextPage = () => {
         <title>Add Todo</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex flex-row">
+      <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="min-h-screen w-full bg-light">
+        <main className="h-auto w-full bg-white">
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form

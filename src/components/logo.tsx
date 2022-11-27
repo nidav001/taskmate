@@ -8,7 +8,7 @@ const Logo: React.FC<{ logoShown: string }> = ({ logoShown }) => {
         "py-3 pl-1 text-2xl font-bold tracking-tight text-black"
       )}
     >
-      <span className="text-main">T3</span>Todo
+      <span className="text-daccent">T3</span>Todo
     </div>
   );
 };

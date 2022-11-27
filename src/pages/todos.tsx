@@ -130,7 +130,7 @@ const Todos: NextPage = () => {
       </Head>
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="w-full bg-light">
+        <main className="h-auto w-full bg-white">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-2 pt-5">
             <Toolbar

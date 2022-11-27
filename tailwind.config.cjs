@@ -10,6 +10,7 @@ module.exports = {
         laccent: "#6EB4EF",
         daccent: "#6263C0",
         main: "#3F52D3",
+        newGray2: "#f9f9fa",
       },
     },
   },

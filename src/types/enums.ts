@@ -9,7 +9,7 @@ export enum Day {
 }
 
 export enum LogoPosition {
-  Top = "md:hidden text-light",
+  Top = "md:hidden",
   Side = "",
   Menu = "hidden",
 }

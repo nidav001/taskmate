@@ -99,7 +99,7 @@ const DraggableTodoCard: React.FC<{
                 defaultValue={todo.content}
                 className={classNames(
                   todoDone ? "line-through" : "",
-                  "w-5/6 resize-none overflow-auto border-0 bg-gray-300 text-base outline-none group-hover:bg-newGray"
+                  "resize-none border-0 bg-gray-300 text-base focus:ring-0 group-hover:bg-newGray"
                 )}
               />
 
