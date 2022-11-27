@@ -61,7 +61,7 @@ const Toolbar: React.FC<{
   });
 
   function handleOnClickFinalize() {
-    const doneTodoIds = getTodoIds(todos, true);
+    const doneTodoIds = getTodoIds(localTodos, true);
 
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({
@@ -73,11 +73,11 @@ const Toolbar: React.FC<{
 
   function handleOnClickArchive() {
     handleOnClickFinalize();
-    const notDoneTodoIds = getTodoIds(todos, false);
+    const notDoneTodoIds = getTodoIds(localTodos, false);
 
     if (notDoneTodoIds.length > 0) {
       archiveTodos.mutate({
-        ids: getTodoIds(todos, false),
+        ids: notDoneTodoIds,
         done: true,
       });
     }
