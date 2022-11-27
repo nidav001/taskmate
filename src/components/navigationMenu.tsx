@@ -12,12 +12,12 @@ const NavigationMenu: React.FC<{
   closeMenu?: () => void;
 }> = ({ logoShown, closeMenu }) => {
   const todoItemStyle =
-    "rounded-xl py-3 pl-1 hover:bg-laccent hover:text-white flex items-center w-2/4 md:w-full";
+    "rounded-3xl py-3 pl-3 hover:bg-laccent hover:text-white flex items-center w-2/4 md:w-full";
 
   const iconStyle = "h-7 w-7 text-daccent";
 
   return (
-    <div className="px-2">
+    <>
       <Logo logoShown={logoShown} />
       <Link onClick={closeMenu} href="/" className={todoItemStyle}>
         <div className="flex gap-1">
@@ -43,7 +43,7 @@ const NavigationMenu: React.FC<{
           Admin
         </div>
       </Link>
-    </div>
+    </>
   );
 };
 

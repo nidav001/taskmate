@@ -86,7 +86,7 @@ const TopNaviagtion: React.FC = () => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute left-0 top-20 z-10 h-screen w-full origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="absolute left-0 top-20 z-10 h-screen w-full origin-top-right rounded-md bg-white py-1 pl-2 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
             </Menu.Items>
           </Transition>

@@ -5,7 +5,6 @@ import { Draggable } from "react-beautiful-dnd";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import classNames from "../utils/classNames";
 import { trpc } from "../utils/trpc";
-import useLongPress from "../utils/useLongPress";
 
 const DraggableTodoCard: React.FC<{
   todo: Todo;
@@ -58,13 +57,13 @@ const DraggableTodoCard: React.FC<{
     }
   }
 
-  const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
+  // const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
 
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
       {(provided, snapshot) => (
         <div
-          {...longPressEvent}
+          // {...longPressEvent}
           className="my-1 "
           ref={provided.innerRef}
           {...provided.dragHandleProps}
