@@ -43,10 +43,16 @@ const DroppableDayArea: React.FC<{
                         .includes(searchValue.toLowerCase())
                     )
 
-                    .sort(
-                      (a, b) =>
-                        todoOrder.indexOf(a.id) - todoOrder.indexOf(b.id)
-                    )
+                    .sort((a, b) => {
+                      const aIndex = todoOrder.findIndex(
+                        (todo) => todo.id === a.id
+                      );
+                      const bIndex = todoOrder.findIndex(
+                        (todo) => todo.id === b.id
+                      );
+                      return aIndex - bIndex;
+                    })
+
                     .map((todo, index) => (
                       <DraggableTodoCard
                         refetch={refetch}

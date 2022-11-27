@@ -23,7 +23,7 @@ model Todo {
   authorId String
   content  String
   done     Boolean   @default(false)
-  day String
+  day     String
   finalized Boolean @default(false)
   archived Boolean @default(false)
   deleted Boolean @default(false)

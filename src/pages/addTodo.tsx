@@ -1,5 +1,6 @@
 import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
@@ -27,9 +28,9 @@ const AddTodo: NextPage = () => {
       reset();
       setValue("day", selected);
 
-      setColumnTodoOrder(data.day, [
+      setColumnTodoOrder(data.day as Day, [
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
-        data.id,
+        data as Todo,
       ]);
     },
   });

@@ -1,3 +1,4 @@
+import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
@@ -29,9 +30,7 @@ const Todos: NextPage = () => {
 
   const validateColumnTodoOrders = () => {
     columns.map((col) => {
-      const columnTodos = todos
-        .filter((todo) => todo.day === col.id)
-        .map((todo) => todo.id);
+      const columnTodos = todos.filter((todo) => todo.day === col.id);
 
       if (columnTodos.length !== col.todoOrder.length) {
         setColumnTodoOrder(col.id, columnTodos);
@@ -45,17 +44,13 @@ const Todos: NextPage = () => {
 
   const changeDay = trpc.todo.changeDayAfterDnD.useMutation({
     //! Refetching on success causes UI to flicker when two todos are moved shortly after each other
-    // onSuccess: () => {
-    //   todoQuery.refetch();
-    // },
   });
 
-  const reorder = (result: string[], startIndex: number, endIndex: number) => {
+  const reorder = (result: Todo[], startIndex: number, endIndex: number) => {
     const [removed] = result.splice(startIndex, 1);
     if (removed) {
       result.splice(endIndex, 0, removed);
     }
-
     return result;
   };
 
@@ -86,7 +81,6 @@ const Todos: NextPage = () => {
           source.index,
           destination.index
         );
-
         setColumnTodoOrder(start.id, newTodoOrder);
       } else {
         //reorder in different column
@@ -96,7 +90,8 @@ const Todos: NextPage = () => {
           taskIds: startTodoIds,
         };
 
-        finishTodoIds.splice(destination.index, 0, draggableId);
+        const todo = todos.find((todo) => todo.id === draggableId);
+        finishTodoIds.splice(destination.index, 0, todo);
         const newFinish = {
           ...finish,
           taskIds: finishTodoIds,
