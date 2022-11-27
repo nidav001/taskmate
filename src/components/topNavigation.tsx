@@ -72,7 +72,7 @@ const TopNaviagtion: React.FC = () => {
 
   const MainMenuButton = (
     <Menu>
-      {({ open, close }) => (
+      {({ close }) => (
         <div className="md:hidden">
           <Menu.Button className="rounded-md p-1 ring-2 ring-laccent/60 hover:ring-laccent">
             <Bars3Icon className="h-6 w-6 text-laccent" />

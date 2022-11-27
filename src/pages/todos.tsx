@@ -44,9 +44,10 @@ const Todos: NextPage = () => {
   }, []);
 
   const changeDay = trpc.todo.changeDayAfterDnD.useMutation({
-    onSuccess: () => {
-      todoQuery.refetch();
-    },
+    //! Refetching on success causes UI to flicker when two todos are moved shortly after each other
+    // onSuccess: () => {
+    //   todoQuery.refetch();
+    // },
   });
 
   const reorder = (result: string[], startIndex: number, endIndex: number) => {
@@ -79,7 +80,6 @@ const Todos: NextPage = () => {
       const startTodoIds = start.todoOrder;
       const finishTodoIds = finish.todoOrder;
 
-      //reorder in same column
       if (start === finish) {
         const newTodoOrder = reorder(
           start?.todoOrder ?? [],
@@ -88,39 +88,37 @@ const Todos: NextPage = () => {
         );
 
         setColumnTodoOrder(start.id, newTodoOrder);
+      } else {
+        //reorder in different column
+        startTodoIds.splice(source.index, 1);
+        const newStart = {
+          ...start,
+          taskIds: startTodoIds,
+        };
 
-        resetMarkedTodos();
-        return;
+        finishTodoIds.splice(destination.index, 0, draggableId);
+        const newFinish = {
+          ...finish,
+          taskIds: finishTodoIds,
+        };
+
+        const newTodos = [...localTodos];
+        const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
+
+        newTodos[todoIndex].day = destination.droppableId as Day;
+        setLocalTodos(newTodos);
+
+        setColumnTodoOrder(newStart.id, newStart.taskIds);
+        setColumnTodoOrder(newFinish.id, newFinish.taskIds);
+
+        // Persist changes in database (onMutate will display changes immediately)
+        changeDay.mutate({
+          id: draggableId,
+          day: destination.droppableId,
+          result: result,
+        });
       }
-
-      //reorder in different column
-      startTodoIds.splice(source.index, 1);
-      const newStart = {
-        ...start,
-        taskIds: startTodoIds,
-      };
-
-      finishTodoIds.splice(destination.index, 0, draggableId);
-      const newFinish = {
-        ...finish,
-        taskIds: finishTodoIds,
-      };
-
-      const newTodos = [...localTodos];
-      const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
-
-      newTodos[todoIndex].day = destination.droppableId as Day;
-      setLocalTodos(newTodos);
-
-      setColumnTodoOrder(newStart.id, newStart.taskIds);
-      setColumnTodoOrder(newFinish.id, newFinish.taskIds);
-
-      // Persist changes in database (onMutate will display changes immediately)
-      changeDay.mutate({
-        id: draggableId,
-        day: destination.droppableId,
-        result: result,
-      });
+      resetMarkedTodos();
     }
   }
 

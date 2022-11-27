@@ -9,7 +9,7 @@ import Logo from "./logo";
 
 const NavigationMenu: React.FC<{
   logoShown: string;
-  closeMenu: () => void;
+  closeMenu?: () => void;
 }> = ({ logoShown, closeMenu }) => {
   const todoItemStyle =
     "rounded-xl py-3 pl-1 hover:bg-laccent hover:text-white flex items-center w-2/4 md:w-full";
