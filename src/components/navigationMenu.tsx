@@ -12,7 +12,7 @@ const NavigationMenu: React.FC<{
   closeMenu?: () => void;
 }> = ({ logoShown, closeMenu }) => {
   const todoItemStyle =
-    "rounded-3xl py-3 pl-3 hover:bg-laccent hover:text-white flex items-center w-2/4 md:w-full";
+    "rounded-3xl py-3 px-3 hover:bg-laccent hover:text-white flex items-center w-full";
 
   const iconStyle = "h-7 w-7 text-daccent";
 
