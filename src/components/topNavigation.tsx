@@ -72,7 +72,7 @@ const TopNaviagtion: React.FC = () => {
 
   const MainMenuButton = (
     <Menu>
-      {({ open }) => (
+      {({ open, close }) => (
         <div className="md:hidden">
           <Menu.Button className="rounded-md p-1 ring-2 ring-laccent/60 hover:ring-laccent">
             <Bars3Icon className="h-6 w-6 text-laccent" />
@@ -87,7 +87,7 @@ const TopNaviagtion: React.FC = () => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="absolute left-0 top-20 z-10 h-screen w-full origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <NavigationMenu logoShown={LogoPosition.Menu} />
+              <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
             </Menu.Items>
           </Transition>
         </div>

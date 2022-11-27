@@ -7,7 +7,10 @@ import {
 import Link from "next/link";
 import Logo from "./logo";
 
-const NavigationMenu: React.FC<{ logoShown: string }> = ({ logoShown }) => {
+const NavigationMenu: React.FC<{
+  logoShown: string;
+  closeMenu: () => void;
+}> = ({ logoShown, closeMenu }) => {
   const todoItemStyle =
     "rounded-xl py-3 pl-1 hover:bg-laccent hover:text-white flex items-center w-2/4 md:w-full";
 
@@ -16,25 +19,25 @@ const NavigationMenu: React.FC<{ logoShown: string }> = ({ logoShown }) => {
   return (
     <div className="px-2">
       <Logo logoShown={logoShown} />
-      <Link href="/" className={todoItemStyle}>
+      <Link onClick={closeMenu} href="/" className={todoItemStyle}>
         <div className="flex gap-1">
           <HomeIcon className={iconStyle} />
           Dashboard
         </div>
       </Link>
-      <Link href="/todos" className={todoItemStyle}>
+      <Link onClick={closeMenu} href="/todos" className={todoItemStyle}>
         <div className="flex gap-1">
           <CheckCircleIcon className={iconStyle} />
           Todos
         </div>
       </Link>
-      <Link href="/addTodo" className={todoItemStyle}>
+      <Link onClick={closeMenu} href="/addTodo" className={todoItemStyle}>
         <div className="flex gap-1">
           <PlusCircleIcon className={iconStyle} />
           Add Todo
         </div>
       </Link>
-      <Link href="/admin" className={todoItemStyle}>
+      <Link onClick={closeMenu} href="/admin" className={todoItemStyle}>
         <div className="flex gap-1">
           <Cog6ToothIcon className={iconStyle} />
           Admin
