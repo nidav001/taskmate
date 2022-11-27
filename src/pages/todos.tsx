@@ -147,6 +147,7 @@ const Todos: NextPage = () => {
                     todos={localTodos.filter((todo) => todo.day === day)}
                     key={day}
                     day={day}
+                    isLoading={todoQuery.isLoading}
                   />
                 ))}
               </DragDropContext>
