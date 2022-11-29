@@ -21,13 +21,14 @@ function getTodaysDateName() {
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
-  const todos = trpc.todo.getTodos.useQuery().data ?? [];
+  const todos = trpc.todo.getTodos.useQuery();
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
       // Optimistically reset the form. Better use onSuccess if form gets more complex
       reset();
       setValue("day", selected);
+
       setColumnTodoOrder(data.day as Day, [
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
         data as Todo,
@@ -49,7 +50,12 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
-    addTodo.mutate({ id: uuidv4(), ...data, index: todos.length });
+    addTodo.mutate({
+      id: uuidv4(),
+      ...data,
+      index: (columns.find((col) => col.id === data.day)?.todoOrder ?? [])
+        .length,
+    });
   };
 
   const DayCombobox = (

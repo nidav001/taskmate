@@ -23,6 +23,12 @@ const DroppableDayArea: React.FC<{
     useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
       ?.todoOrder ?? [];
 
+  const filteredTodos = todos.filter((todo) =>
+    todo.content.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const sortedTodos = filteredTodos.sort((a, b) => a.index - b.index);
+
   return (
     <Droppable key={day} droppableId={day}>
       {(provided) => (

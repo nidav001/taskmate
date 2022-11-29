@@ -30,11 +30,11 @@ const Todos: NextPage = () => {
 
   const validateColumnTodoOrders = () => {
     columns.map((col) => {
-      const columnTodos = todos.filter((todo) => todo.day === col.id);
+      const columnTodos = todos
+        .filter((todo) => todo.day === col.id)
+        .sort((a, b) => a.index - b.index);
 
-      if (columnTodos.length !== col.todoOrder.length) {
-        setColumnTodoOrder(col.id, columnTodos);
-      }
+      setColumnTodoOrder(col.id, columnTodos);
     });
   };
 
@@ -114,8 +114,10 @@ const Todos: NextPage = () => {
       // Persist changes in database based on local state
       columns.map((col) => {
         col.todoOrder.map((todo, index) => {
-          const singleTodo = todos.find((todo) => todo.id === todo.id);
-          if (singleTodo) {
+          const todoToCheck = todos.find((todo) => todo.id === todo.id);
+          //&& (todo.day !== col.id || todo.index !== index) better for performance? but doesnt work because of refetching todos
+          if (todoToCheck) {
+            console.log(todo.content);
             changeDay.mutate({
               id: todo.id,
               day: col.id,
