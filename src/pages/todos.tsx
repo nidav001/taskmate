@@ -81,10 +81,11 @@ const Todos: NextPage = () => {
           source.index,
           destination.index
         );
+
         setColumnTodoOrder(start.id, newTodoOrder);
       } else {
         //reorder in different column
-        startTodoIds.splice(source.index, 1);
+        start.todoOrder.splice(source.index, 1);
         const newStart = {
           ...start,
           taskIds: startTodoIds,
@@ -105,14 +106,22 @@ const Todos: NextPage = () => {
 
         setColumnTodoOrder(newStart.id, newStart.taskIds);
         setColumnTodoOrder(newFinish.id, newFinish.taskIds);
-
-        // Persist changes in database (onMutate will display changes immediately)
-        changeDay.mutate({
-          id: draggableId,
-          day: destination.droppableId,
-          result: result,
-        });
       }
+
+      // Persist changes in database based on local state
+      columns.map((col) => {
+        col.todoOrder.map((todo, index) => {
+          const singleTodo = todos.find((todo) => todo.id === todo.id);
+          if (singleTodo) {
+            changeDay.mutate({
+              id: todo.id,
+              day: col.id,
+              index: index,
+            });
+          }
+        });
+      });
+
       resetMarkedTodos();
     }
   }

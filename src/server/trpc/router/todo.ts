@@ -54,6 +54,7 @@ export const todoRouter = router({
         id: z.string().uuid(),
         content: z.string(),
         day: z.string(),
+        index: z.number(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -63,6 +64,7 @@ export const todoRouter = router({
           authorId: ctx.session.user.id,
           content: input.content,
           day: input.day,
+          index: input.index,
         },
       });
     }),
@@ -110,7 +112,14 @@ export const todoRouter = router({
       });
     }),
   changeDayAfterDnD: protectedProcedure
-    .input(z.object({ id: z.string(), day: z.string(), result: any() }))
+    .input(
+      z.object({
+        id: z.string(),
+        day: z.string(),
+        result: any(),
+        index: z.number(),
+      })
+    )
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.update({
         where: {
@@ -118,6 +127,7 @@ export const todoRouter = router({
         },
         data: {
           day: input.day,
+          index: input.index,
         },
       });
     }),
