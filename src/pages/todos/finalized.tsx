@@ -24,8 +24,12 @@ const FinalizedTodos: NextPage = () => {
                 todoDone={todo.done}
                 key={todo.id}
                 todo={todo}
-                setTodoDone={() => {}}
-                onBlurTextArea={() => {}}
+                setTodoDone={() => {
+                  console.log("FIX ME");
+                }}
+                onBlurTextArea={() => {
+                  console.log("FIX ME");
+                }}
               />
             ))}
           </div>
