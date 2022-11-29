@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
+import getServerSideProps from "../lib/serverProps";
 
 const Profile: NextPage = () => {
   return (
@@ -22,3 +23,5 @@ const Profile: NextPage = () => {
 };
 
 export default Profile;
+
+export { getServerSideProps };

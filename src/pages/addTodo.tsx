@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
 import useTodoOrderStore from "../hooks/todoOrderStore";
+import getServerSideProps from "../lib/serverProps";
 import { buttonStyle } from "../styles/buttonStyle";
 import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
@@ -128,3 +129,5 @@ const AddTodo: NextPage = () => {
 };
 
 export default AddTodo;
+
+export { getServerSideProps };

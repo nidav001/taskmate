@@ -1,10 +1,10 @@
 import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
+import { getSession, SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 
 import { trpc } from "../utils/trpc";
 
-import { GetServerSideProps } from "next";
+import { type CtxOrReq } from "next-auth/client/_utils";
 import { resetServerContext } from "react-beautiful-dnd";
 import "../styles/globals.css";
 
@@ -19,11 +19,23 @@ const MyApp: AppType<{ session: Session | null }> = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export async function getServerSideProps(context: CtxOrReq) {
+  console.log("called getServerSideProps");
   resetServerContext();
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   return {
-    props: { data: [] },
+    props: { session },
   };
-};
+}
 
 export default trpc.withTRPC(MyApp);

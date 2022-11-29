@@ -1,8 +1,13 @@
 import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
+import { type CtxOrReq } from "next-auth/client/_utils";
 import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
-import { DragDropContext, type DropResult } from "react-beautiful-dnd";
+import {
+  DragDropContext,
+  resetServerContext,
+  type DropResult,
+} from "react-beautiful-dnd";
 import DroppableDayArea from "../components/droppableDayArea";
 import SideNavigation from "../components/sideNavigation";
 import Toolbar from "../components/toolbar";
@@ -10,6 +15,7 @@ import TopNaviagtion from "../components/topNavigation";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";
+import serverProps from "../lib/serverProps";
 import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
@@ -169,3 +175,10 @@ const Todos: NextPage = () => {
 };
 
 export default Todos;
+
+export async function getServerSideProps(context: CtxOrReq) {
+  resetServerContext();
+  return {
+    ...(await serverProps(context)),
+  };
+}

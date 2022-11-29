@@ -20,7 +20,7 @@ const TopNaviagtion: React.FC = () => {
     },
     {
       name: `${sessionData?.user?.id ? "Abmelden" : "Anmelden"}`,
-      href: `${sessionData?.user?.id ? "/api/auth/signout" : "auth/signin"}`,
+      href: `${sessionData?.user?.id ? "api/auth/signout" : "auth/signin"}`,
     },
   ];
 

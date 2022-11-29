@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import SideNavigation from "../components/sideNavigation";
 import TopNaviagtion from "../components/topNavigation";
+import getServerSideProps from "../lib/serverProps";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
@@ -89,3 +90,5 @@ const DashboardCard: React.FC<{
     </Link>
   );
 };
+
+export { getServerSideProps };

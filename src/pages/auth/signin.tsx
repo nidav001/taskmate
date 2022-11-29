@@ -20,7 +20,11 @@ const Signin: NextPage<{
           Object.values(providers).map((provider) => (
             <div key={provider.name} style={{ marginBottom: 0 }}>
               <button
-                onClick={() => signIn(provider.id)}
+                onClick={() =>
+                  signIn(provider.id, {
+                    callbackUrl: `${window.location.origin}`,
+                  })
+                }
                 className="rounded-xl border border-gray-300 p-4 hover:bg-gray-100"
               >
                 <div className="flex items-center gap-2 text-xl">
