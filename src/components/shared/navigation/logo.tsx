@@ -1,4 +1,4 @@
-import classNames from "../utils/classNames";
+import classNames from "../../../utils/classNames";
 
 const Logo: React.FC<{ logoShown: string }> = ({ logoShown }) => {
   return (

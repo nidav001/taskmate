@@ -1,5 +1,5 @@
-import { LogoPosition } from "../types/enums";
-import NavigationMenu from "./navigationMenu";
+import { LogoPosition } from "../../types/enums";
+import NavigationMenu from "../shared/navigation/navigationMenu";
 
 const SideNavigation: React.FC = () => {
   return (

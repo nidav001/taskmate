@@ -8,10 +8,10 @@ import {
   resetServerContext,
   type DropResult,
 } from "react-beautiful-dnd";
-import DroppableDayArea from "../components/droppableDayArea";
-import SideNavigation from "../components/sideNavigation";
-import Toolbar from "../components/toolbar";
-import TopNaviagtion from "../components/topNavigation";
+import SideNavigation from "../components/shared/navigation/sideNavigation";
+import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import DroppableDayArea from "../components/todoPage/droppableDayArea";
+import Toolbar from "../components/todoPage/toolbar/toolbar";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";

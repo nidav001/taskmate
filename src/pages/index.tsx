@@ -2,8 +2,8 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
-import SideNavigation from "../components/sideNavigation";
-import TopNaviagtion from "../components/topNavigation";
+import SideNavigation from "../components/shared/navigation/sideNavigation";
+import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
 import { trpc } from "../utils/trpc";
 

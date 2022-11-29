@@ -2,10 +2,10 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import useMarkedTodoStore from "../hooks/markedTodoStore";
-import useTodoStore from "../hooks/todoStore";
-import classNames from "../utils/classNames";
-import { trpc } from "../utils/trpc";
+import useMarkedTodoStore from "../../hooks/markedTodoStore";
+import useTodoStore from "../../hooks/todoStore";
+import classNames from "../../utils/classNames";
+import { trpc } from "../../utils/trpc";
 
 const DraggableTodoCard: React.FC<{
   todo: Todo;

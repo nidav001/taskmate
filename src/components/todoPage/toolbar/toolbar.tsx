@@ -1,20 +1,27 @@
 import {
   ArrowRightIcon,
   CheckIcon,
+  PlusIcon,
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
-import useMarkedTodoStore from "../hooks/markedTodoStore";
-import useTodoOrderStore from "../hooks/todoOrderStore";
-import useTodoStore from "../hooks/todoStore";
-import { buttonStyle } from "../styles/buttonStyle";
-import { trpc } from "../utils/trpc";
+import Link from "next/link";
+import { useState } from "react";
+import useMarkedTodoStore from "../../../hooks/markedTodoStore";
+import useTodoOrderStore from "../../../hooks/todoOrderStore";
+import useTodoStore from "../../../hooks/todoStore";
+import { buttonStyle } from "../../../styles/buttonStyle";
+import { trpc } from "../../../utils/trpc";
+import MyModal from "./modal";
 
 const Toolbar: React.FC<{
   todos: Todo[] | undefined;
   refetch: () => void;
   setSearchValue: (value: string) => void;
 }> = ({ refetch, todos, setSearchValue }) => {
+  const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
+  const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
+
   const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
@@ -90,15 +97,15 @@ const Toolbar: React.FC<{
     });
   }
 
-  function handleOnClickDeleteMarked() {
-    const markedTodoIds = markedTodos.map((todo) => todo.id);
-    if (markedTodoIds.length > 0) {
-      deleteTodos.mutate({
-        ids: markedTodoIds,
-      });
-      resetMarkedTodos();
-    }
-  }
+  // function handleOnClickDeleteMarked() {
+  //   const markedTodoIds = markedTodos.map((todo) => todo.id);
+  //   if (markedTodoIds.length > 0) {
+  //     deleteTodos.mutate({
+  //       ids: markedTodoIds,
+  //     });
+  //     resetMarkedTodos();
+  //   }
+  // }
 
   return (
     <>
@@ -111,6 +118,9 @@ const Toolbar: React.FC<{
         />
       </div>
       <div className="flex gap-2 px-3">
+        <Link href="/addTodo" className={buttonStyle}>
+          <PlusIcon className="h-8 w-8" />
+        </Link>
         <button
           title="Finalisieren"
           onClick={() => handleOnClickFinalize()}
@@ -120,19 +130,27 @@ const Toolbar: React.FC<{
         </button>
         <button
           title="Archivieren"
-          onClick={() => handleOnClickArchive()}
+          onClick={() => {
+            if (localTodos?.length > 0) {
+              setIsArchivedModalOpen(true);
+            }
+          }}
           className={buttonStyle}
         >
           <ArrowRightIcon className="h-8 w-8" />
         </button>
         <button
           title="Neue Woche und verwerfen"
-          onClick={() => handleOnClickDeleteMany()}
+          onClick={() => {
+            if (localTodos?.length > 0) {
+              setIsDeletedModelOpen(true);
+            }
+          }}
           className={buttonStyle}
         >
-          Neue Woche und verwerfen
+          <TrashIcon className="h-8 w-8" />
         </button>
-        {markedTodos.length > 0 ? (
+        {/* {markedTodos.length > 0 ? (
           <button
             title="Löschen"
             onClick={() => handleOnClickDeleteMarked()}
@@ -140,7 +158,25 @@ const Toolbar: React.FC<{
           >
             <TrashIcon className="h-8 w-8" />
           </button>
-        ) : null}
+        ) : null} */}
+        <MyModal
+          title="Neue Woche starten"
+          content="Wirklich alle Todos archivieren und fertige finalisieren?"
+          buttonAccept="Ja"
+          buttonDecline="Nein"
+          isOpen={isArchivedModalOpen}
+          setIsOpen={setIsArchivedModalOpen}
+          onAccept={() => handleOnClickArchive()}
+        />
+        <MyModal
+          title="Neue Woche starten und Todos verwerfen"
+          content="Wirklich alle Todos löschen?"
+          buttonAccept="Ja"
+          buttonDecline="Nein"
+          isOpen={isDeletedModelOpen}
+          setIsOpen={setIsDeletedModelOpen}
+          onAccept={() => handleOnClickDeleteMany()}
+        />
       </div>
     </>
   );

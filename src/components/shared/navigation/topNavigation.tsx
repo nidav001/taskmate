@@ -4,8 +4,8 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
-import { LogoPosition } from "../types/enums";
-import classNames from "../utils/classNames";
+import { LogoPosition } from "../../../types/enums";
+import classNames from "../../../utils/classNames";
 import Logo from "./logo";
 import NavigationMenu from "./navigationMenu";
 
@@ -93,7 +93,7 @@ const TopNaviagtion: React.FC = () => {
     </Menu>
   );
   return (
-    <div className="min-w-screen sticky top-0 z-50 flex h-20 items-center justify-between gap-2 border-b bg-newGray2 px-4 md:justify-end">
+    <div className="min-w-screen sticky top-0 flex h-20 items-center justify-between gap-2 border-b bg-newGray2 px-4 md:justify-end">
       {MainMenuButton}
       <Logo logoShown={LogoPosition.Top} />
       {ProfileMenuButton}
