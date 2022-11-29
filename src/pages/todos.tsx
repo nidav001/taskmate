@@ -70,42 +70,45 @@ const Todos: NextPage = () => {
 
     const start = columns.find((col) => col.id === source.droppableId);
     const finish = columns.find((col) => col.id === destination.droppableId);
+    const draggedItem = todos.find((todo) => todo.id === draggableId);
 
-    if (start && finish) {
-      const startTodoIds = start.todoOrder;
-      const finishTodoIds = finish.todoOrder;
-
+    if (start && finish && draggedItem) {
       if (start === finish) {
+        // Reorder in same column
         const newTodoOrder = reorder(
-          start?.todoOrder ?? [],
+          start.todoOrder,
           source.index,
           destination.index
         );
 
         setColumnTodoOrder(start.id, newTodoOrder);
       } else {
-        //reorder in different column
+        // Reorder in different column
         start.todoOrder.splice(source.index, 1);
         const newStart = {
           ...start,
-          taskIds: startTodoIds,
+          todos: start.todoOrder,
         };
 
-        const todo = todos.find((todo) => todo.id === draggableId);
-        finishTodoIds.splice(destination.index, 0, todo);
+        finish.todoOrder.splice(destination.index, 0, draggedItem);
         const newFinish = {
           ...finish,
-          taskIds: finishTodoIds,
+          todos: finish.todoOrder,
         };
 
         const newTodos = [...localTodos];
-        const todoIndex = newTodos.findIndex((todo) => todo.id === draggableId);
-
-        newTodos[todoIndex].day = destination.droppableId as Day;
+        newTodos.splice(
+          newTodos.findIndex((todo) => todo.id === draggedItem.id),
+          1,
+          {
+            ...draggedItem,
+            day: newFinish.id,
+          }
+        );
         setLocalTodos(newTodos);
 
-        setColumnTodoOrder(newStart.id, newStart.taskIds);
-        setColumnTodoOrder(newFinish.id, newFinish.taskIds);
+        setColumnTodoOrder(newStart.id, newStart.todos);
+        setColumnTodoOrder(newFinish.id, newFinish.todos);
       }
 
       // Persist changes in database based on local state
