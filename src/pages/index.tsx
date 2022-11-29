@@ -30,17 +30,16 @@ const Home: NextPage = () => {
               href="/todos"
               isLoading={todos.isLoading}
             />
-
             <DashboardCard
               content={archivedTodos.data?.length}
               title="Archiviert"
-              href="/todos"
+              href="/todos/archived"
               isLoading={archivedTodos.isLoading}
             />
             <DashboardCard
               content={finalizedTodos.data?.length}
               title="Finalisiert"
-              href="/todos"
+              href="/todos/finalized"
               isLoading={finalizedTodos.isLoading}
             />
             <DashboardCard
