@@ -28,7 +28,8 @@ const DroppableDayArea: React.FC<{
       {(provided) => (
         <>
           <div className="w-80">
-            <h1 className="text-xl font-bold">{day}</h1>
+            <h1 className="w-full text-xl font-bold md:text-center">{day}</h1>
+
             <div
               className="flex flex-col py-4"
               ref={provided.innerRef}

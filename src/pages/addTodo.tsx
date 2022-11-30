@@ -76,10 +76,10 @@ const AddTodo: NextPage = () => {
           />
         </span>
       </Listbox.Button>
-      <Listbox.Options className="flex flex-col rounded-xl">
+      <Listbox.Options className="flex w-full flex-col items-start rounded-lg border bg-newGray2">
         {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
           <Listbox.Option
-            className="p-2 hover:bg-laccent"
+            className="w-full p-2 hover:bg-laccent"
             key={key}
             value={key}
           >
@@ -102,10 +102,11 @@ const AddTodo: NextPage = () => {
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form
-              className="flex flex-col items-center gap-2"
+              className="items-left flex flex-col gap-2"
               onSubmit={handleSubmit(onSubmit)}
             >
               <input
+                id="content"
                 className={inputStyle}
                 type="text"
                 placeholder="Todo..."
