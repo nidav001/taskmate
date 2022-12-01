@@ -10,7 +10,6 @@ import { useState } from "react";
 import useMarkedTodoStore from "../../../hooks/markedTodoStore";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
-import { buttonStyle } from "../../../styles/buttonStyle";
 import { trpc } from "../../../utils/trpc";
 import MyModal from "./modal";
 
@@ -107,26 +106,22 @@ const Toolbar: React.FC<{
   //   }
   // }
 
+  const buttonStyle = "rounded-full bg-dark/20 hover:bg-laccent p-3";
+
+  const iconStyle = "h-8 w-8";
+
   return (
     <>
-      <div className="flex flex-col items-center">
-        <input
-          type="text"
-          className="w-50 rounded-xl"
-          placeholder="Search..."
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-      </div>
       <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
         <Link href="/addTodo" className={buttonStyle}>
-          <PlusIcon className="h-8 w-8" />
+          <PlusIcon className={iconStyle} />
         </Link>
         <button
           title="Finalisieren"
           onClick={() => handleOnClickFinalize()}
           className={buttonStyle}
         >
-          <CheckIcon className="h-8 w-8" />
+          <CheckIcon className={iconStyle} />
         </button>
         <button
           title="Archivieren"
@@ -137,7 +132,7 @@ const Toolbar: React.FC<{
           }}
           className={buttonStyle}
         >
-          <ArrowRightIcon className="h-8 w-8" />
+          <ArrowRightIcon className={iconStyle} />
         </button>
         <button
           title="Neue Woche und verwerfen"
@@ -148,7 +143,7 @@ const Toolbar: React.FC<{
           }}
           className={buttonStyle}
         >
-          <TrashIcon className="h-8 w-8" />
+          <TrashIcon className={iconStyle} />
         </button>
         {/* {markedTodos.length > 0 ? (
           <button

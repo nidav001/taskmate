@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
 import Head from "next/head";
@@ -18,6 +19,11 @@ import useTodoStore from "../hooks/todoStore";
 import serverProps from "../lib/serverProps";
 import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
+
+const startOfWeek = DateTime.now().startOf("week");
+const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
+  startOfWeek.plus({ days: i }).toLocaleString()
+);
 
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
@@ -148,6 +154,17 @@ const Todos: NextPage = () => {
     }
   }
 
+  const searchBar = (
+    <div className="flex flex-col items-center">
+      <input
+        type="text"
+        className="w-50 rounded-xl"
+        placeholder="Search..."
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
+    </div>
+  );
+
   return (
     <>
       <Head>
@@ -158,7 +175,8 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-2 pt-5">
+          <div className="flex flex-col items-center gap-8 pt-5">
+            {searchBar}
             <Toolbar
               refetch={todoQuery.refetch}
               setSearchValue={setSearchValue}
@@ -166,16 +184,19 @@ const Todos: NextPage = () => {
             />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
-                {(Object.keys(Day) as Array<keyof typeof Day>).map((day) => (
-                  <DroppableDayArea
-                    refetch={todoQuery.refetch}
-                    searchValue={searchValue}
-                    todos={localTodos.filter((todo) => todo.day === day)}
-                    key={day}
-                    day={day}
-                    isLoading={todoQuery.isLoading}
-                  />
-                ))}
+                {(Object.keys(Day) as Array<keyof typeof Day>).map(
+                  (day, index) => (
+                    <DroppableDayArea
+                      date={datesOfWeek[index]!}
+                      refetch={todoQuery.refetch}
+                      searchValue={searchValue}
+                      todos={localTodos.filter((todo) => todo.day === day)}
+                      key={day}
+                      day={day}
+                      isLoading={todoQuery.isLoading}
+                    />
+                  )
+                )}
               </DragDropContext>
             </div>
           </div>

@@ -8,8 +8,9 @@ const DroppableDayArea: React.FC<{
   todos: Todo[];
   searchValue: string;
   refetch: () => void;
+  date: string;
   isLoading: boolean;
-}> = ({ day, todos, searchValue, refetch, isLoading }) => {
+}> = ({ day, todos, searchValue, refetch, isLoading, date }) => {
   const loadingSkeleton = (
     <div role="status" className="max-w-sm animate-pulse">
       <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
@@ -23,12 +24,17 @@ const DroppableDayArea: React.FC<{
     useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
       ?.todoOrder ?? [];
 
+  const currentDate = <p>{date}</p>;
+
   return (
     <Droppable key={day} droppableId={day}>
       {(provided) => (
         <>
           <div className="w-80">
-            <h1 className="w-full text-xl font-bold md:text-center">{day}</h1>
+            <div className="flex w-full flex-col items-center justify-evenly">
+              <h1 className="text-xl font-bold ">{day}</h1>
+              {currentDate}
+            </div>
             <div
               className="flex flex-col py-4"
               ref={provided.innerRef}
