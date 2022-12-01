@@ -33,7 +33,7 @@ const Admin: NextPage = () => {
               onClick={() => handleClickDeArchive()}
               className={buttonStyle}
             >
-              Archivierte Todos ent-archivieren
+              Archivierte Todos wiederherstellen
             </button>
             <button
               onClick={() => handleClickRestore()}
