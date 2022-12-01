@@ -117,7 +117,7 @@ const Toolbar: React.FC<{
           onChange={(e) => setSearchValue(e.target.value)}
         />
       </div>
-      <div className="flex gap-2 px-3">
+      <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
         <Link href="/addTodo" className={buttonStyle}>
           <PlusIcon className="h-8 w-8" />
         </Link>
