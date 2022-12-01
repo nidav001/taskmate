@@ -122,8 +122,19 @@ const Todos: NextPage = () => {
         col.todoOrder.map((todo, index) => {
           const todoToCheck = todos.find((todo) => todo.id === todo.id);
           //&& (todo.day !== col.id || todo.index !== index) better for performance? but doesnt work because of refetching todos
-          if (todoToCheck) {
-            console.log(todo.content);
+          if (
+            todoToCheck &&
+            (todoToCheck.day !== col.id || todoToCheck.index !== index)
+          ) {
+            console.log(
+              todoToCheck.day +
+                " " +
+                col.id +
+                "= " +
+                (todoToCheck.day !== col.id) +
+                " " +
+                todoToCheck.content
+            );
             changeDay.mutate({
               id: todo.id,
               day: col.id,

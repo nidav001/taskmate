@@ -1,17 +1,33 @@
+import { faBars, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import React from "react";
+import { useState } from "react";
+import DashboardCard from "../components/dashboard/dashboardCard";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
+  const [smallWidth, setSmallWidth] = useState<boolean>(true);
   const todos = trpc.todo.getTodos.useQuery();
   const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
   const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
   const deletedTodos = trpc.todo.getDeletedTodos.useQuery();
+
+  const toggleDashboardCardView = () => {
+    setSmallWidth(!smallWidth);
+  };
+
+  const floatingButton = (
+    <button className="h-10 w-10 p-2" onClick={() => toggleDashboardCardView()}>
+      <FontAwesomeIcon
+        icon={smallWidth ? faTableCellsLarge : faBars}
+        size="lg"
+      />
+    </button>
+  );
 
   return (
     <>
@@ -23,31 +39,39 @@ const Home: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
+
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard
               content={todos.data?.length}
               title="Todos"
               href="/todos"
               isLoading={todos.isLoading}
+              smallWidth={smallWidth}
             />
             <DashboardCard
               content={archivedTodos.data?.length}
               title="Archiviert"
               href="/todos/archived"
               isLoading={archivedTodos.isLoading}
+              smallWidth={smallWidth}
             />
             <DashboardCard
               content={finalizedTodos.data?.length}
               title="Finalisiert"
               href="/todos/finalized"
               isLoading={finalizedTodos.isLoading}
+              smallWidth={smallWidth}
             />
             <DashboardCard
               content={deletedTodos.data?.length}
               title="Gelöscht"
               href="/todos"
               isLoading={deletedTodos.isLoading}
+              smallWidth={smallWidth}
             />
+          </div>
+          <div className="absolute right-5 bottom-5 rounded-full bg-daccent p-2 shadow-xl">
+            {floatingButton}
           </div>
         </main>
       </div>
@@ -56,38 +80,5 @@ const Home: NextPage = () => {
 };
 
 export default Home;
-
-const DashboardCard: React.FC<{
-  title: string;
-  href: string;
-  content: number | undefined;
-  isLoading: boolean;
-}> = ({ title, href, content, isLoading }) => {
-  const loadingSkeleton = (
-    <div role="status" className="max-w-sm animate-pulse">
-      <div className="mb-4 h-2.5 w-36 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="mb-2.5 h-2 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <div className="mb-2.5 h-2 max-w-[200px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
-      <span className="sr-only">Loading...</span>
-    </div>
-  );
-
-  return (
-    <Link
-      className="min-w-content flex max-w-sm flex-1 flex-col gap-3 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
-      href={href}
-    >
-      {isLoading ? (
-        loadingSkeleton
-      ) : (
-        <>
-          <h3 className="text-2xl font-bold">{title}</h3>
-          <div className="w-40 text-lg">{content}</div>
-        </>
-      )}
-    </Link>
-  );
-};
 
 export { getServerSideProps };

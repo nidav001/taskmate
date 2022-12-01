@@ -1,11 +1,13 @@
 import Link from "next/link";
+import classNames from "../../utils/classNames";
 
 const DashboardCard: React.FC<{
   title: string;
   href: string;
   content: number | undefined;
   isLoading: boolean;
-}> = ({ title, href, content, isLoading }) => {
+  smallWidth: boolean;
+}> = ({ title, href, content, isLoading, smallWidth: view }) => {
   const loadingSkeleton = (
     <div role="status" className="max-w-sm animate-pulse">
       <div className="mb-4 h-2.5 w-36 rounded-full bg-gray-200 dark:bg-gray-700"></div>
@@ -18,7 +20,10 @@ const DashboardCard: React.FC<{
 
   return (
     <Link
-      className="min-w-content flex max-w-sm flex-1 flex-col gap-3 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
+      className={classNames(
+        view ? "min-w-min max-w-[200px]" : "min-w-[320px] max-w-md",
+        "flex  flex-1 flex-col gap-3 rounded-xl bg-dark/10 p-4 text-black hover:bg-dark/20"
+      )}
       href={href}
     >
       {isLoading ? (
@@ -26,7 +31,7 @@ const DashboardCard: React.FC<{
       ) : (
         <>
           <h3 className="text-2xl font-bold">{title}</h3>
-          <div className="w-40 text-lg">{content}</div>
+          <div className="text-lg">{content}</div>
         </>
       )}
     </Link>
