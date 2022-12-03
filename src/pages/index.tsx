@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head title="T3Todo" />
-      <div className="flex h-full flex-row">
+      <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
