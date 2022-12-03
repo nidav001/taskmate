@@ -4,22 +4,32 @@ import classNames from "../../utils/classNames";
 
 const TodoCard: React.FC<{
   todoDone: boolean;
-  setTodoDone: () => any;
+  setTodoDone?: (id: string, done: boolean) => void;
   todo: Todo;
-  onBlurTextArea: (newContent: string) => void;
-}> = ({ todoDone, setTodoDone, todo, onBlurTextArea }) => {
+  onBlurTextArea?: (newContent: string) => void;
+}> = ({ todoDone, setTodoDone: setTodoDoneCallback, todo, onBlurTextArea }) => {
+  const handleOnChange = () => {
+    if (setTodoDoneCallback) {
+      setTodoDoneCallback(todo.id, !todo.done);
+    }
+  };
+
   return (
     <div className="group flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-newGray">
       <div className="group flex items-center justify-between gap-2">
         <input
           type="checkbox"
+          readOnly={setTodoDoneCallback ? false : true}
           checked={todoDone}
-          onChange={() => setTodoDone.mutate({ id: todo.id, done: !todo.done })}
+          onChange={() => handleOnChange()}
           className="h-6 w-6 rounded-full"
         />
         <textarea
+          disabled={setTodoDoneCallback ? false : true}
           onBlur={(e) => {
-            onBlurTextArea(e.target.value);
+            if (onBlurTextArea) {
+              onBlurTextArea(e.target.value);
+            }
           }}
           defaultValue={todo.content}
           className={classNames(

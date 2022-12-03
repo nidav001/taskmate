@@ -16,8 +16,7 @@ import MyModal from "./modal";
 const Toolbar: React.FC<{
   todos: Todo[] | undefined;
   refetch: () => void;
-  setSearchValue: (value: string) => void;
-}> = ({ refetch, todos, setSearchValue }) => {
+}> = ({ refetch, todos }) => {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
 

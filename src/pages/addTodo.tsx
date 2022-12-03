@@ -1,17 +1,16 @@
-import { Listbox } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
-import Head from "next/head";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
+import DayCombobox from "../components/addTodo/dayCombobox";
+import Head from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle } from "../styles/buttonStyle";
-import { Day } from "../types/enums";
+import { type Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
@@ -22,7 +21,6 @@ function getTodaysDateName() {
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
-  const todos = trpc.todo.getTodos.useQuery();
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -59,43 +57,9 @@ const AddTodo: NextPage = () => {
     });
   };
 
-  const DayCombobox = (
-    <Listbox
-      value={selected}
-      onChange={(val: Day) => {
-        setSelected(val);
-        setValue("day", val);
-      }}
-    >
-      <Listbox.Button className="relative w-full cursor-default rounded-xl bg-white p-3 pr-10 text-left shadow-md">
-        <span className="block truncate">{selected}</span>
-        <span className="absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronUpDownIcon
-            className="h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-        </span>
-      </Listbox.Button>
-      <Listbox.Options className="flex w-full flex-col items-start rounded-lg border bg-newGray2">
-        {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
-          <Listbox.Option
-            className="w-full p-2 hover:bg-laccent"
-            key={key}
-            value={key}
-          >
-            {key}
-          </Listbox.Option>
-        ))}
-      </Listbox.Options>
-    </Listbox>
-  );
-
   return (
     <>
-      <Head>
-        <title>Add Todo</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">
@@ -117,9 +81,13 @@ const AddTodo: NextPage = () => {
                 type="text"
                 {...register("day", { required: true })}
               />
-              {DayCombobox}
+              <DayCombobox
+                selected={selected}
+                setSelected={setSelected}
+                setValue={setValue}
+              />
               <button className={buttonStyle} type="submit">
-                Send
+                Hinzufügen
               </button>
             </form>
           </div>

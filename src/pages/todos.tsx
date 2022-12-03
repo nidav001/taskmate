@@ -2,16 +2,17 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import Head from "next/head";
 import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   resetServerContext,
   type DropResult,
 } from "react-beautiful-dnd";
+import Head from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import DroppableDayArea from "../components/todoPage/droppableDayArea";
+import SearchBar from "../components/todoPage/searchBar";
 import Toolbar from "../components/todoPage/toolbar/toolbar";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
@@ -32,7 +33,7 @@ const Todos: NextPage = () => {
 
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
 
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [search, setSearch] = useState<string>("");
   const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
@@ -54,9 +55,7 @@ const Todos: NextPage = () => {
     resetMarkedTodos();
   }, []);
 
-  const changeDay = trpc.todo.changeDayAfterDnD.useMutation({
-    //! Refetching on success causes UI to flicker when two todos are moved shortly after each other
-  });
+  const changeDay = trpc.todo.changeDayAfterDnD.useMutation();
 
   const reorder = (result: Todo[], startIndex: number, endIndex: number) => {
     const [removed] = result.splice(startIndex, 1);
@@ -154,42 +153,24 @@ const Todos: NextPage = () => {
     }
   }
 
-  const searchBar = (
-    <div className="flex flex-col items-center">
-      <input
-        type="text"
-        className="w-50 rounded-xl"
-        placeholder="Search..."
-        onChange={(e) => setSearchValue(e.target.value)}
-      />
-    </div>
-  );
-
   return (
     <>
-      <Head>
-        <title>My Todos</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
-            {searchBar}
-            <Toolbar
-              refetch={todoQuery.refetch}
-              setSearchValue={setSearchValue}
-              todos={todos}
-            />
+            <SearchBar setSearch={setSearch} />
+            <Toolbar refetch={todoQuery.refetch} todos={todos} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(
                   (day, index) => (
                     <DroppableDayArea
-                      date={datesOfWeek[index]!}
+                      date={datesOfWeek[index] ?? "Framstag"}
                       refetch={todoQuery.refetch}
-                      searchValue={searchValue}
+                      searchValue={search}
                       todos={localTodos.filter((todo) => todo.day === day)}
                       key={day}
                       day={day}

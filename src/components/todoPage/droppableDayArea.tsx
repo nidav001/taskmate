@@ -3,14 +3,23 @@ import { Droppable } from "react-beautiful-dnd";
 import useTodoOrderStore from "../../hooks/todoOrderStore";
 import DraggableTodoCard from "./draggableTodoCard";
 
-const DroppableDayArea: React.FC<{
+type DroppableDayAreaProps = {
   day: string;
   todos: Todo[];
   searchValue: string;
   refetch: () => void;
   date: string;
   isLoading: boolean;
-}> = ({ day, todos, searchValue, refetch, isLoading, date }) => {
+};
+
+const DroppableDayArea: React.FC<DroppableDayAreaProps> = ({
+  day,
+  todos,
+  searchValue,
+  refetch,
+  isLoading,
+  date,
+}) => {
   const loadingSkeleton = (
     <div role="status" className="max-w-sm animate-pulse">
       <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>

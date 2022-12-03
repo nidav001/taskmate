@@ -3,7 +3,7 @@ import { type CtxOrReq } from "next-auth/client/_utils";
 import { getCsrfToken, getProviders, signOut } from "next-auth/react";
 import Head from "next/head";
 
-const Signout: NextPage<> = () => {
+const Signout: NextPage = () => {
   return (
     <>
       <Head>

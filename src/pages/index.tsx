@@ -1,11 +1,11 @@
-import { faBars, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type NextPage } from "next";
-import Head from "next/head";
 import { useState } from "react";
 import DashboardCard from "../components/dashboard/dashboardCard";
+import FloatingButton from "../components/dashboard/floatingButton";
+import Head from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import TodoCard from "../components/shared/todoCard";
 import getServerSideProps from "../lib/serverProps";
 import { trpc } from "../utils/trpc";
 
@@ -16,30 +16,26 @@ const Home: NextPage = () => {
   const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
   const deletedTodos = trpc.todo.getDeletedTodos.useQuery();
 
-  const toggleDashboardCardView = () => {
-    setSmallWidth(!smallWidth);
-  };
+  const todaysDate = new Date().toLocaleDateString();
 
-  const floatingButton = (
-    <button className="h-10 w-10 p-2" onClick={() => toggleDashboardCardView()}>
-      <FontAwesomeIcon
-        icon={smallWidth ? faTableCellsLarge : faBars}
-        size="lg"
-      />
-    </button>
+  const todaysTodos = (
+    <div className="flex w-full flex-col items-center px-5 pt-5">
+      <h2 className="text-xl font-bold">Heutige Todos</h2>
+      <div>{todaysDate}</div>
+      <div className="flex flex-col gap-2 pt-2">
+        {todos.data?.map((todo) => (
+          <TodoCard todoDone={todo.done} key={todo.id} todo={todo} />
+        ))}
+      </div>
+    </div>
   );
-
   return (
     <>
-      <Head>
-        <title>T3Todo</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="flex h-screen flex-row">
+      <Head title="T3Todo" />
+      <div className="flex h-full flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
-
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard
               content={todos.data?.length}
@@ -70,9 +66,11 @@ const Home: NextPage = () => {
               smallWidth={smallWidth}
             />
           </div>
-          <div className="absolute right-5 bottom-5 rounded-full bg-daccent p-2 shadow-xl">
-            {floatingButton}
-          </div>
+          {todaysTodos}
+          <FloatingButton
+            smallWidth={smallWidth}
+            setSmallWidth={setSmallWidth}
+          />
         </main>
       </div>
     </>

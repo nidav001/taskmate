@@ -17,7 +17,7 @@ const NavigationMenu: React.FC<{
   const iconStyle = "h-7 w-7 text-daccent";
 
   return (
-    <>
+    <div className="absolute sticky top-0 z-10 ">
       <Logo logoShown={logoShown} />
       <Link onClick={closeMenu} href="/" className={todoItemStyle}>
         <div className="flex gap-1">
@@ -43,7 +43,7 @@ const NavigationMenu: React.FC<{
           Admin
         </div>
       </Link>
-    </>
+    </div>
   );
 };
 
