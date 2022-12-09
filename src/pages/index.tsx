@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { useState } from "react";
 import DashboardCard from "../components/dashboard/dashboardCard";
@@ -17,15 +18,18 @@ const Home: NextPage = () => {
   const deletedTodos = trpc.todo.getDeletedTodos.useQuery();
 
   const todaysDate = new Date().toLocaleDateString();
+  const weekday = DateTime.now().weekdayLong;
 
   const todaysTodos = (
     <div className="flex w-full flex-col items-center px-5 pt-5">
       <h2 className="text-xl font-bold">Heutige Todos</h2>
       <div>{todaysDate}</div>
       <div className="flex flex-col gap-2 pt-2">
-        {todos.data?.map((todo) => (
-          <TodoCard todoDone={todo.done} key={todo.id} todo={todo} />
-        ))}
+        {todos.data
+          ?.filter((todo) => todo.day.localeCompare(weekday) === 0)
+          .map((todo) => (
+            <TodoCard todoDone={todo.done} key={todo.id} todo={todo} />
+          ))}
       </div>
     </div>
   );
