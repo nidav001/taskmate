@@ -31,7 +31,6 @@ const AddTodo: NextPage = () => {
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
         data as Todo,
       ]);
-      console.log(columns);
     },
   });
 
