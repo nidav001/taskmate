@@ -27,12 +27,11 @@ const AddTodo: NextPage = () => {
       reset();
       setValue("day", selected);
 
-      console.log(data.day);
-      console.log(columns.map((col) => col.id));
       setColumnTodoOrder(data.day, [
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
         data as Todo,
       ]);
+      console.log(columns);
     },
   });
 

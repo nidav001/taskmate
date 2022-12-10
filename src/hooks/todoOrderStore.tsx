@@ -60,7 +60,7 @@ const useTodoOrderStore = create<TodoOrderState>()(
       }),
 
       {
-        name: "todo-order-storage",
+        name: "todo-order-storage1",
       }
     )
   )
