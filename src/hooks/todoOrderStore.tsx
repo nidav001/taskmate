@@ -1,16 +1,15 @@
 import { type Todo } from "@prisma/client";
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import { Day } from "../types/enums";
 
 interface Column {
-  id: Day;
+  id: number;
   todoOrder: Todo[];
 }
 
 interface TodoOrderState {
   columns: Column[];
-  setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void;
+  setColumnTodoOrder: (columnId: number, newTodoOrder: Todo[]) => void;
   resetTodoOrder: () => void;
 }
 
@@ -19,15 +18,15 @@ const useTodoOrderStore = create<TodoOrderState>()(
     persist(
       (set) => ({
         columns: [
-          { id: Day.Montag, todoOrder: [] },
-          { id: Day.Dienstag, todoOrder: [] },
-          { id: Day.Mittwoch, todoOrder: [] },
-          { id: Day.Donnerstag, todoOrder: [] },
-          { id: Day.Freitag, todoOrder: [] },
-          { id: Day.Samstag, todoOrder: [] },
-          { id: Day.Sonntag, todoOrder: [] },
+          { id: 1, todoOrder: [] },
+          { id: 2, todoOrder: [] },
+          { id: 3, todoOrder: [] },
+          { id: 4, todoOrder: [] },
+          { id: 5, todoOrder: [] },
+          { id: 6, todoOrder: [] },
+          { id: 7, todoOrder: [] },
         ],
-        setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => {
+        setColumnTodoOrder: (columnId: number, newTodoOrder: Todo[]) => {
           set((state) => {
             const newColumns = state.columns.map((column) => {
               if (column.id === columnId) {

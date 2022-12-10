@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import { DateTime, Info } from "luxon";
 import { type NextPage } from "next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,17 +11,15 @@ import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle } from "../styles/buttonStyle";
-import { type Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
-  const date = new Date();
-  return date.toLocaleDateString("de-DE", { weekday: "long" }) as Day;
+  return Info.weekdays("long")[DateTime.now().weekday - 1] ?? "Framstag";
 }
 
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
-  const [selected, setSelected] = useState<Day>(getTodaysDateName());
+  const [selected, setSelected] = useState<string>(getTodaysDateName());
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -28,7 +27,9 @@ const AddTodo: NextPage = () => {
       reset();
       setValue("day", selected);
 
-      setColumnTodoOrder(data.day as Day, [
+      console.log(data.day);
+      console.log(columns.map((col) => col.id));
+      setColumnTodoOrder(data.day, [
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
         data as Todo,
       ]);
@@ -39,7 +40,7 @@ const AddTodo: NextPage = () => {
 
   type FormValues = {
     content: string;
-    day: Day;
+    day: string;
   };
 
   const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
@@ -49,11 +50,12 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
+    const dateId = Info.weekdays("long").indexOf(data.day);
     addTodo.mutate({
       id: uuidv4(),
-      ...data,
-      index: (columns.find((col) => col.id === data.day)?.todoOrder ?? [])
-        .length,
+      content: data.content,
+      day: dateId,
+      index: (columns.find((col) => col.id === dateId)?.todoOrder ?? []).length,
     });
   };
 

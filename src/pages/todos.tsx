@@ -18,9 +18,9 @@ import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";
 import serverProps from "../lib/serverProps";
-import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
+const dayNumbers = Array.from({ length: 7 }, (_, i) => i + 1);
 const startOfWeek = DateTime.now().startOf("week");
 const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
   startOfWeek.plus({ days: i }).toLocaleString()
@@ -66,6 +66,7 @@ const Todos: NextPage = () => {
   };
 
   function onDragEnd(result: DropResult) {
+    console.log("🚀 ~ file: todos.tsx:69 ~ onDragEnd ~ result", result);
     const { destination, source, draggableId } = result;
 
     //If dropped outside list or dropped in same place
@@ -79,8 +80,11 @@ const Todos: NextPage = () => {
       return;
     }
 
-    const start = columns.find((col) => col.id === source.droppableId);
-    const finish = columns.find((col) => col.id === destination.droppableId);
+    const start = columns.find((col) => col.id === Number(source.droppableId));
+    const finish = columns.find((col) => {
+      console.log(col.id);
+      return col.id === Number(destination.droppableId);
+    });
     const draggedItem = todos.find((todo) => todo.id === draggableId);
 
     if (start && finish && draggedItem) {
@@ -125,7 +129,7 @@ const Todos: NextPage = () => {
       // Persist changes in database based on local state
       columns.map((col) => {
         col.todoOrder.map((todo, index) => {
-          const todoToCheck = todos.find((todo) => todo.id === todo.id);
+          const todoToCheck = todos.find((todo1) => todo.id === todo1.id);
           //&& (todo.day !== col.id || todo.index !== index) better for performance? but doesnt work because of refetching todos
           if (
             todoToCheck &&
@@ -165,19 +169,17 @@ const Todos: NextPage = () => {
             <Toolbar refetch={todoQuery.refetch} todos={todos} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
-                {(Object.keys(Day) as Array<keyof typeof Day>).map(
-                  (day, index) => (
-                    <DroppableDayArea
-                      date={datesOfWeek[index] ?? "Framstag"}
-                      refetch={todoQuery.refetch}
-                      searchValue={search}
-                      todos={localTodos.filter((todo) => todo.day === day)}
-                      key={day}
-                      day={day}
-                      isLoading={todoQuery.isLoading}
-                    />
-                  )
-                )}
+                {dayNumbers.map((day) => (
+                  <DroppableDayArea
+                    date={datesOfWeek[day - 1] ?? "Framstag"}
+                    refetch={todoQuery.refetch}
+                    searchValue={search}
+                    todos={localTodos.filter((todo) => todo.day === day)}
+                    key={day}
+                    dayNumber={day}
+                    isLoading={todoQuery.isLoading}
+                  />
+                ))}
               </DragDropContext>
             </div>
           </div>

@@ -1,10 +1,11 @@
 import { type Todo } from "@prisma/client";
+import { Info } from "luxon";
 import { Droppable } from "react-beautiful-dnd";
 import useTodoOrderStore from "../../hooks/todoOrderStore";
 import DraggableTodoCard from "./draggableTodoCard";
 
 type DroppableDayAreaProps = {
-  day: string;
+  dayNumber: number;
   todos: Todo[];
   searchValue: string;
   refetch: () => void;
@@ -13,13 +14,15 @@ type DroppableDayAreaProps = {
 };
 
 const DroppableDayArea: React.FC<DroppableDayAreaProps> = ({
-  day,
+  dayNumber,
   todos,
   searchValue,
   refetch,
   isLoading,
   date,
 }) => {
+  const day = Info.weekdays("long")[dayNumber - 1];
+
   const loadingSkeleton = (
     <div role="status" className="max-w-sm animate-pulse">
       <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
@@ -30,13 +33,14 @@ const DroppableDayArea: React.FC<DroppableDayAreaProps> = ({
   );
 
   const todoOrder =
-    useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
-      ?.todoOrder ?? [];
+    useTodoOrderStore((state) => state.columns).find(
+      (col) => col.id === dayNumber
+    )?.todoOrder ?? [];
 
   const currentDate = <p>{date}</p>;
 
   return (
-    <Droppable key={day} droppableId={day}>
+    <Droppable key={dayNumber} droppableId={dayNumber.toString()}>
       {(provided) => (
         <>
           <div className="w-80">

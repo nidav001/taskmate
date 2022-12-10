@@ -1,12 +1,14 @@
 import { Listbox } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { Day } from "../../types/enums";
+import { Info } from "luxon";
 
 type DayComboboxProps = {
-  selected: Day;
-  setSelected: (day: Day) => void;
-  setValue: (name: "day" | "content", value: Day) => void;
+  selected: string;
+  setSelected: (day: string) => void;
+  setValue: (name: "day" | "content", value: string) => void;
 };
+
+const weekdays = Info.weekdays("long");
 
 const DayCombobox: React.FC<DayComboboxProps> = ({
   selected,
@@ -16,7 +18,7 @@ const DayCombobox: React.FC<DayComboboxProps> = ({
   return (
     <Listbox
       value={selected}
-      onChange={(val: Day) => {
+      onChange={(val: string) => {
         setSelected(val);
         setValue("day", val);
       }}
@@ -31,13 +33,13 @@ const DayCombobox: React.FC<DayComboboxProps> = ({
         </span>
       </Listbox.Button>
       <Listbox.Options className="flex w-full flex-col items-start rounded-lg border bg-newGray2">
-        {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
+        {weekdays.map((day) => (
           <Listbox.Option
             className="w-full p-2 hover:bg-laccent"
-            key={key}
-            value={key}
+            key={day}
+            value={day}
           >
-            {key}
+            {day}
           </Listbox.Option>
         ))}
       </Listbox.Options>

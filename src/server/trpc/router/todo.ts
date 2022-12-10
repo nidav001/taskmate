@@ -53,7 +53,7 @@ export const todoRouter = router({
       z.object({
         id: z.string().uuid(),
         content: z.string(),
-        day: z.string(),
+        day: z.number(),
         index: z.number(),
       })
     )
@@ -115,7 +115,7 @@ export const todoRouter = router({
     .input(
       z.object({
         id: z.string(),
-        day: z.string(),
+        day: z.number(),
         result: any(),
         index: z.number(),
       })

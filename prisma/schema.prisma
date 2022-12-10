@@ -11,7 +11,7 @@ datasource db {
   // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
   // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
-  relationMode = "prisma"
+  relationMode = "foreignKeys"
 }
 
 model Todo {
@@ -22,7 +22,7 @@ model Todo {
   authorId String
   content  String
   done     Boolean   @default(false)
-  day     String
+  day      Int
   index Int @default(0)
   finalized Boolean @default(false)
   archived Boolean @default(false)
