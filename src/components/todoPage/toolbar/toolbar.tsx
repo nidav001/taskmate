@@ -1,9 +1,4 @@
-import {
-  ArrowRightIcon,
-  CheckIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowRightIcon, CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -133,7 +128,7 @@ const Toolbar: React.FC<{
         >
           <ArrowRightIcon className={iconStyle} />
         </button>
-        <button
+        {/* <button
           title="Neue Woche und verwerfen"
           onClick={() => {
             if (localTodos?.length > 0) {
@@ -143,7 +138,7 @@ const Toolbar: React.FC<{
           className={buttonStyle}
         >
           <TrashIcon className={iconStyle} />
-        </button>
+        </button> */}
         {/* {markedTodos.length > 0 ? (
           <button
             title="Löschen"
