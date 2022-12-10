@@ -82,7 +82,6 @@ const Todos: NextPage = () => {
 
     const start = columns.find((col) => col.id === Number(source.droppableId));
     const finish = columns.find((col) => {
-      console.log(col.id);
       return col.id === Number(destination.droppableId);
     });
     const draggedItem = todos.find((todo) => todo.id === draggableId);
