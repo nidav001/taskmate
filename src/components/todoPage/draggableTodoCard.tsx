@@ -26,7 +26,7 @@ const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
     setTodoDone.mutate({ id: id, done: done });
   };
 
-  const setTodoContent = trpc.todo.updateTodoContent.useMutation({
+  const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
     onSuccess: () => {
       refetch();
     },
@@ -45,14 +45,14 @@ const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
     console.log("click is triggered");
   };
 
-  const defaultOptions = {
-    shouldPreventDefault: true,
-    delay: 500,
-  };
-
   function onBlurTextArea(newContent: string) {
+    //Change local todos
     if (newContent !== todo.content) {
-      setTodoContent.mutate({
+      if (newContent === "") {
+        setTodos(todos?.filter((mappedTodo) => mappedTodo.id !== todo.id));
+      }
+      //Change database
+      updateTodoContent.mutate({
         id: todo.id,
         content: newContent,
       });
