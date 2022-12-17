@@ -27,13 +27,16 @@ function TopNaviagtion() {
   const ProfileMenuButton = (
     <Menu>
       <div>
-        <Menu.Button className="outline-non flex rounded-full text-sm ring-2 ring-daccent/60 ring-offset-1  hover:ring-daccent">
+        <Menu.Button
+          className="outline-non flex rounded-full text-sm ring-2 ring-daccent/60 ring-offset-1  hover:ring-daccent"
+          aria-label="profile"
+        >
           <Image
             width="40"
             height="40"
             className="h-8 w-8 rounded-full"
             src={sessionData?.user?.image ?? "/guestIcon.svg"}
-            alt=""
+            alt="Profile Image"
           />
         </Menu.Button>
       </div>
@@ -72,7 +75,10 @@ function TopNaviagtion() {
     <Menu>
       {({ close }) => (
         <div className="md:hidden">
-          <Menu.Button className="rounded-md p-1 ring-2 ring-daccent/60 hover:ring-daccent">
+          <Menu.Button
+            aria-label="menu"
+            className="rounded-md p-1 ring-2 ring-daccent/60 hover:ring-daccent"
+          >
             <Bars3Icon className="h-6 w-6 text-daccent" />
           </Menu.Button>
           <Transition

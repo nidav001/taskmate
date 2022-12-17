@@ -9,6 +9,7 @@ function HeadComponent({ title }: HeadComponentProps) {
     <Head>
       <title>{title}</title>
       <link rel="icon" href="/favicon.ico" />
+      <meta name="description" content="T3Todo App" />
     </Head>
   );
 }

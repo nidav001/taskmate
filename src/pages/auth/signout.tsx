@@ -6,15 +6,12 @@ import {
   getSession,
   signOut,
 } from "next-auth/react";
-import Head from "next/head";
+import HeadComponent from "../../components/shared/head";
 
 const Signout: NextPage = () => {
   return (
     <>
-      <Head>
-        <title>T3Todo</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <HeadComponent title="Abmelden" />
       <main className="flex h-screen w-screen items-center justify-center bg-white">
         <button
           onClick={() =>

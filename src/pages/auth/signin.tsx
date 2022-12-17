@@ -8,7 +8,7 @@ import {
   getSession,
   signIn,
 } from "next-auth/react";
-import Head from "next/head";
+import HeadComponent from "../../components/shared/head";
 
 const Signin: NextPage<{
   csrfToken: string;
@@ -16,10 +16,7 @@ const Signin: NextPage<{
 }> = ({ csrfToken, providers }) => {
   return (
     <>
-      <Head>
-        <title>T3Todo</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <HeadComponent title="Anmelden" />
       <main className="flex h-screen w-screen items-center justify-center bg-white">
         {providers &&
           Object.values(providers).map((provider) => (

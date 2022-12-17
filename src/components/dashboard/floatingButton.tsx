@@ -12,6 +12,7 @@ function FloatingButton({ setSmallWidth, smallWidth }: FloatingButtonProps) {
       <button
         className="h-10 w-10 p-2"
         onClick={() => setSmallWidth(!smallWidth)}
+        aria-label="Change view"
       >
         <FontAwesomeIcon
           icon={smallWidth ? faTableCellsLarge : faBars}

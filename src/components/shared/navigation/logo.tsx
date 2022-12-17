@@ -7,7 +7,7 @@ type LogoProps = {
 
 function Logo({ logoShown }: LogoProps) {
   return (
-    <Link href="/">
+    <Link href="/" aria-label="home">
       <div
         className={classNames(
           logoShown,
