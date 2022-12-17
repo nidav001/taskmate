@@ -31,6 +31,13 @@ const DayCombobox: React.FC<DayComboboxProps> = ({
         </span>
       </Listbox.Button>
       <Listbox.Options className="flex w-full flex-col items-start rounded-lg border bg-newGray2">
+        <Listbox.Option
+          className="w-full p-2 hover:bg-laccent"
+          key={"Allgemein"}
+          value={"Allgemein"}
+        >
+          {"Allgemein"}
+        </Listbox.Option>
         {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
           <Listbox.Option
             className="w-full p-2 hover:bg-laccent"

@@ -1,4 +1,5 @@
 export enum Day {
+  Allgemein = "Allgemein",
   Montag = "Montag",
   Dienstag = "Dienstag",
   Mittwoch = "Mittwoch",

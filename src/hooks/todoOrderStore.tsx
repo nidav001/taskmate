@@ -19,6 +19,7 @@ const useTodoOrderStore = create<TodoOrderState>()(
     persist(
       (set) => ({
         columns: [
+          { id: Day.Allgemein, todoOrder: [] },
           { id: Day.Montag, todoOrder: [] },
           { id: Day.Dienstag, todoOrder: [] },
           { id: Day.Mittwoch, todoOrder: [] },
@@ -61,7 +62,7 @@ const useTodoOrderStore = create<TodoOrderState>()(
       }),
 
       {
-        name: "todo-order-storage",
+        name: "todoorder-storage",
       }
     )
   )

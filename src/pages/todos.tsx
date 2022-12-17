@@ -14,7 +14,6 @@ import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
 import Toolbar from "../components/todoPage/toolbar/toolbar";
-import useMarkedTodoStore from "../hooks/markedTodoStore";
 import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";
@@ -31,11 +30,8 @@ const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
-
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
-
   const { search } = useSearchStore();
-  const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
     validateColumnTodoOrders();
@@ -51,10 +47,6 @@ const Todos: NextPage = () => {
       setColumnTodoOrder(col.id, columnTodos);
     });
   };
-
-  useEffect(() => {
-    resetMarkedTodos();
-  }, []);
 
   const changeDay = trpc.todo.changeDayAfterDnD.useMutation();
 
@@ -149,8 +141,6 @@ const Todos: NextPage = () => {
           }
         });
       });
-
-      resetMarkedTodos();
     }
   }
 
@@ -169,7 +159,10 @@ const Todos: NextPage = () => {
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(
                   (day, index) => (
                     <DroppableDayArea
-                      date={datesOfWeek[index] ?? "Framstag"}
+                      date={
+                        datesOfWeek[index - 1] ??
+                        `Woche ${DateTime.now().weekNumber.toString()}`
+                      }
                       refetch={todoQuery.refetch}
                       searchValue={search}
                       todos={localTodos.filter((todo) => todo.day === day)}

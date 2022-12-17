@@ -1,7 +1,6 @@
 import { type Todo } from "@prisma/client";
 import { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
-import useMarkedTodoStore from "../../hooks/markedTodoStore";
 import useTodoStore from "../../hooks/todoStore";
 import { trpc } from "../../utils/trpc";
 import TodoCard from "../shared/todoCard";
@@ -18,8 +17,6 @@ const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
   refetch,
 }) => {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
-
-  const { markedTodos, addMarkedTodo } = useMarkedTodoStore();
   const { todos, setTodos } = useTodoStore();
 
   const setTodoDoneCallback = (id: string, done: boolean) => {
@@ -31,19 +28,6 @@ const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
       refetch();
     },
   });
-
-  const isMarked = markedTodos.includes(todo);
-
-  const onLongPress = () => {
-    console.log("longpress is triggered");
-    if (!isMarked) {
-      addMarkedTodo(todo);
-    }
-  };
-
-  const onClick = () => {
-    console.log("click is triggered");
-  };
 
   function onBlurTextArea(newContent: string) {
     //Change local todos

@@ -8,7 +8,7 @@ type DroppableDayAreaProps = {
   todos: Todo[];
   searchValue: string;
   refetch: () => void;
-  date: string;
+  date?: string;
   isLoading: boolean;
 };
 

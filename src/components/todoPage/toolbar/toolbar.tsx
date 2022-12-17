@@ -2,7 +2,6 @@ import { ArrowRightIcon, CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
-import useMarkedTodoStore from "../../../hooks/markedTodoStore";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
 import { trpc } from "../../../utils/trpc";
@@ -14,7 +13,6 @@ const Toolbar: React.FC<{
 }> = ({ refetch, todos }) => {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
-  const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
 
@@ -89,16 +87,6 @@ const Toolbar: React.FC<{
     });
   }
 
-  // function handleOnClickDeleteMarked() {
-  //   const markedTodoIds = markedTodos.map((todo) => todo.id);
-  //   if (markedTodoIds.length > 0) {
-  //     deleteTodos.mutate({
-  //       ids: markedTodoIds,
-  //     });
-  //     resetMarkedTodos();
-  //   }
-  // }
-
   const buttonStyle = "rounded-full bg-dark/20 hover:bg-laccent p-3";
 
   const iconStyle = "h-8 w-8";
@@ -127,26 +115,6 @@ const Toolbar: React.FC<{
         >
           <ArrowRightIcon className={iconStyle} />
         </button>
-        {/* <button
-          title="Neue Woche und verwerfen"
-          onClick={() => {
-            if (localTodos?.length > 0) {
-              setIsDeletedModelOpen(true);
-            }
-          }}
-          className={buttonStyle}
-        >
-          <TrashIcon className={iconStyle} />
-        </button> */}
-        {/* {markedTodos.length > 0 ? (
-          <button
-            title="Löschen"
-            onClick={() => handleOnClickDeleteMarked()}
-            className={buttonStyle}
-          >
-            <TrashIcon className="h-8 w-8" />
-          </button>
-        ) : null} */}
         <MyModal
           title="Neue Woche starten"
           content="Wirklich alle Todos archivieren und fertige finalisieren?"
