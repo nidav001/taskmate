@@ -8,13 +8,11 @@ import { trpc } from "../../../utils/trpc";
 import Modal from "./modal";
 
 type ToolbarProps = {
-  todos: Todo[] | undefined;
   refetch: () => void;
 };
 
-function Toolbar({ refetch, todos }: ToolbarProps) {
+function Toolbar({ refetch }: ToolbarProps) {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
-  const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
 
@@ -49,16 +47,6 @@ function Toolbar({ refetch, todos }: ToolbarProps) {
     },
   });
 
-  const deleteTodos = trpc.todo.deleteTodos.useMutation({
-    onSuccess: () => {
-      resetTodoOrder();
-      refetch();
-    },
-    onMutate: (data) => {
-      refreshLocalTodos(data.ids);
-    },
-  });
-
   function handleOnClickFinalize() {
     const doneTodoIds = getTodoIds(localTodos, true);
 
@@ -80,13 +68,6 @@ function Toolbar({ refetch, todos }: ToolbarProps) {
         done: true,
       });
     }
-  }
-
-  function handleOnClickDeleteMany() {
-    handleOnClickFinalize();
-    deleteTodos.mutate({
-      ids: getTodoIds(todos, false),
-    });
   }
 
   const buttonStyle = "rounded-full bg-dark/20 hover:bg-laccent p-3";
@@ -125,15 +106,6 @@ function Toolbar({ refetch, todos }: ToolbarProps) {
           isOpen={isArchivedModalOpen}
           setIsOpen={setIsArchivedModalOpen}
           onAccept={() => handleOnClickArchive()}
-        />
-        <Modal
-          title="Neue Woche starten und Todos verwerfen"
-          content="Wirklich alle Todos löschen?"
-          buttonAccept="Ja"
-          buttonDecline="Nein"
-          isOpen={isDeletedModelOpen}
-          setIsOpen={setIsDeletedModelOpen}
-          onAccept={() => handleOnClickDeleteMany()}
         />
       </div>
     </>
