@@ -5,12 +5,14 @@ import { useState } from "react";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
 import { trpc } from "../../../utils/trpc";
-import MyModal from "./modal";
+import Modal from "./modal";
 
-const Toolbar: React.FC<{
+type ToolbarProps = {
   todos: Todo[] | undefined;
   refetch: () => void;
-}> = ({ refetch, todos }) => {
+};
+
+function Toolbar({ refetch, todos }: ToolbarProps) {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
   const { resetTodoOrder } = useTodoOrderStore();
@@ -115,7 +117,7 @@ const Toolbar: React.FC<{
         >
           <ArrowRightIcon className={iconStyle} />
         </button>
-        <MyModal
+        <Modal
           title="Neue Woche starten"
           content="Wirklich alle Todos archivieren und fertige finalisieren?"
           buttonAccept="Ja"
@@ -124,7 +126,7 @@ const Toolbar: React.FC<{
           setIsOpen={setIsArchivedModalOpen}
           onAccept={() => handleOnClickArchive()}
         />
-        <MyModal
+        <Modal
           title="Neue Woche starten und Todos verwerfen"
           content="Wirklich alle Todos löschen?"
           buttonAccept="Ja"
@@ -136,6 +138,6 @@ const Toolbar: React.FC<{
       </div>
     </>
   );
-};
+}
 
 export default Toolbar;

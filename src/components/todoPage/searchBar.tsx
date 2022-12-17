@@ -1,6 +1,6 @@
 import useSearchStore from "../../hooks/searchStore";
 
-const SearchBar: React.FC = () => {
+function SearchBar() {
   const { search, setSearch } = useSearchStore();
   return (
     <div className="flex flex-col items-center">
@@ -15,6 +15,6 @@ const SearchBar: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default SearchBar;

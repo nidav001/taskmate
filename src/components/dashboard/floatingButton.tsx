@@ -6,10 +6,7 @@ type FloatingButtonProps = {
   smallWidth: boolean;
 };
 
-const FloatingButton: React.FC<FloatingButtonProps> = ({
-  setSmallWidth,
-  smallWidth,
-}) => {
+function FloatingButton({ setSmallWidth, smallWidth }: FloatingButtonProps) {
   return (
     <div className="fixed right-5 bottom-5 rounded-full bg-daccent p-2 shadow-xl">
       <button
@@ -23,6 +20,6 @@ const FloatingButton: React.FC<FloatingButtonProps> = ({
       </button>
     </div>
   );
-};
+}
 
 export default FloatingButton;

@@ -1,5 +1,5 @@
 import { type Todo } from "@prisma/client";
-import Head from "../shared/head";
+import HeadComponent from "../shared/head";
 import SideNavigation from "../shared/navigation/sideNavigation";
 import TopNaviagtion from "../shared/navigation/topNavigation";
 import TodoCard from "../shared/todoCard";
@@ -9,13 +9,13 @@ type ArchivedAndFinalizedTodosProps = {
   title: string;
 };
 
-const ArchivedAndFinalizedTodos: React.FC<ArchivedAndFinalizedTodosProps> = ({
+function ArchivedAndFinalizedTodos({
   todos,
   title,
-}) => {
+}: ArchivedAndFinalizedTodosProps) {
   return (
     <>
-      <Head title={title} />
+      <HeadComponent title={title} />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">
@@ -29,6 +29,6 @@ const ArchivedAndFinalizedTodos: React.FC<ArchivedAndFinalizedTodosProps> = ({
       </div>
     </>
   );
-};
+}
 
 export default ArchivedAndFinalizedTodos;

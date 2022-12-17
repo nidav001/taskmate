@@ -1,7 +1,11 @@
 import Link from "next/link";
 import classNames from "../../../utils/classNames";
 
-const Logo: React.FC<{ logoShown: string }> = ({ logoShown }) => {
+type LogoProps = {
+  logoShown: string;
+};
+
+function Logo({ logoShown }: LogoProps) {
   return (
     <Link href="/">
       <div
@@ -14,6 +18,6 @@ const Logo: React.FC<{ logoShown: string }> = ({ logoShown }) => {
       </div>
     </Link>
   );
-};
+}
 
 export default Logo;

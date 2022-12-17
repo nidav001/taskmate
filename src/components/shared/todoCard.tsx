@@ -2,15 +2,22 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import classNames from "../../utils/classNames";
 
-const TodoCard: React.FC<{
+type TodoCardProps = {
   todoDone: boolean;
   setTodoDone?: (id: string, done: boolean) => void;
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
-}> = ({ todoDone, setTodoDone: setTodoDoneCallback, todo, onBlurTextArea }) => {
+};
+
+function TodoCard({
+  todoDone,
+  setTodoDone,
+  todo,
+  onBlurTextArea,
+}: TodoCardProps) {
   const handleOnChange = () => {
-    if (setTodoDoneCallback) {
-      setTodoDoneCallback(todo.id, !todo.done);
+    if (setTodoDone) {
+      setTodoDone(todo.id, !todo.done);
     }
   };
 
@@ -19,13 +26,13 @@ const TodoCard: React.FC<{
       <div className="group flex items-center justify-between gap-2">
         <input
           type="checkbox"
-          readOnly={setTodoDoneCallback ? false : true}
+          readOnly={setTodoDone ? false : true}
           checked={todoDone}
           onChange={() => handleOnChange()}
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={setTodoDoneCallback ? false : true}
+          disabled={setTodoDone ? false : true}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);
@@ -41,6 +48,6 @@ const TodoCard: React.FC<{
       </div>
     </div>
   );
-};
+}
 
 export default TodoCard;

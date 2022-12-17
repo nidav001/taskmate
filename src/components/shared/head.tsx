@@ -1,16 +1,16 @@
 import Head from "next/head";
 
-type HeadProps = {
+type HeadComponentProps = {
   title: string;
 };
 
-const asf: React.FC<HeadProps> = ({ title }) => {
+function HeadComponent({ title }: HeadComponentProps) {
   return (
     <Head>
       <title>{title}</title>
       <link rel="icon" href="/favicon.ico" />
     </Head>
   );
-};
+}
 
-export default asf;
+export default HeadComponent;

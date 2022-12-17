@@ -7,10 +7,12 @@ import {
 import Link from "next/link";
 import Logo from "./logo";
 
-const NavigationMenu: React.FC<{
+type NavigationMenuProps = {
   logoShown: string;
   closeMenu?: () => void;
-}> = ({ logoShown, closeMenu }) => {
+};
+
+function NavigationMenu({ logoShown, closeMenu }: NavigationMenuProps) {
   const todoItemStyle =
     "rounded-3xl py-3 px-3 hover:bg-laccent hover:text-white flex items-center w-full";
 
@@ -45,6 +47,6 @@ const NavigationMenu: React.FC<{
       </Link>
     </div>
   );
-};
+}
 
 export default NavigationMenu;

@@ -12,14 +12,14 @@ type DroppableDayAreaProps = {
   isLoading: boolean;
 };
 
-const DroppableDayArea: React.FC<DroppableDayAreaProps> = ({
+function DroppableDayArea({
   day,
   todos,
   searchValue,
   refetch,
   isLoading,
   date,
-}) => {
+}: DroppableDayAreaProps) {
   const loadingSkeleton = (
     <div role="status" className="max-w-sm animate-pulse">
       <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
@@ -83,6 +83,6 @@ const DroppableDayArea: React.FC<DroppableDayAreaProps> = ({
       )}
     </Droppable>
   );
-};
+}
 
 export default DroppableDayArea;

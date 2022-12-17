@@ -9,7 +9,7 @@ import classNames from "../../../utils/classNames";
 import Logo from "./logo";
 import NavigationMenu from "./navigationMenu";
 
-const TopNaviagtion: React.FC = () => {
+function TopNaviagtion() {
   const sessionData = useSession().data;
 
   const menuItems = [
@@ -99,6 +99,6 @@ const TopNaviagtion: React.FC = () => {
       {ProfileMenuButton}
     </div>
   );
-};
+}
 
 export default TopNaviagtion;

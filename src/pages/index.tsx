@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import { useState } from "react";
 import DashboardCard from "../components/dashboard/dashboardCard";
 import FloatingButton from "../components/dashboard/floatingButton";
-import Head from "../components/shared/head";
+import HeadComponent from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import TodoCard from "../components/shared/todoCard";
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
   );
   return (
     <>
-      <Head title="T3Todo" />
+      <HeadComponent title="T3Todo" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">

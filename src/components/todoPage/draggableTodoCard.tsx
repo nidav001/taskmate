@@ -11,11 +11,7 @@ type DraggableTodoCardProps = {
   refetch: () => void;
 };
 
-const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
-  todo,
-  index,
-  refetch,
-}) => {
+function DraggableTodoCard({ todo, index, refetch }: DraggableTodoCardProps) {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
   const { todos, setTodos } = useTodoStore();
 
@@ -80,6 +76,6 @@ const DraggableTodoCard: React.FC<DraggableTodoCardProps> = ({
       )}
     </Draggable>
   );
-};
+}
 
 export default DraggableTodoCard;

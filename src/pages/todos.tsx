@@ -8,7 +8,7 @@ import {
   resetServerContext,
   type DropResult,
 } from "react-beautiful-dnd";
-import Head from "../components/shared/head";
+import HeadComponent from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import DroppableDayArea from "../components/todoPage/droppableDayArea";
@@ -134,7 +134,7 @@ const Todos: NextPage = () => {
 
   return (
     <>
-      <Head title="Todos" />
+      <HeadComponent title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import DayCombobox from "../components/addTodo/dayCombobox";
-import Head from "../components/shared/head";
+import HeadComponent from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import useSearchStore from "../hooks/searchStore";
@@ -62,7 +62,7 @@ const AddTodo: NextPage = () => {
 
   return (
     <>
-      <Head title="Todo hinzufügen" />
+      <HeadComponent title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white">

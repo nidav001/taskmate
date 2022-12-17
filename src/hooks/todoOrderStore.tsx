@@ -3,10 +3,10 @@ import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { Day } from "../types/enums";
 
-interface Column {
+type Column = {
   id: Day;
   todoOrder: Todo[];
-}
+};
 
 interface TodoOrderState {
   columns: Column[];
