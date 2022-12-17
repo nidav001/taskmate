@@ -2,7 +2,12 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { getCsrfToken, getProviders, signIn } from "next-auth/react";
+import {
+  getCsrfToken,
+  getProviders,
+  getSession,
+  signIn,
+} from "next-auth/react";
 import Head from "next/head";
 
 const Signin: NextPage<{
@@ -42,6 +47,17 @@ const Signin: NextPage<{
 export default Signin;
 
 export async function getServerSideProps(context: CtxOrReq) {
+  const session = await getSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const providers = await getProviders();
   const csrfToken = await getCsrfToken(context);
   return {

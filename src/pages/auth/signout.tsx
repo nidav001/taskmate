@@ -1,6 +1,11 @@
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { getCsrfToken, getProviders, signOut } from "next-auth/react";
+import {
+  getCsrfToken,
+  getProviders,
+  getSession,
+  signOut,
+} from "next-auth/react";
 import Head from "next/head";
 
 const Signout: NextPage = () => {
@@ -29,6 +34,17 @@ const Signout: NextPage = () => {
 export default Signout;
 
 export async function getServerSideProps(context: CtxOrReq) {
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
   const providers = await getProviders();
   const csrfToken = await getCsrfToken(context);
   return {
