@@ -2,7 +2,7 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   DragDropContext,
   resetServerContext,
@@ -15,6 +15,7 @@ import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
 import Toolbar from "../components/todoPage/toolbar/toolbar";
 import useMarkedTodoStore from "../hooks/markedTodoStore";
+import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";
 import serverProps from "../lib/serverProps";
@@ -33,7 +34,7 @@ const Todos: NextPage = () => {
 
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
 
-  const [search, setSearch] = useState<string>("");
+  const { search } = useSearchStore();
   const { resetMarkedTodos } = useMarkedTodoStore();
 
   useEffect(() => {
@@ -161,7 +162,7 @@ const Todos: NextPage = () => {
         <main className="h-auto w-full bg-white">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
-            <SearchBar setSearch={setSearch} />
+            <SearchBar />
             <Toolbar refetch={todoQuery.refetch} todos={todos} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>

@@ -14,7 +14,6 @@ const Toolbar: React.FC<{
 }> = ({ refetch, todos }) => {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const [isDeletedModelOpen, setIsDeletedModelOpen] = useState(false);
-
   const { markedTodos, resetMarkedTodos } = useMarkedTodoStore();
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();

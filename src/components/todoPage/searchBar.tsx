@@ -1,8 +1,7 @@
-type SearchBarProps = {
-  setSearch: (search: string) => void;
-};
+import useSearchStore from "../../hooks/searchStore";
 
-const SearchBar: React.FC<SearchBarProps> = ({ setSearch }) => {
+const SearchBar: React.FC = () => {
+  const { search, setSearch } = useSearchStore();
   return (
     <div className="flex flex-col items-center">
       <form>
@@ -10,8 +9,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ setSearch }) => {
           type="text"
           className="w-50 rounded-xl"
           placeholder="Search..."
+          defaultValue={search}
           onChange={(e) => setSearch(e.target.value)}
-          onSubmit={(e) => console.log("Test")}
         />
       </form>
     </div>

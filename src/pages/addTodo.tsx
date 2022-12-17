@@ -7,6 +7,7 @@ import DayCombobox from "../components/addTodo/dayCombobox";
 import Head from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle } from "../styles/buttonStyle";
@@ -21,6 +22,7 @@ function getTodaysDateName() {
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
+  const { search, setSearch } = useSearchStore();
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -49,6 +51,7 @@ const AddTodo: NextPage = () => {
   });
 
   const onSubmit = (data: FormValues) => {
+    setSearch("");
     addTodo.mutate({
       id: uuidv4(),
       ...data,
@@ -74,6 +77,7 @@ const AddTodo: NextPage = () => {
                 className={inputStyle}
                 type="text"
                 placeholder="Todo..."
+                defaultValue={search}
                 {...register("content", { required: true })}
               />
               <input
