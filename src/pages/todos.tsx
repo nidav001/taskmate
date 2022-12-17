@@ -29,8 +29,10 @@ const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
+
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
+
   const { search } = useSearchStore();
 
   useEffect(() => {
@@ -118,21 +120,7 @@ const Todos: NextPage = () => {
       // Persist changes in database based on local state
       columns.map((col) => {
         col.todoOrder.map((todo, index) => {
-          const todoToCheck = todos.find((todo) => todo.id === todo.id);
-          //&& (todo.day !== col.id || todo.index !== index) better for performance? but doesnt work because of refetching todos
-          if (
-            todoToCheck &&
-            (todoToCheck.day !== col.id || todoToCheck.index !== index)
-          ) {
-            console.log(
-              todoToCheck.day +
-                " " +
-                col.id +
-                "= " +
-                (todoToCheck.day !== col.id) +
-                " " +
-                todoToCheck.content
-            );
+          if (todo.index !== index || todo.day !== col.id) {
             changeDay.mutate({
               id: todo.id,
               day: col.id,
