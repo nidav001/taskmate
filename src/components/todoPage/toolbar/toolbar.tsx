@@ -1,7 +1,14 @@
-import { ArrowRightIcon, CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowRightIcon,
+  CheckIcon,
+  ChevronDoubleDownIcon,
+  ChevronDoubleUpIcon,
+  PlusIcon,
+} from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useDisclosureStore from "../../../hooks/disclosureStore";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
 import { trpc } from "../../../utils/trpc";
@@ -15,6 +22,14 @@ function Toolbar({ refetch }: ToolbarProps) {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
+  const { Days, setDay } = useDisclosureStore();
+  const [allFalse, setAllFalse] = useState(
+    Days.every((day) => day.open === false)
+  );
+
+  useEffect(() => {
+    setAllFalse(Days.every((day) => day.open === false));
+  }, [Days]);
 
   const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
     return (
@@ -70,6 +85,13 @@ function Toolbar({ refetch }: ToolbarProps) {
     }
   }
 
+  function handleOnClickCollapseAll() {
+    Days.forEach((day) => {
+      setDay({ day: day.day, open: allFalse });
+    });
+    setAllFalse(!allFalse);
+  }
+
   const buttonStyle = "rounded-full bg-dark/20 hover:bg-laccent p-3";
 
   const iconStyle = "h-8 w-8";
@@ -97,6 +119,17 @@ function Toolbar({ refetch }: ToolbarProps) {
           className={buttonStyle}
         >
           <ArrowRightIcon className={iconStyle} />
+        </button>
+        <button
+          title="Collapse"
+          onClick={() => handleOnClickCollapseAll()}
+          className={buttonStyle}
+        >
+          {allFalse ? (
+            <ChevronDoubleDownIcon className={iconStyle} />
+          ) : (
+            <ChevronDoubleUpIcon className={iconStyle} />
+          )}
         </button>
         <Modal
           title="Neue Woche starten"

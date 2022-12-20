@@ -23,7 +23,7 @@ import { trpc } from "../utils/trpc";
 
 const startOfWeek = DateTime.now().startOf("week");
 const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
-  startOfWeek.plus({ days: i }).toLocaleString()
+  startOfWeek.plus({ days: i })
 );
 
 const Todos: NextPage = () => {
@@ -141,7 +141,7 @@ const Todos: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
             <SearchBar />
-            <Toolbar refetch={todoQuery.refetch} todos={todos} />
+            <Toolbar refetch={todoQuery.refetch} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(

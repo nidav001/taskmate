@@ -1,8 +1,8 @@
 import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { useState } from "react";
+import FloatingButton from "../components/dashboard/changeViewFloatingButton";
 import DashboardCard from "../components/dashboard/dashboardCard";
-import FloatingButton from "../components/dashboard/floatingButton";
 import HeadComponent from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
