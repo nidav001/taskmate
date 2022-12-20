@@ -155,7 +155,7 @@ const Todos: NextPage = () => {
                       searchValue={search}
                       todos={localTodos.filter((todo) => todo.day === day)}
                       key={day}
-                      day={day}
+                      day={day as Day}
                       isLoading={todoQuery.isLoading}
                     />
                   )

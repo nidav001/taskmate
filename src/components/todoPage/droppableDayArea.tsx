@@ -81,7 +81,7 @@ function DroppableDayArea({
         open: true,
       });
     }
-  }, [todos]);
+  }, []);
 
   const DroppableDayAreaHeader = (
     <Disclosure.Button
@@ -120,51 +120,51 @@ function DroppableDayArea({
           <Disclosure defaultOpen={disclosureOpen}>
             <div className="w-80">
               {DroppableDayAreaHeader}
+
               <div
+                className="flex w-80 flex-col py-4"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="flex w-80 flex-col py-4"
               >
-                <Disclosure.Panel>
-                  {isLoading
-                    ? todoLoadingSkeleton
-                    : todos
-                        ?.filter((todo) =>
-                          todo.content
-                            .toLowerCase()
-                            .includes(searchValue.toLowerCase())
-                        )
+                {isLoading
+                  ? todoLoadingSkeleton
+                  : todos
+                      ?.filter((todo) =>
+                        todo.content
+                          .toLowerCase()
+                          .includes(searchValue.toLowerCase())
+                      )
 
-                        .sort((a, b) => {
-                          const aIndex = todoOrder.findIndex(
-                            (todo) => todo.id === a.id
-                          );
-                          const bIndex = todoOrder.findIndex(
-                            (todo) => todo.id === b.id
-                          );
-                          return aIndex - bIndex;
-                        })
+                      .sort((a, b) => {
+                        const aIndex = todoOrder.findIndex(
+                          (todo) => todo.id === a.id
+                        );
+                        const bIndex = todoOrder.findIndex(
+                          (todo) => todo.id === b.id
+                        );
+                        return aIndex - bIndex;
+                      })
 
-                        .map((todo, index) => (
-                          // <Transition
-                          //   key={todo.id}
-                          //   show={disclosureOpen}
-                          //   enter="transform transition duration-[400ms]"
-                          //   enterFrom="opacity-0 rotate-[-120deg] scale-50"
-                          //   enterTo="opacity-100 rotate-0 scale-100"
-                          //   leave="transform duration-200 transition ease-in-out"
-                          //   leaveFrom="opacity-100 rotate-0 scale-100 "
-                          //   leaveTo="opacity-0 scale-95 "
-                          // >
+                      .map((todo, index) => (
+                        // <Transition
+                        //   key={todo.id}
+                        //   show={disclosureOpen}
+                        //   enter="transform transition duration-[400ms]"
+                        //   enterFrom="opacity-0 rotate-[-120deg] scale-50"
+                        //   enterTo="opacity-100 rotate-0 scale-100"
+                        //   leave="transform duration-200 transition ease-in-out"
+                        //   leaveFrom="opacity-100 rotate-0 scale-100 "
+                        //   leaveTo="opacity-0 scale-95 "
+                        // >
+                        <Disclosure.Panel key={todo.id}>
                           <DraggableTodoCard
                             refetch={refetch}
                             index={index}
-                            key={todo.id}
                             todo={todo}
                           />
-                          // </Transition>
-                        ))}
-                </Disclosure.Panel>
+                        </Disclosure.Panel>
+                        // </Transition>
+                      ))}
                 {provided.placeholder}
               </div>
             </div>
