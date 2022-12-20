@@ -22,8 +22,8 @@ const Home: NextPage = () => {
 
   const todaysTodos = (
     <div className="flex w-full flex-col items-center px-5 pt-5">
-      <h2 className="text-xl font-bold">Heutige Todos</h2>
-      <div>{todaysDate}</div>
+      <h2 className="text-xl font-bold dark:text-white">Heutige Todos</h2>
+      <div className="dark:text-slate-400">{todaysDate}</div>
       <div className="flex flex-col gap-2 pt-2">
         {todos.data
           ?.filter((todo) => todo.day.localeCompare(weekday) === 0)
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
       <HeadComponent title="T3Todo" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard

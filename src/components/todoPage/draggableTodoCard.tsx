@@ -60,7 +60,6 @@ function DraggableTodoCard({ todo, index, refetch }: DraggableTodoCardProps) {
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
       {(provided) => (
         <div
-          // {...longPressEvent}
           className="my-1 "
           ref={provided.innerRef}
           {...provided.dragHandleProps}

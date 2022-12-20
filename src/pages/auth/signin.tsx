@@ -17,7 +17,7 @@ const Signin: NextPage<{
   return (
     <>
       <HeadComponent title="Anmelden" />
-      <main className="flex h-screen w-screen items-center justify-center bg-white">
+      <main className="flex h-screen w-screen items-center justify-center bg-white dark:bg-slate-800">
         {providers &&
           Object.values(providers).map((provider) => (
             <div key={provider.name} style={{ marginBottom: 0 }}>

@@ -10,7 +10,7 @@ const Profile: NextPage = () => {
       <HeadComponent title="Profil" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <h1>Profile</h1>
         </main>

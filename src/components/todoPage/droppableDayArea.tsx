@@ -83,6 +83,35 @@ function DroppableDayArea({
     }
   }, [todos]);
 
+  const DroppableDayAreaHeader = (
+    <Disclosure.Button
+      className="w-80 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+      onClick={() => handleDisclosureButtonClick()}
+    >
+      {({ open }) => (
+        <div className="flex flex-row items-center">
+          <div className="flex w-full flex-col justify-evenly">
+            <h1 className="text-xl font-bold dark:text-white">{day}</h1>
+            <div className="text-slate-400">{currentDate}</div>
+          </div>
+          <div className="flex flex-col">
+            <div
+              className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
+                isLoading ? "animate-pulse bg-gray-400" : ""
+              }`}
+            >
+              {isLoading ? null : todos.length}
+            </div>
+            <FontAwesomeIcon
+              icon={open ? faChevronUp : faChevronDown}
+              className="h-5 dark:text-white"
+            />
+          </div>
+        </div>
+      )}
+    </Disclosure.Button>
+  );
+
   //Using day + disclosureOpen in Droppable key to force rerender when disclosureOpen changes
   return (
     <Droppable key={day + disclosureOpen} droppableId={day}>
@@ -90,33 +119,7 @@ function DroppableDayArea({
         <>
           <Disclosure defaultOpen={disclosureOpen}>
             <div className="w-80">
-              <Disclosure.Button
-                className="w-80 rounded-lg p-2 hover:bg-gray-100"
-                onClick={() => handleDisclosureButtonClick()}
-              >
-                {({ open }) => (
-                  <div className="flex flex-row items-center">
-                    <div className="flex w-full flex-col justify-evenly">
-                      <h1 className="text-xl font-bold ">{day}</h1>
-                      {currentDate}
-                    </div>
-                    <div className="flex flex-col">
-                      <div
-                        className={`flex h-8 w-8 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black ${
-                          isLoading ? "animate-pulse bg-gray-400" : ""
-                        }`}
-                      >
-                        {isLoading ? null : todos.length}
-                      </div>
-                      <FontAwesomeIcon
-                        icon={open ? faChevronUp : faChevronDown}
-                        className="h-5"
-                      />
-                    </div>
-                  </div>
-                )}
-              </Disclosure.Button>
-
+              {DroppableDayAreaHeader}
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}

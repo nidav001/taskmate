@@ -137,7 +137,7 @@ const Todos: NextPage = () => {
       <HeadComponent title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
             <SearchBar />

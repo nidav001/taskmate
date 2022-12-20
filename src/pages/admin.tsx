@@ -23,7 +23,7 @@ const Admin: NextPage = () => {
       <HeadComponent title="Admin" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <button

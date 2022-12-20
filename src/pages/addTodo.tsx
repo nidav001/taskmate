@@ -10,7 +10,7 @@ import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
-import { buttonStyle } from "../styles/buttonStyle";
+import { buttonStyle, inputStyle } from "../styles/buttonStyle";
 import { type Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
@@ -36,8 +36,6 @@ const AddTodo: NextPage = () => {
       ]);
     },
   });
-
-  const inputStyle = "rounded-xl py-3 pl-3 shadow-md outline-none border-0";
 
   type FormValues = {
     content: string;
@@ -65,7 +63,7 @@ const AddTodo: NextPage = () => {
       <HeadComponent title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form

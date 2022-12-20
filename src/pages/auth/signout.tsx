@@ -12,7 +12,7 @@ const Signout: NextPage = () => {
   return (
     <>
       <HeadComponent title="Abmelden" />
-      <main className="flex h-screen w-screen items-center justify-center bg-white">
+      <main className="flex h-screen w-screen items-center justify-center bg-white dark:bg-slate-800">
         <button
           onClick={() =>
             signOut({

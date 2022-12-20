@@ -30,7 +30,7 @@ function DashboardCard({
     <Link
       className={classNames(
         smallWidth ? "min-w-min max-w-[200px]" : "min-w-[320px] max-w-md",
-        "backface-visibility-hidden  flex flex-1 transform flex-col gap-3 rounded-xl bg-gray-400 bg-opacity-20 p-4 text-sm font-medium text-black transition hover:scale-105 hover:bg-gray-600 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40"
+        "backface-visibility-hidden  flex flex-1 transform flex-col gap-3 rounded-xl bg-gray-400 bg-opacity-20 p-4 text-sm font-medium transition hover:scale-105 hover:bg-gray-600 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40"
       )}
       href={href}
     >
@@ -38,8 +38,8 @@ function DashboardCard({
         loadingSkeleton
       ) : (
         <>
-          <h3 className="text-2xl font-bold">{title}</h3>
-          <div className="text-lg">{content}</div>
+          <h3 className="text-2xl font-bold dark:text-white">{title}</h3>
+          <div className="text-lg dark:text-slate-400">{content}</div>
         </>
       )}
     </Link>

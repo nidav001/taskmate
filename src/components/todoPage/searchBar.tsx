@@ -1,18 +1,22 @@
+import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import useSearchStore from "../../hooks/searchStore";
+import { inputStyle } from "../../styles/buttonStyle";
 
 function SearchBar() {
   const { search, setSearch } = useSearchStore();
   return (
-    <div className="flex flex-col items-center">
-      <form>
-        <input
-          type="text"
-          className="w-50 rounded-xl"
-          placeholder="Search..."
-          defaultValue={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </form>
+    <div className="relative w-80">
+      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+        <MagnifyingGlassIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+      </div>
+      <input
+        type="search"
+        id="todo-search"
+        className={inputStyle + " block h-14 w-full pl-10"}
+        placeholder="Suche..."
+        defaultValue={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
     </div>
   );
 }

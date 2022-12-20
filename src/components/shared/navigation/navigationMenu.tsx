@@ -14,7 +14,7 @@ type NavigationMenuProps = {
 
 function NavigationMenu({ logoShown, closeMenu }: NavigationMenuProps) {
   const menuItemStyle =
-    "rounded-full p-3 my-1 mx-1 hover:bg-sky-400 transform transition flex items-center hover:scale-110 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40 bg-opacity-20 font-medium backface-visibility-hidden text-sm";
+    "rounded-full p-3 my-1 mx-1 hover:bg-sky-400 transform transition flex items-center hover:scale-110 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40 bg-opacity-20 font-medium backface-visibility-hidden text-sm dark:text-white";
 
   const iconStyle = "h-7 w-7 text-sky-600";
 
