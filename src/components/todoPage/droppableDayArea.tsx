@@ -21,9 +21,9 @@ type DroppableDayAreaProps = {
 
 const todoLoadingSkeleton = (
   <div role="status" className="max-w-sm animate-pulse">
-    <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-dark"></div>
-    <div className="mb-2.5 h-2 max-w-[240px] rounded-full bg-dark "></div>
-    <div className="mb-2.5 h-2 max-w-[270px] rounded-full bg-dark"></div>
+    <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-400"></div>
+    <div className="mb-2.5 h-2 max-w-[240px] rounded-full bg-gray-400 "></div>
+    <div className="mb-2.5 h-2 max-w-[270px] rounded-full bg-gray-400"></div>
     <span className="sr-only">Loading...</span>
   </div>
 );
@@ -81,7 +81,7 @@ function DroppableDayArea({
         open: true,
       });
     }
-  }, []);
+  }, [todos]);
 
   //Using day + disclosureOpen in Droppable key to force rerender when disclosureOpen changes
   return (
@@ -91,7 +91,7 @@ function DroppableDayArea({
           <Disclosure defaultOpen={disclosureOpen}>
             <div className="w-80">
               <Disclosure.Button
-                className="w-80"
+                className="w-80 rounded-lg p-2 hover:bg-gray-100"
                 onClick={() => handleDisclosureButtonClick()}
               >
                 {({ open }) => (
@@ -103,7 +103,7 @@ function DroppableDayArea({
                     <div className="flex flex-col">
                       <div
                         className={`flex h-8 w-8 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black ${
-                          isLoading ? "animate-pulse bg-dark" : ""
+                          isLoading ? "animate-pulse bg-gray-400" : ""
                         }`}
                       >
                         {isLoading ? null : todos.length}

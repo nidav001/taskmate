@@ -69,7 +69,7 @@ const AddTodo: NextPage = () => {
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form
-              className="items-left flex flex-col gap-2"
+              className="items-left flex flex-col justify-center gap-2"
               onSubmit={handleSubmit(onSubmit)}
             >
               <input
@@ -90,9 +90,11 @@ const AddTodo: NextPage = () => {
                 setSelected={setSelected}
                 setValue={setValue}
               />
-              <button className={buttonStyle} type="submit">
-                Hinzufügen
-              </button>
+              <div className="flex w-full justify-center">
+                <button className={"w-3/4 " + buttonStyle} type="submit">
+                  Hinzufügen
+                </button>
+              </div>
             </form>
           </div>
         </main>

@@ -14,7 +14,7 @@ function Logo({ logoShown }: LogoProps) {
           "py-3 pl-1 text-2xl font-bold tracking-tight text-black"
         )}
       >
-        <span className="text-daccent">T3</span>Todo
+        <span className="text-sky-600">T3</span>Todo
       </div>
     </Link>
   );

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import useDisclosureStore from "../../../hooks/disclosureStore";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
+import { buttonStyle } from "../../../styles/buttonStyle";
 import { trpc } from "../../../utils/trpc";
 import Modal from "./modal";
 
@@ -91,8 +92,6 @@ function Toolbar({ refetch }: ToolbarProps) {
     });
     setAllFalse(!allFalse);
   }
-
-  const buttonStyle = "rounded-full bg-dark/20 hover:bg-laccent p-3";
 
   const iconStyle = "h-8 w-8";
 

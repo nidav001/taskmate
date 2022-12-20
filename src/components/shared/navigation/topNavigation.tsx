@@ -28,7 +28,7 @@ function TopNaviagtion() {
     <Menu>
       <div>
         <Menu.Button
-          className="outline-non flex rounded-full text-sm ring-2 ring-daccent/60 ring-offset-1  hover:ring-daccent"
+          className="outline-non ring-sky/60 flex rounded-full text-sm ring-2 ring-offset-1 hover:ring-sky-600"
           aria-label="profile"
         >
           <Image
@@ -77,9 +77,9 @@ function TopNaviagtion() {
         <div className="md:hidden">
           <Menu.Button
             aria-label="menu"
-            className="rounded-md p-1 ring-2 ring-daccent/60 hover:ring-daccent"
+            className="ring-sky/60 rounded-md p-1 ring-2 hover:ring-sky-600"
           >
-            <Bars3Icon className="h-6 w-6 text-daccent" />
+            <Bars3Icon className="h-6 w-6 text-sky-600" />
           </Menu.Button>
           <Transition
             as={Fragment}
@@ -98,8 +98,9 @@ function TopNaviagtion() {
       )}
     </Menu>
   );
+
   return (
-    <div className="min-w-screen sticky top-0 z-10 flex h-20 items-center justify-between gap-2 border-b bg-newGray2 px-4 md:justify-end">
+    <div className="min-w-screen sticky top-0 z-10 flex h-20 items-center justify-between gap-2 border-b bg-gray-100  px-4 md:justify-end">
       {MainMenuButton}
       <Logo logoShown={LogoPosition.Top} />
       {ProfileMenuButton}

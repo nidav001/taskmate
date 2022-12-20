@@ -22,7 +22,7 @@ function TodoCard({
   };
 
   return (
-    <div className="group flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-newGray">
+    <div className="group flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400">
       <div className="group flex items-center justify-between gap-2">
         <input
           type="checkbox"
@@ -41,7 +41,7 @@ function TodoCard({
           defaultValue={todo.content}
           className={classNames(
             todoDone ? "line-through" : "",
-            "resize-none border-0 bg-gray-300 text-base focus:ring-0 group-hover:bg-newGray"
+            "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400"
           )}
         />
         <EllipsisVerticalIcon className="h-8 w-8" />
