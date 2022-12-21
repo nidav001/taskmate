@@ -8,6 +8,7 @@ type TodoCardProps = {
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
+  isDragging?: boolean;
 };
 
 function TodoCard({
@@ -15,7 +16,6 @@ function TodoCard({
   setTodoDone,
   todo,
   onBlurTextArea,
-  disclosureOpen,
 }: TodoCardProps) {
   const handleOnChange = () => {
     if (setTodoDone) {
@@ -24,7 +24,7 @@ function TodoCard({
   };
 
   return (
-    <div className="group flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600">
+    <div className="group flex transform flex-col rounded-xl bg-gray-300 py-1 px-4 text-black transition-opacity duration-300 ease-in-out hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600">
       <div className="group flex items-center justify-between gap-2">
         <input
           type="checkbox"
@@ -46,9 +46,7 @@ function TodoCard({
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />
-        {/* <Transition show={disclosureOpen} {...threeDots}> */}
         <EllipsisVerticalIcon className="h-8 w-8" />
-        {/* </Transition> */}
       </div>
     </div>
   );

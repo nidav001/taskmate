@@ -4,11 +4,11 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { Droppable } from "react-beautiful-dnd";
-import useDisclosureStore from "../../hooks/disclosureStore";
+import { Droppable, type DraggableRubric } from "react-beautiful-dnd";
 import useTodoOrderStore from "../../hooks/todoOrderStore";
 import { panel } from "../../styles/transitionClasses";
 import { type Day } from "../../types/enums";
+import TodoCard from "../shared/todoCard";
 import DraggableTodoCard from "./draggableTodoCard";
 
 type DroppableDayAreaProps = {
@@ -37,51 +37,39 @@ function DroppableDayArea({
   isLoading,
   date,
 }: DroppableDayAreaProps) {
-  const { days, setDay, resetDay } = useDisclosureStore();
-
   const [disclosureOpen, setDisclosureOpen] = useState(false);
-
-  const dayForDisclosure = days.find((d) => d.day === day)!;
-
-  useEffect(() => {
-    setDisclosureOpen(dayForDisclosure.open);
-  }, [todos, days]);
+  const [dayModified, setDayModified] = useState(false);
 
   useEffect(() => {
     const open = checkIfDisclosureShouldBeOpen();
-    if (open !== null) {
-      setDay({
-        day: day,
-        open: open,
-        modified: false,
-      });
-    }
-  }, [todos]);
+    setDisclosureOpen(open);
+  }, []);
 
   useEffect(() => {
-    resetDay(day);
-  }, []);
+    if (searchValue !== "" && filteredTodos.length > 0) {
+      setDisclosureOpen(true);
+    } else {
+      const open = checkIfDisclosureShouldBeOpen();
+      setDisclosureOpen(open);
+    }
+  }, [searchValue]);
 
   const todoOrder =
     useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
       ?.todoOrder ?? [];
 
-  const currentDate = <p>{date.toLocaleString()}</p>;
+  const currentDate = <p>{date.toLocaleString().toString()}</p>;
 
   function handleDisclosureButtonClick() {
-    setDay({
-      day: day,
-      open: !disclosureOpen,
-      modified: true,
-    });
+    setDisclosureOpen(!disclosureOpen);
+    setDayModified(true);
   }
 
   function checkIfDisclosureShouldBeOpen() {
     //Skip if day is manually modified
-    if (!dayForDisclosure.modified) {
+    if (!dayModified) {
       //Create conditions for disclosure to be open
       const dateIsString = typeof date === "string";
-      const todosAreFilled = todos.length > 0;
       let dateIsBiggerOrEqualsToday = false;
       if (!dateIsString) {
         dateIsBiggerOrEqualsToday =
@@ -89,16 +77,13 @@ function DroppableDayArea({
       }
 
       //Check if conditions are met
-      if (!todosAreFilled || (!dateIsString && !dateIsBiggerOrEqualsToday)) {
+      if (!dateIsString && !dateIsBiggerOrEqualsToday) {
         return false;
-      } else if (
-        (todosAreFilled && !dateIsString && dateIsBiggerOrEqualsToday) ||
-        dateIsString
-      ) {
+      } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
         return true;
       }
     }
-    return null;
+    return disclosureOpen;
   }
 
   const DayAreaHeader = (
@@ -138,83 +123,43 @@ function DroppableDayArea({
     ?.filter((todo) =>
       todo.content.toLowerCase().includes(searchValue.toLowerCase())
     )
-
     .sort((a, b) => {
       const aIndex = todoOrder.findIndex((todo) => todo.id === a.id);
       const bIndex = todoOrder.findIndex((todo) => todo.id === b.id);
       return aIndex - bIndex;
     });
 
-  //Using day + disclosureOpen in Droppable key to force rerender when disclosureOpen changes
+  const itemToShowWhileDragging = (rubric: DraggableRubric) => {
+    return (
+      <div className="my-1">
+        <TodoCard todo={filteredTodos[rubric.source.index]!} todoDone={false} />
+      </div>
+    );
+  };
+
   return (
-    // <Droppable key={day + disclosureOpen} droppableId={day}>
-    //   {(provided) => (
-    //     <>
-    //       <Disclosure defaultOpen={disclosureOpen}>
-    //         {({ open }) => (
-    //           <div className="w-80">
-    //             {DroppableDayAreaHeader}
-    //             <div
-    //               className="flex w-80 flex-col py-4"
-    //               ref={provided.innerRef}
-    //               {...provided.droppableProps}
-    //             >
-    //               {isLoading
-    //                 ? todoLoadingSkeleton
-    //                 : todos
-    //                     ?.filter((todo) =>
-    //                       todo.content
-    //                         .toLowerCase()
-    //                         .includes(searchValue.toLowerCase())
-    //                     )
-
-    //                     .sort((a, b) => {
-    //                       const aIndex = todoOrder.findIndex(
-    //                         (todo) => todo.id === a.id
-    //                       );
-    //                       const bIndex = todoOrder.findIndex(
-    //                         (todo) => todo.id === b.id
-    //                       );
-    //                       return aIndex - bIndex;
-    //                     })
-
-    //                     .map((todo, index) => (
-    //                       <Transition
-    //                         appear
-    //                         key={todo.id}
-    //                         show={open}
-    //                         {...disclosurepanel}
-    //                       >
-    //                         <Disclosure.Panel static>
-    //                           <DraggableTodoCard
-    //                             disclosureOpen={open}
-    //                             refetch={refetch}
-    //                             index={index}
-    //                             todo={todo}
-    //                           />
-    //                         </Disclosure.Panel>
-    //                       </Transition>
-    //                     ))}
-    //               {provided.placeholder}
-    //             </div>
-    //           </div>
-    //         )}
-    //       </Disclosure>
-    //     </>
-    //   )}
-    // </Droppable>
-
-    <Disclosure defaultOpen={disclosureOpen}>
+    <Disclosure>
       {({ open }) => (
         <div className="w-80">
           {DayAreaHeader}
           <Transition
-            show={open}
-            className={!open ? "overflow-hidden" : ""}
+            className={!disclosureOpen ? "overflow-hidden" : ""}
+            show={disclosureOpen}
             {...panel}
           >
             <Disclosure.Panel static>
-              <Droppable key={day + disclosureOpen} droppableId={day}>
+              <Droppable
+                droppableId={day}
+                renderClone={(provided, snapshot, rubric) => (
+                  <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                  >
+                    {itemToShowWhileDragging(rubric)}
+                  </div>
+                )}
+              >
                 {(provided) => (
                   <div
                     className="flex w-80 flex-col py-4"
@@ -226,12 +171,13 @@ function DroppableDayArea({
                       : filteredTodos.map((todo, index) => (
                           <DraggableTodoCard
                             key={todo.id}
-                            disclosureOpen={open}
+                            disclosureOpen={disclosureOpen}
                             refetch={refetch}
                             index={index}
                             todo={todo}
                           />
                         ))}
+
                     {provided.placeholder}
                   </div>
                 )}

@@ -35,10 +35,10 @@ export const todoItem = {
 };
 
 export const panel = {
-  enter: "transition transition-[max-height] duration-200 ease-in",
+  enter: "transition transition-[max-height] duration-[200ms] ease-in",
   enterFrom: "transform max-h-0",
   enterTo: "transform max-h-screen",
-  leave: "transition transition-[max-height] duration-400 ease-out",
+  leave: "transition transition-[max-height] duration-[300ms] ease-out",
   leaveFrom: "transform max-h-screen",
   leaveTo: "transform max-h-0",
 };

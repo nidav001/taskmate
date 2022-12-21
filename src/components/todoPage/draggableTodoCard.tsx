@@ -62,7 +62,7 @@ function DraggableTodoCard({
 
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
-      {(provided) => {
+      {(provided, snapshot) => {
         return (
           <div
             className="my-1 "
@@ -81,16 +81,6 @@ function DraggableTodoCard({
         );
       }}
     </Draggable>
-
-    // <div className="my-1 ">
-    //   <TodoCard
-    //     disclosureOpen={disclosureOpen}
-    //     todoDone={todoDone}
-    //     setTodoDone={setTodoDoneCallback}
-    //     todo={todo}
-    //     onBlurTextArea={onBlurTextArea}
-    //   />
-    // </div>
   );
 }
 
