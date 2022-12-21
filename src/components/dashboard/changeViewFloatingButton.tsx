@@ -1,6 +1,6 @@
 import { faBars, faTableCellsLarge } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { floatingButtonDivStyle } from "../../styles/buttonStyle";
+import { buttonStyle, floatingButtonDivStyle } from "../../styles/buttonStyle";
 
 type FloatingButtonProps = {
   setSmallWidth: (smallWidth: boolean) => void;
@@ -9,7 +9,7 @@ type FloatingButtonProps = {
 
 function FloatingButton({ setSmallWidth, smallWidth }: FloatingButtonProps) {
   return (
-    <div className={floatingButtonDivStyle}>
+    <div className={floatingButtonDivStyle + " " + buttonStyle}>
       <button
         className="h-10 w-10 p-2"
         onClick={() => setSmallWidth(!smallWidth)}

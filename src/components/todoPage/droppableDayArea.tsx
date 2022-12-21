@@ -36,15 +36,30 @@ function DroppableDayArea({
   isLoading,
   date,
 }: DroppableDayAreaProps) {
-  const { Days, setDay } = useDisclosureStore();
+  const { days, setDay, resetDay } = useDisclosureStore();
 
   const [disclosureOpen, setDisclosureOpen] = useState(false);
 
-  const dayForDisclosure = Days.find((d) => d.day === day)!;
+  const dayForDisclosure = days.find((d) => d.day === day)!;
 
   useEffect(() => {
     setDisclosureOpen(dayForDisclosure.open);
-  }, [todos, Days]);
+  }, [todos, days]);
+
+  useEffect(() => {
+    const open = checkIfDisclosureShouldBeOpen();
+    if (open !== null) {
+      setDay({
+        day: day,
+        open: open,
+        modified: false,
+      });
+    }
+  }, [todos]);
+
+  useEffect(() => {
+    resetDay(day);
+  }, []);
 
   const todoOrder =
     useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
@@ -84,17 +99,6 @@ function DroppableDayArea({
     }
     return null;
   }
-
-  useEffect(() => {
-    const open = checkIfDisclosureShouldBeOpen();
-    if (open !== null) {
-      setDay({
-        day: day,
-        open: open,
-        modified: false,
-      });
-    }
-  }, [todos]);
 
   const DroppableDayAreaHeader = (
     <Disclosure.Button

@@ -21,7 +21,7 @@ function NavigationMenu({ logoShown, closeMenu }: NavigationMenuProps) {
   const itemWrapperStyle = "flex items-center gap-1 ";
 
   return (
-    <div className="absolute sticky top-0 z-10 ">
+    <div className="absolute sticky top-0 z-10 w-1/2 sm:w-full">
       <Logo logoShown={logoShown} />
       <Link onClick={closeMenu} href="/" className={menuItemStyle}>
         <div className={itemWrapperStyle}>
@@ -38,7 +38,7 @@ function NavigationMenu({ logoShown, closeMenu }: NavigationMenuProps) {
       <Link onClick={closeMenu} href="/addTodo" className={menuItemStyle}>
         <div className={itemWrapperStyle}>
           <PlusCircleIcon className={iconStyle} />
-          Add Todo
+          Hinzufügen
         </div>
       </Link>
       <Link onClick={closeMenu} href="/admin" className={menuItemStyle}>

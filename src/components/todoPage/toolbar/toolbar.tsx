@@ -1,5 +1,4 @@
 import {
-  ArrowRightIcon,
   CheckIcon,
   ChevronDoubleDownIcon,
   ChevronDoubleUpIcon,
@@ -23,14 +22,15 @@ function Toolbar({ refetch }: ToolbarProps) {
   const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const { resetTodoOrder } = useTodoOrderStore();
   const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
-  const { Days, setDay } = useDisclosureStore();
+  const { days, setDay } = useDisclosureStore();
   const [allFalse, setAllFalse] = useState(
-    Days.every((day) => day.open === false)
+    days.every((day) => day.open === false)
   );
 
   useEffect(() => {
-    setAllFalse(Days.every((day) => day.open === false));
-  }, [Days]);
+    //Useeffect for the case that all days are manually closed
+    setAllFalse(days.every((day) => day.open === false));
+  }, [days]);
 
   const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
     return (
@@ -87,8 +87,8 @@ function Toolbar({ refetch }: ToolbarProps) {
   }
 
   function handleOnClickCollapseAll() {
-    Days.forEach((day) => {
-      setDay({ day: day.day, open: allFalse });
+    days.forEach((day) => {
+      setDay({ day: day.day, open: allFalse, modified: true });
     });
     setAllFalse(!allFalse);
   }
@@ -107,17 +107,6 @@ function Toolbar({ refetch }: ToolbarProps) {
           className={buttonStyle}
         >
           <CheckIcon className={iconStyle} />
-        </button>
-        <button
-          title="Archivieren"
-          onClick={() => {
-            if (localTodos?.length > 0) {
-              setIsArchivedModalOpen(true);
-            }
-          }}
-          className={buttonStyle}
-        >
-          <ArrowRightIcon className={iconStyle} />
         </button>
         <button
           title="Collapse"

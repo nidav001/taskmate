@@ -32,6 +32,7 @@ const Todos: NextPage = () => {
 
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
+  // const { reset, days } = useDisclosureStore();
 
   const { search } = useSearchStore();
 
@@ -39,6 +40,11 @@ const Todos: NextPage = () => {
     validateColumnTodoOrders();
     setLocalTodos(todos);
   }, [todos]);
+
+  // useEffect(() => {
+  //   const daysAreModified = days.some((day) => day.modified === true);
+  //   if (daysAreModified) reset();
+  // }, []);
 
   const validateColumnTodoOrders = () => {
     columns.map((col) => {

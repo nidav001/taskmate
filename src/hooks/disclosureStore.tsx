@@ -9,32 +9,44 @@ type DayOpen = {
 };
 
 interface DisclosureState {
-  Days: DayOpen[];
+  days: DayOpen[];
   setDay: (day: DayOpen) => void;
+  resetDay: (day: Day) => void;
 }
+
+const initialDays: DayOpen[] = [
+  { day: Day.Allgemein, open: true, modified: false },
+  { day: Day.Montag, open: true, modified: false },
+  { day: Day.Dienstag, open: true, modified: false },
+  { day: Day.Mittwoch, open: true, modified: false },
+  { day: Day.Donnerstag, open: true, modified: false },
+  { day: Day.Freitag, open: true, modified: false },
+  { day: Day.Samstag, open: true, modified: false },
+  { day: Day.Sonntag, open: true, modified: false },
+];
 
 const useDisclosureStore = create<DisclosureState>()(
   devtools(
     persist(
       (set) => ({
-        Days: [
-          { day: Day.Allgemein, open: true, modified: false },
-          { day: Day.Montag, open: true, modified: false },
-          { day: Day.Dienstag, open: true, modified: false },
-          { day: Day.Mittwoch, open: true, modified: false },
-          { day: Day.Donnerstag, open: true, modified: false },
-          { day: Day.Freitag, open: true, modified: false },
-          { day: Day.Samstag, open: true, modified: false },
-          { day: Day.Sonntag, open: true, modified: false },
-        ],
+        days: initialDays,
         setDay: (day) =>
           set((state) => ({
-            Days: state.Days.map((d) => (d.day === day.day ? day : d)),
+            days: state.days.map((d) => (d.day === day.day ? day : d)),
+          })),
+        resetDay: (day) =>
+          set((state) => ({
+            days: state.days.map((d) => {
+              if (d.day === day) {
+                return { day: d.day, open: true, modified: false };
+              }
+              return d;
+            }),
           })),
       }),
 
       {
-        name: "disclosure-storage2",
+        name: "disclosure-storage18",
       }
     )
   )

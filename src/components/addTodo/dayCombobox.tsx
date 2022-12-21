@@ -22,7 +22,7 @@ function DayCombobox({ selected, setSelected, setValue }: DayComboboxProps) {
       >
         <Listbox.Button
           className={
-            inputStyle + " relative w-full cursor-default p-3 pr-10 text-left"
+            inputStyle + " relative w-full cursor-default pr-10 text-left"
           }
         >
           <span className="block truncate dark:text-white">{selected}</span>

@@ -14,8 +14,6 @@ const Home: NextPage = () => {
   const [smallWidth, setSmallWidth] = useState<boolean>(true);
   const todos = trpc.todo.getTodos.useQuery();
   const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
-  const archivedTodos = trpc.todo.getArchivedTodos.useQuery();
-  const deletedTodos = trpc.todo.getDeletedTodos.useQuery();
 
   const todaysDate = new Date().toLocaleDateString();
   const weekday = DateTime.now().weekdayLong;
@@ -33,6 +31,7 @@ const Home: NextPage = () => {
       </div>
     </div>
   );
+
   return (
     <>
       <HeadComponent title="T3Todo" />
@@ -49,10 +48,10 @@ const Home: NextPage = () => {
               smallWidth={smallWidth}
             />
             <DashboardCard
-              content={archivedTodos.data?.length}
-              title="Archiviert"
-              href="/todos/archived"
-              isLoading={archivedTodos.isLoading}
+              content={0}
+              title="Allgemein"
+              href="/todos/general"
+              isLoading={true}
               smallWidth={smallWidth}
             />
             <DashboardCard
@@ -60,13 +59,6 @@ const Home: NextPage = () => {
               title="Finalisiert"
               href="/todos/finalized"
               isLoading={finalizedTodos.isLoading}
-              smallWidth={smallWidth}
-            />
-            <DashboardCard
-              content={deletedTodos.data?.length}
-              title="Gelöscht"
-              href="/todos"
-              isLoading={deletedTodos.isLoading}
               smallWidth={smallWidth}
             />
           </div>
