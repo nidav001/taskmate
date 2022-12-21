@@ -40,8 +40,10 @@ function DroppableDayArea({
 
   const [disclosureOpen, setDisclosureOpen] = useState(false);
 
+  const dayForDisclosure = Days.find((d) => d.day === day)!;
+
   useEffect(() => {
-    setDisclosureOpen(Days.find((d) => d.day === day)?.open ?? false);
+    setDisclosureOpen(dayForDisclosure.open);
   }, [todos, Days]);
 
   const todoOrder =
@@ -54,34 +56,45 @@ function DroppableDayArea({
     setDay({
       day: day,
       open: !disclosureOpen,
+      modified: true,
     });
   }
 
-  useEffect(() => {
-    if (
-      (todos && todos.length === 0) ||
-      (typeof date !== "string" &&
-        date.startOf("day") <= DateTime.now().startOf("day"))
-    ) {
-      setDay({
-        day: day,
-        open: false,
-      });
-    }
+  function checkIfDisclosureShouldBeOpen() {
+    //Skip if day is manually modified
+    if (!dayForDisclosure.modified) {
+      //Create conditions for disclosure to be open
+      const dateIsString = typeof date === "string";
+      const todosAreFilled = todos.length > 0;
+      let dateIsBiggerOrEqualsToday = false;
+      if (!dateIsString) {
+        dateIsBiggerOrEqualsToday =
+          date.startOf("day") >= DateTime.now().startOf("day");
+      }
 
-    if (
-      (todos &&
-        todos.length > 0 &&
-        typeof date !== "string" &&
-        date.startOf("day") >= DateTime.now().startOf("day")) ||
-      typeof date === "string"
-    ) {
+      //Check if conditions are met
+      if (!todosAreFilled || (!dateIsString && !dateIsBiggerOrEqualsToday)) {
+        return false;
+      } else if (
+        (todosAreFilled && !dateIsString && dateIsBiggerOrEqualsToday) ||
+        dateIsString
+      ) {
+        return true;
+      }
+    }
+    return null;
+  }
+
+  useEffect(() => {
+    const open = checkIfDisclosureShouldBeOpen();
+    if (open !== null) {
       setDay({
         day: day,
-        open: true,
+        open: open,
+        modified: false,
       });
     }
-  }, []);
+  }, [todos]);
 
   const DroppableDayAreaHeader = (
     <Disclosure.Button

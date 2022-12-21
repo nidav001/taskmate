@@ -5,6 +5,7 @@ import { Day } from "../types/enums";
 type DayOpen = {
   day: Day;
   open: boolean;
+  modified: boolean;
 };
 
 interface DisclosureState {
@@ -17,14 +18,14 @@ const useDisclosureStore = create<DisclosureState>()(
     persist(
       (set) => ({
         Days: [
-          { day: Day.Allgemein, open: true },
-          { day: Day.Montag, open: true },
-          { day: Day.Dienstag, open: true },
-          { day: Day.Mittwoch, open: true },
-          { day: Day.Donnerstag, open: true },
-          { day: Day.Freitag, open: true },
-          { day: Day.Samstag, open: true },
-          { day: Day.Sonntag, open: true },
+          { day: Day.Allgemein, open: true, modified: false },
+          { day: Day.Montag, open: true, modified: false },
+          { day: Day.Dienstag, open: true, modified: false },
+          { day: Day.Mittwoch, open: true, modified: false },
+          { day: Day.Donnerstag, open: true, modified: false },
+          { day: Day.Freitag, open: true, modified: false },
+          { day: Day.Samstag, open: true, modified: false },
+          { day: Day.Sonntag, open: true, modified: false },
         ],
         setDay: (day) =>
           set((state) => ({
