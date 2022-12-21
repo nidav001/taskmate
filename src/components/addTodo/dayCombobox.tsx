@@ -2,6 +2,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import { inputStyle } from "../../styles/buttonStyle";
+import { dropdown } from "../../styles/transitionClasses";
 import { Day } from "../../types/enums";
 
 type DayComboboxProps = {
@@ -33,12 +34,7 @@ function DayCombobox({ selected, setSelected, setValue }: DayComboboxProps) {
             />
           </span>
         </Listbox.Button>
-        <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
+        <Transition as={Fragment} {...dropdown}>
           <Listbox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-1 dark:bg-slate-700">
             {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
               <Listbox.Option

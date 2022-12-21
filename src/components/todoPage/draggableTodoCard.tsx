@@ -9,9 +9,15 @@ type DraggableTodoCardProps = {
   todo: Todo;
   index: number;
   refetch: () => void;
+  disclosureOpen: boolean;
 };
 
-function DraggableTodoCard({ todo, index, refetch }: DraggableTodoCardProps) {
+function DraggableTodoCard({
+  todo,
+  index,
+  refetch,
+  disclosureOpen,
+}: DraggableTodoCardProps) {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
   const { todos, setTodos } = useTodoStore();
 
@@ -54,26 +60,40 @@ function DraggableTodoCard({ todo, index, refetch }: DraggableTodoCardProps) {
     },
   });
 
-  // const longPressEvent = useLongPress(onLongPress, onClick, defaultOptions);
-
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
-      {(provided) => (
-        <div
-          className="my-1 "
-          ref={provided.innerRef}
-          {...provided.dragHandleProps}
-          {...provided.draggableProps}
-        >
-          <TodoCard
-            todoDone={todoDone}
-            setTodoDone={setTodoDoneCallback}
-            todo={todo}
-            onBlurTextArea={onBlurTextArea}
-          />
-        </div>
-      )}
+      {(provided, snapshot) => {
+        // if (snapshot.isDragging) {
+        // }
+
+        return (
+          <div
+            className="my-1 "
+            ref={provided.innerRef}
+            {...provided.dragHandleProps}
+            {...provided.draggableProps}
+          >
+            <TodoCard
+              disclosureOpen={disclosureOpen}
+              todoDone={todoDone}
+              setTodoDone={setTodoDoneCallback}
+              todo={todo}
+              onBlurTextArea={onBlurTextArea}
+            />
+          </div>
+        );
+      }}
     </Draggable>
+
+    // <div className="my-1 ">
+    //   <TodoCard
+    //     disclosureOpen={disclosureOpen}
+    //     todoDone={todoDone}
+    //     setTodoDone={setTodoDoneCallback}
+    //     todo={todo}
+    //     onBlurTextArea={onBlurTextArea}
+    //   />
+    // </div>
   );
 }
 

@@ -7,6 +7,7 @@ type TodoCardProps = {
   setTodoDone?: (id: string, done: boolean) => void;
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
+  disclosureOpen?: boolean;
 };
 
 function TodoCard({
@@ -14,6 +15,7 @@ function TodoCard({
   setTodoDone,
   todo,
   onBlurTextArea,
+  disclosureOpen,
 }: TodoCardProps) {
   const handleOnChange = () => {
     if (setTodoDone) {
@@ -44,7 +46,9 @@ function TodoCard({
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />
+        {/* <Transition show={disclosureOpen} {...threeDots}> */}
         <EllipsisVerticalIcon className="h-8 w-8" />
+        {/* </Transition> */}
       </div>
     </div>
   );
