@@ -1,13 +1,12 @@
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Disclosure } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import useDisclosureStore from "../../hooks/disclosureStore";
 import useTodoOrderStore from "../../hooks/todoOrderStore";
-import { panel } from "../../styles/transitionClasses";
 import { type Day } from "../../types/enums";
 import DraggableTodoCard from "./draggableTodoCard";
 
@@ -147,98 +146,45 @@ function DroppableDayArea({
 
   //Using day + disclosureOpen in Droppable key to force rerender when disclosureOpen changes
   return (
-    // <Droppable key={day + disclosureOpen} droppableId={day}>
-    //   {(provided) => (
-    //     <>
-    //       <Disclosure defaultOpen={disclosureOpen}>
-    //         {({ open }) => (
-    //           <div className="w-80">
-    //             {DroppableDayAreaHeader}
-    //             <div
-    //               className="flex w-80 flex-col py-4"
-    //               ref={provided.innerRef}
-    //               {...provided.droppableProps}
-    //             >
-    //               {isLoading
-    //                 ? todoLoadingSkeleton
-    //                 : todos
-    //                     ?.filter((todo) =>
-    //                       todo.content
-    //                         .toLowerCase()
-    //                         .includes(searchValue.toLowerCase())
-    //                     )
-
-    //                     .sort((a, b) => {
-    //                       const aIndex = todoOrder.findIndex(
-    //                         (todo) => todo.id === a.id
-    //                       );
-    //                       const bIndex = todoOrder.findIndex(
-    //                         (todo) => todo.id === b.id
-    //                       );
-    //                       return aIndex - bIndex;
-    //                     })
-
-    //                     .map((todo, index) => (
-    //                       <Transition
-    //                         appear
-    //                         key={todo.id}
-    //                         show={open}
-    //                         {...disclosurepanel}
-    //                       >
-    //                         <Disclosure.Panel static>
-    //                           <DraggableTodoCard
-    //                             disclosureOpen={open}
-    //                             refetch={refetch}
-    //                             index={index}
-    //                             todo={todo}
-    //                           />
-    //                         </Disclosure.Panel>
-    //                       </Transition>
-    //                     ))}
-    //               {provided.placeholder}
-    //             </div>
-    //           </div>
-    //         )}
-    //       </Disclosure>
-    //     </>
-    //   )}
-    // </Droppable>
-
-    <Disclosure defaultOpen={disclosureOpen}>
-      {({ open }) => (
-        <div className="w-80">
-          {DayAreaHeader}
-          <Transition className="overflow-hidden" show={open}>
-            <Transition.Child {...panel}>
-              <Disclosure.Panel static>
-                <Droppable key={day + disclosureOpen} droppableId={day}>
-                  {(provided) => (
-                    <div
-                      className="flex w-80 flex-col py-4"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {isLoading
-                        ? todoLoadingSkeleton
-                        : filteredTodos.map((todo, index) => (
-                            <DraggableTodoCard
-                              key={todo.id}
-                              disclosureOpen={open}
-                              refetch={refetch}
-                              index={index}
-                              todo={todo}
-                            />
-                          ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </Disclosure.Panel>
-            </Transition.Child>
-          </Transition>
-        </div>
+    <Droppable key={day + disclosureOpen} droppableId={day}>
+      {(provided) => (
+        <>
+          <Disclosure defaultOpen={disclosureOpen}>
+            {({ open }) => (
+              <div className="w-80">
+                {DayAreaHeader}
+                <div
+                  className="flex w-80 flex-col py-4"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {isLoading
+                    ? todoLoadingSkeleton
+                    : filteredTodos.map((todo, index) => (
+                        // <Transition
+                        //   appear
+                        //   key={todo.id}
+                        //   show={open}
+                        //   {...disclosurepanel}
+                        // >
+                        <Disclosure.Panel key={todo.id} static>
+                          <DraggableTodoCard
+                            disclosureOpen={open}
+                            refetch={refetch}
+                            index={index}
+                            todo={todo}
+                          />
+                        </Disclosure.Panel>
+                        // </Transition>
+                      ))}
+                  {provided.placeholder}
+                </div>
+              </div>
+            )}
+          </Disclosure>
+        </>
       )}
-    </Disclosure>
+    </Droppable>
   );
 }
 

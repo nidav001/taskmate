@@ -30,8 +30,8 @@ export const threeDots = {
 
 export const disclosurepanel = {
   enter: "transition ease-out duration-[600ms]",
-  enterFrom: "opacity-0",
-  enterTo: "opacity-100",
+  enterFrom: "opacity-0 -translate-y-7",
+  enterTo: "opacity-100 translate-y-0",
 };
 
 export const panel = {
