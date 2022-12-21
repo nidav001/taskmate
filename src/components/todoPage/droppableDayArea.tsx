@@ -208,33 +208,35 @@ function DroppableDayArea({
       {({ open }) => (
         <div className="w-80">
           {DayAreaHeader}
-          <Transition className="overflow-hidden" show={open}>
-            <Transition.Child {...panel}>
-              <Disclosure.Panel static>
-                <Droppable key={day + disclosureOpen} droppableId={day}>
-                  {(provided) => (
-                    <div
-                      className="flex w-80 flex-col py-4"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {isLoading
-                        ? todoLoadingSkeleton
-                        : filteredTodos.map((todo, index) => (
-                            <DraggableTodoCard
-                              key={todo.id}
-                              disclosureOpen={open}
-                              refetch={refetch}
-                              index={index}
-                              todo={todo}
-                            />
-                          ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </Disclosure.Panel>
-            </Transition.Child>
+          <Transition
+            show={open}
+            className={!open ? "overflow-hidden" : ""}
+            {...panel}
+          >
+            <Disclosure.Panel static>
+              <Droppable key={day + disclosureOpen} droppableId={day}>
+                {(provided) => (
+                  <div
+                    className="flex w-80 flex-col py-4"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {isLoading
+                      ? todoLoadingSkeleton
+                      : filteredTodos.map((todo, index) => (
+                          <DraggableTodoCard
+                            key={todo.id}
+                            disclosureOpen={open}
+                            refetch={refetch}
+                            index={index}
+                            todo={todo}
+                          />
+                        ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </Disclosure.Panel>
           </Transition>
         </div>
       )}

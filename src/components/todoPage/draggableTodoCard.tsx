@@ -62,10 +62,7 @@ function DraggableTodoCard({
 
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
-      {(provided, snapshot) => {
-        // if (snapshot.isDragging) {
-        // }
-
+      {(provided) => {
         return (
           <div
             className="my-1 "

@@ -28,7 +28,7 @@ export const threeDots = {
   enterTo: "opacity-100 rotate-0 scale-100",
 };
 
-export const disclosurepanel = {
+export const todoItem = {
   enter: "transition ease-out duration-[600ms]",
   enterFrom: "opacity-0",
   enterTo: "opacity-100",
