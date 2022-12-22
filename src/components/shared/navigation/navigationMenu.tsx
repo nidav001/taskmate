@@ -21,7 +21,7 @@ function NavigationMenu({ logoShown, closeMenu }: NavigationMenuProps) {
   const itemWrapperStyle = "flex items-center gap-1 ";
 
   return (
-    <div className="absolute sticky top-0 z-10 w-1/2 sm:w-full">
+    <div className="absolute sticky top-0 z-10 w-2/3 sm:w-full">
       <Logo logoShown={logoShown} />
       <Link onClick={closeMenu} href="/" className={menuItemStyle}>
         <div className={itemWrapperStyle}>
