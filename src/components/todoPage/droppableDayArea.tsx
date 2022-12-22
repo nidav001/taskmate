@@ -4,7 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { Droppable, type DraggableRubric } from "react-beautiful-dnd";
+import { Droppable } from "react-beautiful-dnd";
 import useTodoOrderStore from "../../hooks/todoOrderStore";
 import { panel } from "../../styles/transitionClasses";
 import { type Day } from "../../types/enums";
@@ -91,31 +91,29 @@ function DroppableDayArea({
       className="w-80 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
       onClick={() => handleDisclosureButtonClick()}
     >
-      {({ open }) => (
-        <div className="flex flex-row items-center">
-          <div className="flex w-full flex-col justify-evenly">
-            <h1 className="text-xl font-bold dark:text-white">{day}</h1>
-            <div className="text-slate-400">{currentDate}</div>
+      <div className="flex flex-row items-center">
+        <div className="flex w-full flex-col justify-evenly">
+          <h1 className="text-xl font-bold dark:text-white">{day}</h1>
+          <div className="text-slate-400">{currentDate}</div>
+        </div>
+        <div className="flex flex-col">
+          <div
+            className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
+              isLoading ? "animate-pulse bg-gray-400" : ""
+            }`}
+          >
+            {isLoading ? null : todos.length}
           </div>
-          <div className="flex flex-col">
-            <div
-              className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
-                isLoading ? "animate-pulse bg-gray-400" : ""
+          <div>
+            <FontAwesomeIcon
+              icon={faChevronDown}
+              className={`h-5 transition-all dark:text-white ${
+                disclosureOpen ? "rotate-180" : "rotate-0"
               }`}
-            >
-              {isLoading ? null : todos.length}
-            </div>
-            <div>
-              <FontAwesomeIcon
-                icon={faChevronDown}
-                className={`h-5 transition-all dark:text-white ${
-                  open ? "rotate-180" : "rotate-0"
-                }`}
-              />
-            </div>
+            />
           </div>
         </div>
-      )}
+      </div>
     </Disclosure.Button>
   );
 
@@ -129,63 +127,54 @@ function DroppableDayArea({
       return aIndex - bIndex;
     });
 
-  const itemToShowWhileDragging = (rubric: DraggableRubric) => {
-    return (
-      <div className="my-1">
-        <TodoCard todo={filteredTodos[rubric.source.index]!} todoDone={false} />
-      </div>
-    );
-  };
-
   return (
     <Disclosure>
-      {({ open }) => (
-        <div className="w-80">
-          {DayAreaHeader}
-          <Transition
-            className={!disclosureOpen ? "overflow-hidden" : ""}
-            show={disclosureOpen}
-            {...panel}
-          >
-            <Disclosure.Panel static>
-              <Droppable
-                droppableId={day}
-                renderClone={(provided, snapshot, rubric) => (
-                  <div
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    ref={provided.innerRef}
-                  >
-                    {itemToShowWhileDragging(rubric)}
-                  </div>
-                )}
-              >
-                {(provided) => (
-                  <div
-                    className="flex w-80 flex-col py-4"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {isLoading
-                      ? todoLoadingSkeleton
-                      : filteredTodos.map((todo, index) => (
-                          <DraggableTodoCard
-                            key={todo.id}
-                            disclosureOpen={disclosureOpen}
-                            refetch={refetch}
-                            index={index}
-                            todo={todo}
-                          />
-                        ))}
+      <div className="w-80">
+        {DayAreaHeader}
+        <Transition
+          className={!disclosureOpen ? "overflow-hidden" : ""}
+          show={disclosureOpen}
+          {...panel}
+        >
+          <Disclosure.Panel static>
+            <Droppable
+              droppableId={day}
+              renderClone={(provided, snapshot, rubric) => {
+                const todo = filteredTodos[rubric.source.index]!;
+                return (
+                  <TodoCard
+                    provided={provided}
+                    todo={todo}
+                    todoDone={todo.done}
+                  />
+                );
+              }}
+            >
+              {(provided) => (
+                <div
+                  className="flex w-80 flex-col py-4"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {isLoading
+                    ? todoLoadingSkeleton
+                    : filteredTodos.map((todo, index) => (
+                        <DraggableTodoCard
+                          key={todo.id}
+                          disclosureOpen={disclosureOpen}
+                          refetch={refetch}
+                          index={index}
+                          todo={todo}
+                        />
+                      ))}
 
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </Disclosure.Panel>
-          </Transition>
-        </div>
-      )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </Disclosure.Panel>
+        </Transition>
+      </div>
     </Disclosure>
   );
 }

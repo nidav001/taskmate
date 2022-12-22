@@ -1,5 +1,7 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
+import { useEffect } from "react";
+import { type DraggableProvided } from "react-beautiful-dnd";
 import classNames from "../../utils/classNames";
 
 type TodoCardProps = {
@@ -9,6 +11,7 @@ type TodoCardProps = {
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging?: boolean;
+  provided: DraggableProvided;
 };
 
 function TodoCard({
@@ -16,6 +19,8 @@ function TodoCard({
   setTodoDone,
   todo,
   onBlurTextArea,
+  isDragging,
+  provided,
 }: TodoCardProps) {
   const handleOnChange = () => {
     if (setTodoDone) {
@@ -23,8 +28,19 @@ function TodoCard({
     }
   };
 
+  useEffect(() => {
+    console.log(isDragging);
+  }, [isDragging]);
+
   return (
-    <div className="group flex transform flex-col rounded-xl bg-gray-300 py-1 px-4 text-black transition-opacity duration-300 ease-in-out hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600">
+    <div
+      {...provided?.draggableProps}
+      {...provided?.dragHandleProps}
+      ref={provided?.innerRef}
+      className={`group my-1 flex flex-col rounded-xl bg-gray-500 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
+        isDragging === undefined ? "dark:bg-red-200" : ""
+      }`}
+    >
       <div className="group flex items-center justify-between gap-2">
         <input
           type="checkbox"

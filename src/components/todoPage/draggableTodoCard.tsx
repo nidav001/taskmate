@@ -64,20 +64,15 @@ function DraggableTodoCard({
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
       {(provided, snapshot) => {
         return (
-          <div
-            className="my-1 "
-            ref={provided.innerRef}
-            {...provided.dragHandleProps}
-            {...provided.draggableProps}
-          >
-            <TodoCard
-              disclosureOpen={disclosureOpen}
-              todoDone={todoDone}
-              setTodoDone={setTodoDoneCallback}
-              todo={todo}
-              onBlurTextArea={onBlurTextArea}
-            />
-          </div>
+          <TodoCard
+            provided={provided}
+            isDragging={snapshot.isDragging}
+            disclosureOpen={disclosureOpen}
+            todoDone={todoDone}
+            setTodoDone={setTodoDoneCallback}
+            todo={todo}
+            onBlurTextArea={onBlurTextArea}
+          />
         );
       }}
     </Draggable>
