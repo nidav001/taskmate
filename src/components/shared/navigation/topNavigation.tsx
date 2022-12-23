@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
+import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
 import { LogoPosition } from "../../../types/enums";
 import classNames from "../../../utils/classNames";
 import Logo from "./logo";
@@ -40,15 +41,7 @@ function TopNaviagtion() {
           />
         </Menu.Button>
       </div>
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
+      <Transition as={Fragment} {...profileMenu}>
         <Menu.Items className="absolute right-3 top-14 right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           {menuItems.map((item) => (
             <Menu.Item key={item.name}>
@@ -71,30 +64,29 @@ function TopNaviagtion() {
     </Menu>
   );
 
+  const getStyle = () => {
+    if (typeof window !== "undefined") return { height: screen.height - 80 };
+  };
+
   const MainMenuButton = (
-    <Menu>
+    <Menu as={"div"} className="md:hidden">
       {({ close }) => (
-        <div className="md:hidden">
+        <>
           <Menu.Button
             aria-label="menu"
             className="ring-sky/60 rounded-md p-1 ring-2 hover:ring-sky-600"
           >
             <Bars3Icon className="h-6 w-6 text-sky-600" />
           </Menu.Button>
-          <Transition
-            as={Fragment}
-            enter="transition ease-out duration-100"
-            enterFrom="transform opacity-0 scale-95"
-            enterTo="transform opacity-100 scale-100"
-            leave="transition ease-in duration-75"
-            leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95"
-          >
-            <Menu.Items className="absolute left-0 top-20 h-screen w-full origin-top-right rounded-md bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700">
+          <Transition as={Fragment} {...sideMenu}>
+            <Menu.Items
+              style={getStyle()}
+              className={`absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700`}
+            >
               <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
             </Menu.Items>
           </Transition>
-        </div>
+        </>
       )}
     </Menu>
   );

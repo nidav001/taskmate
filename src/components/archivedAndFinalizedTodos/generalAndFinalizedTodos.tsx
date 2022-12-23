@@ -4,15 +4,15 @@ import SideNavigation from "../shared/navigation/sideNavigation";
 import TopNaviagtion from "../shared/navigation/topNavigation";
 import TodoCard from "../shared/todoCard";
 
-type ArchivedAndFinalizedTodosProps = {
+type GeneralAndFinalizedTodosProps = {
   todos: Todo[];
   title: string;
 };
 
-function ArchivedAndFinalizedTodos({
+function GeneralAndFinalizedTodos({
   todos,
   title,
-}: ArchivedAndFinalizedTodosProps) {
+}: GeneralAndFinalizedTodosProps) {
   return (
     <>
       <HeadComponent title={title} />
@@ -31,4 +31,4 @@ function ArchivedAndFinalizedTodos({
   );
 }
 
-export default ArchivedAndFinalizedTodos;
+export default GeneralAndFinalizedTodos;

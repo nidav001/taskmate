@@ -1,12 +1,12 @@
 import { type NextPage } from "next";
-import ArchivedAndFinalizedTodos from "../../components/archivedAndFinalizedTodos/archivedAndFinalizedTodos";
+import GeneralAndFinalizedTodos from "../../components/archivedAndFinalizedTodos/generalAndFinalizedTodos";
 import getServerSideProps from "../../lib/serverProps";
 import { trpc } from "../../utils/trpc";
 
 const FinalizedTodos: NextPage = () => {
   const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery().data;
   return (
-    <ArchivedAndFinalizedTodos
+    <GeneralAndFinalizedTodos
       todos={finalizedTodos ?? []}
       title="Finalisierte Todos"
     />

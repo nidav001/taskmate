@@ -10,7 +10,7 @@ type TodoCardProps = {
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging?: boolean;
-  provided: DraggableProvided;
+  provided?: DraggableProvided;
 };
 
 function TodoCard({

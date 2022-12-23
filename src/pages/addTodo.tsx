@@ -1,12 +1,14 @@
 import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import DayCombobox from "../components/addTodo/dayCombobox";
 import HeadComponent from "../components/shared/head";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import Snackbar from "../components/shared/snackbar";
 import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
@@ -23,6 +25,7 @@ const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useTodoOrderStore();
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
   const { search, setSearch } = useSearchStore();
+  const [showAlert, setShowAlert] = useState(false);
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -48,7 +51,16 @@ const AddTodo: NextPage = () => {
     },
   });
 
+  useEffect(() => {
+    if (showAlert) {
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+    }
+  }, [showAlert]);
+
   const onSubmit = (data: FormValues) => {
+    setShowAlert(true);
     setSearch("");
     addTodo.mutate({
       id: uuidv4(),
@@ -95,6 +107,12 @@ const AddTodo: NextPage = () => {
               </div>
             </form>
           </div>
+          <Link href="/todos">
+            <Snackbar
+              message="Hinzugefügt. Hier klicken um zu deinen Todos zu gelangen :)"
+              showAlert={showAlert}
+            />
+          </Link>
         </main>
       </div>
     </>

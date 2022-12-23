@@ -1,21 +1,29 @@
 import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useTodoOrderStore from "../../../hooks/todoOrderStore";
 import useTodoStore from "../../../hooks/todoStore";
 import { buttonStyle } from "../../../styles/buttonStyle";
 import { trpc } from "../../../utils/trpc";
-import Modal from "./modal";
+import Snackbar from "../../shared/snackbar";
 
 type ToolbarProps = {
   refetch: () => void;
 };
 
 function Toolbar({ refetch }: ToolbarProps) {
-  const [isArchivedModalOpen, setIsArchivedModalOpen] = useState(false);
   const { resetTodoOrder } = useTodoOrderStore();
-  const { todos: localTodos, setTodos, resetTodos } = useTodoStore();
+  const { todos: localTodos, setTodos } = useTodoStore();
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    if (showAlert) {
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+    }
+  }, [showAlert]);
 
   const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
     return (
@@ -35,16 +43,7 @@ function Toolbar({ refetch }: ToolbarProps) {
     },
     onMutate: (data) => {
       refreshLocalTodos(data.ids);
-    },
-  });
-
-  const archiveTodos = trpc.todo.archiveTodos.useMutation({
-    onSuccess: () => {
-      resetTodoOrder();
-      refetch();
-    },
-    onMutate: () => {
-      resetTodos();
+      setShowAlert(true);
     },
   });
 
@@ -59,17 +58,12 @@ function Toolbar({ refetch }: ToolbarProps) {
     }
   }
 
-  function handleOnClickArchive() {
-    handleOnClickFinalize();
-    const notDoneTodoIds = getTodoIds(localTodos, false);
-
-    if (notDoneTodoIds.length > 0) {
-      archiveTodos.mutate({
-        ids: notDoneTodoIds,
-        done: true,
-      });
-    }
-  }
+  const funnyMessages = [
+    "Endlich geschafft :)",
+    "Gut gemacht :)",
+    "Super :)",
+    "Weiter so :)",
+  ];
 
   const iconStyle = "h-8 w-8";
 
@@ -86,14 +80,10 @@ function Toolbar({ refetch }: ToolbarProps) {
         >
           <CheckIcon className={iconStyle} />
         </button>
-        <Modal
-          title="Neue Woche starten"
-          content="Wirklich alle Todos archivieren und fertige finalisieren?"
-          buttonAccept="Ja"
-          buttonDecline="Nein"
-          isOpen={isArchivedModalOpen}
-          setIsOpen={setIsArchivedModalOpen}
-          onAccept={() => handleOnClickArchive()}
+        <Snackbar
+          showAlert={showAlert}
+          message={"Erledigt."}
+          randomMessages={funnyMessages}
         />
       </div>
     </>

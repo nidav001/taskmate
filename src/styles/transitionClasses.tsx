@@ -37,8 +37,35 @@ export const todoItem = {
 export const panel = {
   enter: "transition transition-[max-height] duration-[100ms] ease-in",
   enterFrom: "transform max-h-0",
-  enterTo: "transform max-h-screen",
+  enterTo: "transform max-h-[4096px]",
   leave: "transition transition-[max-height] duration-[300ms] ease-out",
-  leaveFrom: "transform max-h-screen",
+  leaveFrom: "transform max-h-[4096px]",
   leaveTo: "transform max-h-0",
+};
+
+export const sideMenu = {
+  enter: "transform transition ease-in-out duration-150",
+  enterFrom: "-translate-x-full",
+  enterTo: "-translate-x-0",
+  leave: "transform transition ease-in-out duration-150",
+  leaveFrom: "-translate-x-0",
+  leaveTo: "-translate-x-full",
+};
+
+export const profileMenu = {
+  enter: "transition ease-out duration-100",
+  enterFrom: "transform opacity-0 scale-95",
+  enterTo: "transform opacity-100 scale-100",
+  leave: "transition ease-in duration-75",
+  leaveFrom: "transform opacity-100 scale-100",
+  leaveTo: "transform opacity-0 scale-95",
+};
+
+export const snackbar = {
+  enter: "transition ease-out duration-200",
+  enterFrom: "opacity-0 translate-y-4",
+  enterTo: "opacity-100 translate-y-0",
+  leave: "transition ease-in duration-200",
+  leaveFrom: "opacity-100 translate-y-0",
+  leaveTo: "opacity-0 translate-y-4",
 };
