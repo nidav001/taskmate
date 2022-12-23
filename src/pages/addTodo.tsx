@@ -109,7 +109,7 @@ const AddTodo: NextPage = () => {
           </div>
           <Link href="/todos">
             <Snackbar
-              message="Hinzugefügt. Hier klicken um zu deinen Todos zu gelangen :)"
+              message="Hinzugefügt. Hier klicken um zu deinen Todos zu gelangen ➡️"
               showAlert={showAlert}
             />
           </Link>

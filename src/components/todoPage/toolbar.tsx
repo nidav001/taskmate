@@ -70,7 +70,7 @@ function Toolbar({ refetch }: ToolbarProps) {
     "Beeindruckend 😳",
     "Das nächste Todo wartet schon 🫡",
     "Du coole Socke 😎",
-    "Ganz stark 💪🏼",
+    "Ganz stark 💪",
   ];
 
   const iconStyle = "h-8 w-8";
