@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
-import { inputStyle } from "../../styles/buttonStyle";
+import { inputStyle } from "../../styles/basicStyles";
 import { dropdown } from "../../styles/transitionClasses";
 import { Day } from "../../types/enums";
 
@@ -11,7 +11,11 @@ type DayComboboxProps = {
   setValue: (name: "day" | "content", value: Day) => void;
 };
 
-function DayCombobox({ selected, setSelected, setValue }: DayComboboxProps) {
+export default function DayCombobox({
+  selected,
+  setSelected,
+  setValue,
+}: DayComboboxProps) {
   return (
     <Listbox
       as={"div"}
@@ -57,5 +61,3 @@ function DayCombobox({ selected, setSelected, setValue }: DayComboboxProps) {
     </Listbox>
   );
 }
-
-export default DayCombobox;

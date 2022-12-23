@@ -5,7 +5,7 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
-import useTodoOrderStore from "../../hooks/todoOrderStore";
+import useColumnStore from "../../hooks/columnStore";
 import { panel } from "../../styles/transitionClasses";
 import { type Day } from "../../types/enums";
 import TodoCard from "../shared/todoCard";
@@ -29,7 +29,7 @@ const todoLoadingSkeleton = (
   </div>
 );
 
-function DroppableDayArea({
+export default function DroppableDayArea({
   day,
   todos,
   searchValue,
@@ -41,21 +41,17 @@ function DroppableDayArea({
   const [dayModified, setDayModified] = useState(false);
 
   useEffect(() => {
-    const open = checkIfDisclosureShouldBeOpen();
-    setDisclosureOpen(open);
-  }, []);
-
-  useEffect(() => {
     if (searchValue !== "" && filteredTodos.length > 0) {
       setDisclosureOpen(true);
     } else {
       const open = checkIfDisclosureShouldBeOpen();
       setDisclosureOpen(open);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   const todoOrder =
-    useTodoOrderStore((state) => state.columns).find((col) => col.id === day)
+    useColumnStore((state) => state.columns).find((col) => col.id === day)
       ?.todoOrder ?? [];
 
   const currentDate = <p>{date.toLocaleString().toString()}</p>;
@@ -67,23 +63,24 @@ function DroppableDayArea({
 
   function checkIfDisclosureShouldBeOpen() {
     //Skip if day is manually modified
-    if (!dayModified) {
-      //Create conditions for disclosure to be open
-      const dateIsString = typeof date === "string";
-      let dateIsBiggerOrEqualsToday = false;
-      if (!dateIsString) {
-        dateIsBiggerOrEqualsToday =
-          date.startOf("day") >= DateTime.now().startOf("day");
-      }
+    let returnValue = disclosureOpen;
+    if (dayModified) return returnValue;
 
-      //Check if conditions are met
-      if (!dateIsString && !dateIsBiggerOrEqualsToday) {
-        return false;
-      } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
-        return true;
-      }
+    //Create conditions for disclosure to be open
+    const dateIsString = typeof date === "string";
+    let dateIsBiggerOrEqualsToday = false;
+    if (!dateIsString) {
+      dateIsBiggerOrEqualsToday =
+        date.startOf("day") >= DateTime.now().startOf("day");
     }
-    return disclosureOpen;
+
+    //Check if conditions are met
+    if (!dateIsString && !dateIsBiggerOrEqualsToday) {
+      returnValue = false;
+    } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
+      returnValue = true;
+    }
+    return returnValue;
   }
 
   const DayAreaHeader = (
@@ -140,6 +137,7 @@ function DroppableDayArea({
             <Droppable
               droppableId={day}
               renderClone={(provided, snapshot, rubric) => {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 const todo = filteredTodos[rubric.source.index]!;
                 return (
                   <TodoCard
@@ -178,5 +176,3 @@ function DroppableDayArea({
     </Disclosure>
   );
 }
-
-export default DroppableDayArea;

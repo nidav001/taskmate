@@ -8,13 +8,13 @@ type Column = {
   todoOrder: Todo[];
 };
 
-interface TodoOrderState {
+interface ColumnState {
   columns: Column[];
   setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void;
-  resetTodoOrder: () => void;
+  resetAllColumns: () => void;
 }
 
-const useTodoOrderStore = create<TodoOrderState>()(
+const useColumnStore = create<ColumnState>()(
   devtools(
     persist(
       (set) => ({
@@ -45,7 +45,7 @@ const useTodoOrderStore = create<TodoOrderState>()(
             };
           });
         },
-        resetTodoOrder: () => {
+        resetAllColumns: () => {
           set((state) => {
             const newColumns = state.columns.map((column) => {
               return {
@@ -68,4 +68,4 @@ const useTodoOrderStore = create<TodoOrderState>()(
   )
 );
 
-export default useTodoOrderStore;
+export default useColumnStore;

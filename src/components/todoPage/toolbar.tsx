@@ -2,9 +2,9 @@ import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import useTodoOrderStore from "../../hooks/todoOrderStore";
+import useColumnStore from "../../hooks/columnStore";
 import useTodoStore from "../../hooks/todoStore";
-import { buttonStyle } from "../../styles/buttonStyle";
+import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { trpc } from "../../utils/trpc";
 import Snackbar from "../shared/snackbar";
 
@@ -12,17 +12,17 @@ type ToolbarProps = {
   refetch: () => void;
 };
 
-function Toolbar({ refetch }: ToolbarProps) {
-  const { resetTodoOrder } = useTodoOrderStore();
+export default function Toolbar({ refetch }: ToolbarProps) {
+  const { resetAllColumns: resetTodoOrder } = useColumnStore();
   const { todos: localTodos, setTodos } = useTodoStore();
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-    }
+    if (!showAlert) return;
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000);
   }, [showAlert]);
 
   const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
@@ -73,20 +73,18 @@ function Toolbar({ refetch }: ToolbarProps) {
     "Ganz stark 💪",
   ];
 
-  const iconStyle = "h-8 w-8";
-
   return (
     <>
       <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
         <Link href="/addTodo" className={buttonStyle}>
-          <PlusIcon className={iconStyle} />
+          <PlusIcon className={basicIcon} />
         </Link>
         <button
           title="Finalisieren"
           onClick={() => handleOnClickFinalize()}
           className={buttonStyle}
         >
-          <CheckIcon className={iconStyle} />
+          <CheckIcon className={basicIcon} />
         </button>
         <Snackbar
           showAlert={showAlert}
@@ -97,5 +95,3 @@ function Toolbar({ refetch }: ToolbarProps) {
     </>
   );
 }
-
-export default Toolbar;

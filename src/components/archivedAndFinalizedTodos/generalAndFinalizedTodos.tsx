@@ -1,5 +1,5 @@
 import { type Todo } from "@prisma/client";
-import HeadComponent from "../shared/head";
+import CustomHead from "../shared/customHead";
 import SideNavigation from "../shared/navigation/sideNavigation";
 import TopNaviagtion from "../shared/navigation/topNavigation";
 import TodoCard from "../shared/todoCard";
@@ -9,13 +9,13 @@ type GeneralAndFinalizedTodosProps = {
   title: string;
 };
 
-function GeneralAndFinalizedTodos({
+export default function GeneralAndFinalizedTodos({
   todos,
   title,
 }: GeneralAndFinalizedTodosProps) {
   return (
     <>
-      <HeadComponent title={title} />
+      <CustomHead title={title} />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
@@ -30,5 +30,3 @@ function GeneralAndFinalizedTodos({
     </>
   );
 }
-
-export default GeneralAndFinalizedTodos;

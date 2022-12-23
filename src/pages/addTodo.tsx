@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import DayCombobox from "../components/addTodo/dayCombobox";
-import HeadComponent from "../components/shared/head";
+import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import Snackbar from "../components/shared/snackbar";
+import useColumnStore from "../hooks/columnStore";
 import useSearchStore from "../hooks/searchStore";
-import useTodoOrderStore from "../hooks/todoOrderStore";
 import getServerSideProps from "../lib/serverProps";
-import { buttonStyle, inputStyle } from "../styles/buttonStyle";
+import { buttonStyle, inputStyle } from "../styles/basicStyles";
 import { type Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
@@ -22,7 +22,7 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
-  const { columns, setColumnTodoOrder } = useTodoOrderStore();
+  const { columns, setColumnTodoOrder } = useColumnStore();
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
   const { search, setSearch } = useSearchStore();
   const [showAlert, setShowAlert] = useState(false);
@@ -52,11 +52,11 @@ const AddTodo: NextPage = () => {
   });
 
   useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 5000);
-    }
+    if (!showAlert) return;
+
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 5000);
   }, [showAlert]);
 
   const onSubmit = (data: FormValues) => {
@@ -72,7 +72,7 @@ const AddTodo: NextPage = () => {
 
   return (
     <>
-      <HeadComponent title="Todo hinzufügen" />
+      <CustomHead title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">

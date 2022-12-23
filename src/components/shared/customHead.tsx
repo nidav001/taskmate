@@ -4,7 +4,7 @@ type HeadComponentProps = {
   title: string;
 };
 
-function HeadComponent({ title }: HeadComponentProps) {
+export default function CustomHead({ title }: HeadComponentProps) {
   // useEffect(() => {
   //   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
   //   if (
@@ -37,5 +37,3 @@ function HeadComponent({ title }: HeadComponentProps) {
     </Head>
   );
 }
-
-export default HeadComponent;

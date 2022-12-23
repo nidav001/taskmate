@@ -5,7 +5,7 @@ type LogoProps = {
   logoShown: string;
 };
 
-function Logo({ logoShown }: LogoProps) {
+export default function Logo({ logoShown }: LogoProps) {
   return (
     <Link
       href="/"
@@ -19,5 +19,3 @@ function Logo({ logoShown }: LogoProps) {
     </Link>
   );
 }
-
-export default Logo;

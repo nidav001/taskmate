@@ -1,8 +1,8 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import useSearchStore from "../../hooks/searchStore";
-import { inputStyle } from "../../styles/buttonStyle";
+import { inputStyle } from "../../styles/basicStyles";
 
-function SearchBar() {
+export default function SearchBar() {
   const { search, setSearch } = useSearchStore();
   return (
     <div className="relative w-80">
@@ -20,5 +20,3 @@ function SearchBar() {
     </div>
   );
 }
-
-export default SearchBar;

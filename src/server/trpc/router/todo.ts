@@ -1,15 +1,8 @@
 import { any, z } from "zod";
 
-import { protectedProcedure, publicProcedure, router } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const todoRouter = router({
-  hello: publicProcedure
-    .input(z.object({ text: z.string().nullish() }).nullish())
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input?.text ?? "world"}`,
-      };
-    }),
   getTodos: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todo.findMany({
       where: {
@@ -111,7 +104,7 @@ export const todoRouter = router({
         },
       });
     }),
-  changeDayAfterDnD: protectedProcedure
+  updateTodo: protectedProcedure
     .input(
       z.object({
         id: z.string(),

@@ -8,7 +8,7 @@ import {
   getSession,
   signIn,
 } from "next-auth/react";
-import HeadComponent from "../../components/shared/head";
+import CustomHead from "../../components/shared/customHead";
 
 const Signin: NextPage<{
   csrfToken: string;
@@ -16,7 +16,7 @@ const Signin: NextPage<{
 }> = ({ csrfToken, providers }) => {
   return (
     <>
-      <HeadComponent title="Anmelden" />
+      <CustomHead title="Anmelden" />
       <main className="flex h-screen w-screen items-center justify-center bg-white dark:bg-slate-800">
         {providers &&
           Object.values(providers).map((provider) => (
@@ -27,10 +27,10 @@ const Signin: NextPage<{
                     callbackUrl: `${window.location.origin}`,
                   })
                 }
-                className="rounded-xl border border-gray-300 p-4 hover:bg-gray-100"
+                className="rounded-xl border border-gray-300 p-4 hover:bg-gray-100 dark:bg-slate-600 dark:hover:bg-slate-700"
               >
-                <div className="flex items-center gap-2 text-xl">
-                  <FontAwesomeIcon icon={faGoogle} className="h-8 w-8" />
+                <div className="flex items-center gap-2 text-xl  dark:text-white">
+                  <FontAwesomeIcon icon={faGoogle} className="h-8 w-8 " />
                   Sign in with {provider.name}
                 </div>
               </button>

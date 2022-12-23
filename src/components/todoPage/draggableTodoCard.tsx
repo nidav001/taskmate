@@ -12,7 +12,7 @@ type DraggableTodoCardProps = {
   disclosureOpen: boolean;
 };
 
-function DraggableTodoCard({
+export default function DraggableTodoCard({
   todo,
   index,
   refetch,
@@ -33,16 +33,16 @@ function DraggableTodoCard({
 
   function onBlurTextArea(newContent: string) {
     //Change local todos
-    if (newContent !== todo.content) {
-      if (newContent === "") {
-        setTodos(todos?.filter((mappedTodo) => mappedTodo.id !== todo.id));
-      }
-      //Change database
-      updateTodoContent.mutate({
-        id: todo.id,
-        content: newContent,
-      });
+    if (newContent === todo.content) return;
+
+    if (newContent === "") {
+      setTodos(todos.filter((mappedTodo) => mappedTodo.id !== todo.id));
     }
+    //Change database
+    updateTodoContent.mutate({
+      id: todo.id,
+      content: newContent,
+    });
   }
 
   const setTodoDone = trpc.todo.setTodoDone.useMutation({
@@ -50,7 +50,7 @@ function DraggableTodoCard({
       setTodoDoneState(!todoDone);
 
       // Update local state
-      const newTodos = todos?.map((mappedTodo) => {
+      const newTodos = todos.map((mappedTodo) => {
         if (todo.id === mappedTodo.id) {
           return { ...mappedTodo, done: !mappedTodo.done };
         }
@@ -78,5 +78,3 @@ function DraggableTodoCard({
     </Draggable>
   );
 }
-
-export default DraggableTodoCard;

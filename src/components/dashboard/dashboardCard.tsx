@@ -19,7 +19,7 @@ const loadingSkeleton = (
   </div>
 );
 
-function DashboardCard({
+export default function DashboardCard({
   title,
   href,
   content,
@@ -45,5 +45,3 @@ function DashboardCard({
     </Link>
   );
 }
-
-export default DashboardCard;

@@ -1,76 +1,67 @@
-import { DateTime } from "luxon";
 import { type NextPage } from "next";
-import { useState } from "react";
-import FloatingButton from "../components/dashboard/changeViewFloatingButton";
+import { useEffect, useState } from "react";
 import DashboardCard from "../components/dashboard/dashboardCard";
-import HeadComponent from "../components/shared/head";
+import FloatingButton from "../components/dashboard/floatingButton";
+import TodaysTodos from "../components/dashboard/todaysTodos";
+import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
-import TodoCard from "../components/shared/todoCard";
 import getServerSideProps from "../lib/serverProps";
 import { trpc } from "../utils/trpc";
 
-const Home: NextPage = () => {
-  const [smallWidth, setSmallWidth] = useState<boolean>(true);
-  const todos = trpc.todo.getTodos.useQuery();
-  const finalizedTodos = trpc.todo.getFinalizedTodos.useQuery();
+const Dashboard: NextPage = () => {
+  const [isLayoutSmall, setIsLayoutSmall] = useState<boolean>(false);
+  const todosFromDb = trpc.todo.getTodos.useQuery();
+  const finalizedTodosFromDb = trpc.todo.getFinalizedTodos.useQuery();
 
-  const todaysDate = new Date().toLocaleDateString();
-  const weekday = DateTime.now().weekdayLong;
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsLayoutSmall(true);
+      } else {
+        setIsLayoutSmall(false);
+      }
+    };
 
-  const todaysTodos = (
-    <div className="flex w-full flex-col items-center px-5 pt-5">
-      <h2 className="text-xl font-bold dark:text-white">Heutige Todos</h2>
-      <div className="dark:text-slate-400">{todaysDate}</div>
-      <div className="flex flex-col gap-2 pt-2">
-        {todos.data
-          ?.filter((todo) => todo.day.localeCompare(weekday) === 0)
-          .map((todo) => (
-            <TodoCard
-              isDragging={false}
-              todoDone={todo.done}
-              key={todo.id}
-              todo={todo}
-            />
-          ))}
-      </div>
-    </div>
-  );
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
-      <HeadComponent title="T3Todo" />
+      <CustomHead title="T3Todo" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard
-              content={todos.data?.length}
+              content={todosFromDb.data?.length}
               title="Todos"
               href="/todos"
-              isLoading={todos.isLoading}
-              smallWidth={smallWidth}
+              isLoading={todosFromDb.isLoading}
+              smallWidth={isLayoutSmall}
             />
             <DashboardCard
               content={0}
               title="Allgemein"
               href="/todos/general"
               isLoading={true}
-              smallWidth={smallWidth}
+              smallWidth={isLayoutSmall}
             />
             <DashboardCard
-              content={finalizedTodos.data?.length}
+              content={finalizedTodosFromDb.data?.length}
               title="Finalisiert"
               href="/todos/finalized"
-              isLoading={finalizedTodos.isLoading}
-              smallWidth={smallWidth}
+              isLoading={finalizedTodosFromDb.isLoading}
+              smallWidth={isLayoutSmall}
             />
           </div>
-          {todaysTodos}
+          <TodaysTodos todos={todosFromDb.data ?? []} />
           <FloatingButton
-            smallWidth={smallWidth}
-            setSmallWidth={setSmallWidth}
+            isLayoutSmall={isLayoutSmall}
+            setIsLayoutSmall={setIsLayoutSmall}
           />
         </main>
       </div>
@@ -78,6 +69,6 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
 
 export { getServerSideProps };

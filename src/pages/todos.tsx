@@ -8,14 +8,14 @@ import {
   resetServerContext,
   type DropResult,
 } from "react-beautiful-dnd";
-import HeadComponent from "../components/shared/head";
+import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
 import Toolbar from "../components/todoPage/toolbar";
+import useColumnStore from "../hooks/columnStore";
 import useSearchStore from "../hooks/searchStore";
-import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";
 import serverProps from "../lib/serverProps";
 import { Day } from "../types/enums";
@@ -28,27 +28,17 @@ const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
 
 const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
-  const todos = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
+  const todosFromDb = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
+  const updateTodo = trpc.todo.updateTodo.useMutation();
 
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
-  const { columns, setColumnTodoOrder } = useTodoOrderStore();
-  // const { reset, days } = useDisclosureStore();
+  const { columns, setColumnTodoOrder } = useColumnStore();
 
   const { search } = useSearchStore();
 
-  useEffect(() => {
-    validateColumnTodoOrders();
-    setLocalTodos(todos);
-  }, [todos]);
-
-  // useEffect(() => {
-  //   const daysAreModified = days.some((day) => day.modified === true);
-  //   if (daysAreModified) reset();
-  // }, []);
-
   const validateColumnTodoOrders = () => {
     columns.map((col) => {
-      const columnTodos = todos
+      const columnTodos = todosFromDb
         .filter((todo) => todo.day === col.id)
         .sort((a, b) => a.index - b.index);
 
@@ -56,15 +46,19 @@ const Todos: NextPage = () => {
     });
   };
 
-  const changeDay = trpc.todo.changeDayAfterDnD.useMutation();
+  useEffect(() => {
+    validateColumnTodoOrders();
+    setLocalTodos(todosFromDb);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todosFromDb]);
 
-  const reorder = (result: Todo[], startIndex: number, endIndex: number) => {
+  function reorder(result: Todo[], startIndex: number, endIndex: number) {
     const [removed] = result.splice(startIndex, 1);
     if (removed) {
       result.splice(endIndex, 0, removed);
     }
     return result;
-  };
+  }
 
   function onDragEnd(result: DropResult) {
     const { destination, source, draggableId } = result;
@@ -82,65 +76,65 @@ const Todos: NextPage = () => {
 
     const start = columns.find((col) => col.id === source.droppableId);
     const finish = columns.find((col) => col.id === destination.droppableId);
-    const draggedItem = todos.find((todo) => todo.id === draggableId);
+    const draggedItem = todosFromDb.find((todo) => todo.id === draggableId);
 
-    if (start && finish && draggedItem) {
-      if (start === finish) {
-        // Reorder in same column
-        const newTodoOrder = reorder(
-          start.todoOrder,
-          source.index,
-          destination.index
-        );
+    if (!start || !finish || !draggedItem) return;
 
-        setColumnTodoOrder(start.id, newTodoOrder);
-      } else {
-        // Reorder in different column
-        start.todoOrder.splice(source.index, 1);
-        const newStart = {
-          ...start,
-          todos: start.todoOrder,
-        };
+    if (start === finish) {
+      // Reorder in same column
+      const newTodoOrder = reorder(
+        start.todoOrder,
+        source.index,
+        destination.index
+      );
 
-        finish.todoOrder.splice(destination.index, 0, draggedItem);
-        const newFinish = {
-          ...finish,
-          todos: finish.todoOrder,
-        };
+      setColumnTodoOrder(start.id, newTodoOrder);
+    } else {
+      // Reorder in different column
+      start.todoOrder.splice(source.index, 1);
+      const newStart = {
+        ...start,
+        todos: start.todoOrder,
+      };
 
-        const newTodos = [...localTodos];
-        newTodos.splice(
-          newTodos.findIndex((todo) => todo.id === draggedItem.id),
-          1,
-          {
-            ...draggedItem,
-            day: newFinish.id,
-          }
-        );
-        setLocalTodos(newTodos);
+      finish.todoOrder.splice(destination.index, 0, draggedItem);
+      const newFinish = {
+        ...finish,
+        todos: finish.todoOrder,
+      };
 
-        setColumnTodoOrder(newStart.id, newStart.todos);
-        setColumnTodoOrder(newFinish.id, newFinish.todos);
-      }
+      const newTodos = [...localTodos];
+      newTodos.splice(
+        newTodos.findIndex((todo) => todo.id === draggedItem.id),
+        1,
+        {
+          ...draggedItem,
+          day: newFinish.id,
+        }
+      );
+      setLocalTodos(newTodos);
 
-      // Persist changes in database based on local state
-      columns.map((col) => {
-        col.todoOrder.map((todo, index) => {
-          if (todo.index !== index || todo.day !== col.id) {
-            changeDay.mutate({
-              id: todo.id,
-              day: col.id,
-              index: index,
-            });
-          }
-        });
-      });
+      setColumnTodoOrder(newStart.id, newStart.todos);
+      setColumnTodoOrder(newFinish.id, newFinish.todos);
     }
+
+    // Persist changes in database based on local state
+    columns.map((col) => {
+      col.todoOrder.map((todo, index) => {
+        if (todo.index !== index || todo.day !== col.id) {
+          updateTodo.mutate({
+            id: todo.id,
+            day: col.id,
+            index: index,
+          });
+        }
+      });
+    });
   }
 
   return (
     <>
-      <HeadComponent title="Todos" />
+      <CustomHead title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">

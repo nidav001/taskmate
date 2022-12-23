@@ -1,9 +1,9 @@
 import { type NextPage } from "next";
-import HeadComponent from "../components/shared/head";
+import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
-import { buttonStyle } from "../styles/buttonStyle";
+import { buttonStyle } from "../styles/basicStyles";
 import { trpc } from "../utils/trpc";
 
 const Admin: NextPage = () => {
@@ -20,7 +20,7 @@ const Admin: NextPage = () => {
 
   return (
     <>
-      <HeadComponent title="Admin" />
+      <CustomHead title="Admin" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">

@@ -6,12 +6,12 @@ import {
   getSession,
   signOut,
 } from "next-auth/react";
-import HeadComponent from "../../components/shared/head";
+import CustomHead from "../../components/shared/customHead";
 
 const Signout: NextPage = () => {
   return (
     <>
-      <HeadComponent title="Abmelden" />
+      <CustomHead title="Abmelden" />
       <main className="flex h-screen w-screen items-center justify-center bg-white dark:bg-slate-800">
         <button
           onClick={() =>
@@ -19,9 +19,11 @@ const Signout: NextPage = () => {
               callbackUrl: `${window.location.origin}/auth/signin`,
             })
           }
-          className="rounded-xl border border-gray-300 p-4 hover:bg-gray-100"
+          className="rounded-xl border border-gray-300 p-4 dark:bg-slate-600 dark:hover:bg-slate-700"
         >
-          <div className="flex items-center gap-2 text-xl">Sign out</div>
+          <div className="flex items-center gap-2 text-xl dark:text-white">
+            Sign out
+          </div>
         </button>
       </main>
     </>

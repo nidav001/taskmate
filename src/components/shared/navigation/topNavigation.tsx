@@ -10,7 +10,7 @@ import classNames from "../../../utils/classNames";
 import Logo from "./logo";
 import NavigationMenu from "./navigationMenu";
 
-function TopNaviagtion() {
+export default function TopNaviagtion() {
   const sessionData = useSession().data;
 
   const menuItems = [
@@ -99,5 +99,3 @@ function TopNaviagtion() {
     </div>
   );
 }
-
-export default TopNaviagtion;
