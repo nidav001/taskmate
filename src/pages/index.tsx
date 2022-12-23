@@ -26,7 +26,12 @@ const Home: NextPage = () => {
         {todos.data
           ?.filter((todo) => todo.day.localeCompare(weekday) === 0)
           .map((todo) => (
-            <TodoCard todoDone={todo.done} key={todo.id} todo={todo} />
+            <TodoCard
+              isDragging={false}
+              todoDone={todo.done}
+              key={todo.id}
+              todo={todo}
+            />
           ))}
       </div>
     </div>
