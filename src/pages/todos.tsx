@@ -13,7 +13,7 @@ import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
-import Toolbar from "../components/todoPage/toolbar/toolbar";
+import Toolbar from "../components/todoPage/toolbar";
 import useSearchStore from "../hooks/searchStore";
 import useTodoOrderStore from "../hooks/todoOrderStore";
 import useTodoStore from "../hooks/todoStore";

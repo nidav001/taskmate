@@ -2,11 +2,11 @@ import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import useTodoOrderStore from "../../../hooks/todoOrderStore";
-import useTodoStore from "../../../hooks/todoStore";
-import { buttonStyle } from "../../../styles/buttonStyle";
-import { trpc } from "../../../utils/trpc";
-import Snackbar from "../../shared/snackbar";
+import useTodoOrderStore from "../../hooks/todoOrderStore";
+import useTodoStore from "../../hooks/todoStore";
+import { buttonStyle } from "../../styles/buttonStyle";
+import { trpc } from "../../utils/trpc";
+import Snackbar from "../shared/snackbar";
 
 type ToolbarProps = {
   refetch: () => void;
@@ -59,10 +59,18 @@ function Toolbar({ refetch }: ToolbarProps) {
   }
 
   const funnyMessages = [
-    "Endlich geschafft :)",
-    "Gut gemacht :)",
-    "Super :)",
-    "Weiter so :)",
+    "Endlich geschafft 🥹",
+    "Schneller als gedacht 😘",
+    "Super 😍",
+    "Weiter so 😘",
+    "Hammer 🤩",
+    "Gut gemacht 😍",
+    "Liebe dich 🥰",
+    "Nicht so schnell, der Server kommt nicht hinterher 🥵",
+    "Beeindruckend 😳",
+    "Das nächste Todo wartet schon 🫡",
+    "Du coole Socke 😎",
+    "Ganz stark 💪🏼",
   ];
 
   const iconStyle = "h-8 w-8";
