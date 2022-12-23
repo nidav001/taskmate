@@ -13,7 +13,7 @@ type TodoCardProps = {
   provided?: DraggableProvided;
 };
 
-function TodoCard({
+export default function TodoCard({
   todoDone,
   setTodoDone,
   todo,
@@ -63,5 +63,3 @@ function TodoCard({
     </div>
   );
 }
-
-export default TodoCard;
