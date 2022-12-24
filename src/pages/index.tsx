@@ -44,10 +44,10 @@ const Dashboard: NextPage = () => {
               smallWidth={isLayoutSmall}
             />
             <DashboardCard
-              content={0}
-              title="Allgemein"
+              content={"Vielen Dank für Ihr Verständnis."}
+              title="Umbau 🚧👷‍♂️"
               href="/todos/general"
-              isLoading={true}
+              isLoading={false}
               smallWidth={isLayoutSmall}
             />
             <DashboardCard
