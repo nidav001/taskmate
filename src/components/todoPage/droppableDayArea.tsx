@@ -8,6 +8,7 @@ import { Droppable } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
 import { panel } from "../../styles/transitionClasses";
 import { type Day } from "../../types/enums";
+import { sortTodos } from "../../utils/todoUtils";
 import TodoCard from "../shared/todoCard";
 import DraggableTodoCard from "./draggableTodoCard";
 
@@ -43,7 +44,7 @@ export default function DroppableDayArea({
   const [dayModified, setDayModified] = useState(false);
 
   useEffect(() => {
-    if (searchValue !== "" && filteredTodos.length > 0) {
+    if (searchValue !== "" && getFilteredAndSortedTodos.length > 0) {
       setDisclosureOpen(true);
     } else {
       const open = checkIfDisclosureShouldBeOpen();
@@ -116,15 +117,13 @@ export default function DroppableDayArea({
     </Disclosure.Button>
   );
 
-  const filteredTodos = todos
-    ?.filter((todo) =>
+  const getFilteredAndSortedTodos = (): Todo[] => {
+    const filteredTodos = todos?.filter((todo) =>
       todo.content.toLowerCase().includes(searchValue.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aIndex = todoOrder.findIndex((todo) => todo.id === a.id);
-      const bIndex = todoOrder.findIndex((todo) => todo.id === b.id);
-      return aIndex - bIndex;
-    });
+    );
+
+    return sortTodos(filteredTodos, todoOrder);
+  };
 
   return (
     <Disclosure>
@@ -140,9 +139,10 @@ export default function DroppableDayArea({
               droppableId={day}
               renderClone={(provided, snapshot, rubric) => {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const todo = filteredTodos[rubric.source.index]!;
+                const todo = getFilteredAndSortedTodos()[rubric.source.index]!;
                 return (
                   <TodoCard
+                    isDragging={undefined}
                     provided={provided}
                     todo={todo}
                     todoDone={todo.done}
@@ -158,7 +158,7 @@ export default function DroppableDayArea({
                 >
                   {isLoading
                     ? todoLoadingSkeleton
-                    : filteredTodos.map((todo, index) => {
+                    : getFilteredAndSortedTodos().map((todo, index) => {
                         return (
                           <DraggableTodoCard
                             todoRef={todoRef}

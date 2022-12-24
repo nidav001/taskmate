@@ -12,7 +12,7 @@ type TodoCardProps = {
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
-  isDragging?: boolean;
+  isDragging: boolean;
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
 };
@@ -52,7 +52,7 @@ export default function TodoCard({
       setShowAnimation(true);
       setTimeout(() => {
         setShowAnimation(false);
-      }, 2000);
+      }, 4000);
     }
   }, []);
 
@@ -63,7 +63,7 @@ export default function TodoCard({
       ref={provided?.innerRef}
       className={`group my-1 flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
         isDragging === undefined ? "bg-sky-200 dark:bg-slate-300" : ""
-      }${showAnimation ? "animate-ping" : ""}`}
+      }${showAnimation ? "animate-pulse" : ""}`}
     >
       <div
         ref={shouldUseRef() ? todoRef : null}

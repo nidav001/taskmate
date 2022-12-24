@@ -7,7 +7,11 @@ import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { trpc } from "../../utils/trpc";
 import Snackbar from "../shared/snackbar";
 
-export default function Toolbar() {
+type ToolbarProps = {
+  refetch: () => void;
+};
+
+export default function Toolbar({ refetch }: ToolbarProps) {
   const { todos: localTodos, setTodos } = useTodoStore();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -31,6 +35,9 @@ export default function Toolbar() {
   };
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
     onMutate: (data) => {
       refreshLocalTodos(data.ids);
       setShowAlert(true);

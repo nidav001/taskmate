@@ -37,6 +37,7 @@ const Todos: NextPage = () => {
     recentlyAddedTodo.current.scrollIntoView({
       behavior: "smooth",
       block: "center",
+      inline: "center",
     });
 
   useEffect(() => {
@@ -156,7 +157,7 @@ const Todos: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
             <SearchBar />
-            <Toolbar />
+            <Toolbar refetch={() => todoQuery.refetch()} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(

@@ -22,7 +22,12 @@ export default function GeneralAndFinalizedTodos({
           <TopNaviagtion />
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             {todos?.map((todo) => (
-              <TodoCard todoDone={todo.done} key={todo.id} todo={todo} />
+              <TodoCard
+                isDragging={false}
+                todoDone={todo.done}
+                key={todo.id}
+                todo={todo}
+              />
             ))}
           </div>
         </main>
