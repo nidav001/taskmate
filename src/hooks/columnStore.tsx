@@ -11,7 +11,6 @@ type Column = {
 interface ColumnState {
   columns: Column[];
   setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void;
-  resetAllColumns: () => void;
 }
 
 const useColumnStore = create<ColumnState>()(
@@ -38,20 +37,6 @@ const useColumnStore = create<ColumnState>()(
                 };
               }
               return column;
-            });
-
-            return {
-              columns: newColumns,
-            };
-          });
-        },
-        resetAllColumns: () => {
-          set((state) => {
-            const newColumns = state.columns.map((column) => {
-              return {
-                ...column,
-                todoOrder: [],
-              };
             });
 
             return {

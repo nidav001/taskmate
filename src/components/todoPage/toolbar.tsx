@@ -2,18 +2,12 @@ import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import useColumnStore from "../../hooks/columnStore";
 import useTodoStore from "../../hooks/todoStore";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { trpc } from "../../utils/trpc";
 import Snackbar from "../shared/snackbar";
 
-type ToolbarProps = {
-  refetch: () => void;
-};
-
-export default function Toolbar({ refetch }: ToolbarProps) {
-  const { resetAllColumns: resetTodoOrder } = useColumnStore();
+export default function Toolbar() {
   const { todos: localTodos, setTodos } = useTodoStore();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -37,10 +31,6 @@ export default function Toolbar({ refetch }: ToolbarProps) {
   };
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
-    onSuccess: () => {
-      resetTodoOrder();
-      refetch();
-    },
     onMutate: (data) => {
       refreshLocalTodos(data.ids);
       setShowAlert(true);

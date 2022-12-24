@@ -141,7 +141,7 @@ const Todos: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
             <SearchBar />
-            <Toolbar refetch={todoQuery.refetch} />
+            <Toolbar />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(
