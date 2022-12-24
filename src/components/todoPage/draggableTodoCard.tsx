@@ -10,6 +10,7 @@ type DraggableTodoCardProps = {
   index: number;
   refetch: () => void;
   disclosureOpen: boolean;
+  todoRef: React.RefObject<HTMLDivElement>;
 };
 
 export default function DraggableTodoCard({
@@ -17,6 +18,7 @@ export default function DraggableTodoCard({
   index,
   refetch,
   disclosureOpen,
+  todoRef,
 }: DraggableTodoCardProps) {
   const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
   const { todos, setTodos } = useTodoStore();
@@ -65,6 +67,7 @@ export default function DraggableTodoCard({
       {(provided, snapshot) => {
         return (
           <TodoCard
+            todoRef={todoRef}
             provided={provided}
             isDragging={snapshot.isDragging}
             disclosureOpen={disclosureOpen}

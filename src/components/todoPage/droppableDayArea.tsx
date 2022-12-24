@@ -18,6 +18,7 @@ type DroppableDayAreaProps = {
   refetch: () => void;
   date: DateTime | string;
   isLoading: boolean;
+  todoRef: React.RefObject<HTMLDivElement>;
 };
 
 const todoLoadingSkeleton = (
@@ -36,6 +37,7 @@ export default function DroppableDayArea({
   refetch,
   isLoading,
   date,
+  todoRef,
 }: DroppableDayAreaProps) {
   const [disclosureOpen, setDisclosureOpen] = useState(false);
   const [dayModified, setDayModified] = useState(false);
@@ -156,15 +158,18 @@ export default function DroppableDayArea({
                 >
                   {isLoading
                     ? todoLoadingSkeleton
-                    : filteredTodos.map((todo, index) => (
-                        <DraggableTodoCard
-                          key={todo.id}
-                          disclosureOpen={disclosureOpen}
-                          refetch={refetch}
-                          index={index}
-                          todo={todo}
-                        />
-                      ))}
+                    : filteredTodos.map((todo, index) => {
+                        return (
+                          <DraggableTodoCard
+                            todoRef={todoRef}
+                            key={todo.id}
+                            disclosureOpen={disclosureOpen}
+                            refetch={refetch}
+                            index={index}
+                            todo={todo}
+                          />
+                        );
+                      })}
 
                   {provided.placeholder}
                 </div>

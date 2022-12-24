@@ -166,4 +166,17 @@ export const todoRouter = router({
         },
       });
     }),
+  getMostRecentTodo: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findFirst({
+      where: {
+        authorId: ctx.session?.user?.id,
+        finalized: false,
+        archived: false,
+        deleted: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
 });

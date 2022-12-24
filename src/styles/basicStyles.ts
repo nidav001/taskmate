@@ -1,5 +1,5 @@
 export const zoomIn =
-  "transform transition hover:scale-110 focus:outline-none hover:bg-opacity-80 active:bg-opacity-60";
+  "transform transition hover:scale-110 duration-100 focus:outline-none hover:bg-opacity-80 active:bg-opacity-60";
 
 export const buttonStyle =
   "rounded-full bg-amber-400 hover:bg-amber-300 p-2 transform transition hover:scale-110 focus:outline-none hover:bg-opacity-80 active:bg-opacity-60 font-medium backface-visibility-hidden text-sm dark:text-gray-100 dark:bg-amber-600 dark:hover:bg-amber-500";
