@@ -3,7 +3,7 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
 import { LogoPosition } from "../../../types/enums";
 import classNames from "../../../utils/classNames";
@@ -12,6 +12,7 @@ import NavigationMenu from "./navigationMenu";
 
 export default function TopNaviagtion() {
   const sessionData = useSession().data;
+  const [darkMode, setDarkMode] = useState(false);
 
   const menuItems = [
     { name: "Profil", href: `/profile` },
