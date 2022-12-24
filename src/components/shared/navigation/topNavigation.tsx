@@ -1,9 +1,9 @@
 import { Menu, Transition } from "@headlessui/react";
-import { Bars3Icon } from "@heroicons/react/20/solid";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
+import { zoomIn } from "../../../styles/basicStyles";
 import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
 import { LogoPosition } from "../../../types/enums";
 import classNames from "../../../utils/classNames";
@@ -12,7 +12,7 @@ import NavigationMenu from "./navigationMenu";
 
 export default function TopNaviagtion() {
   const sessionData = useSession().data;
-  const [darkMode, setDarkMode] = useState(false);
+  const genericHamburgerLine = `h-1 w-5 rounded-full transition bg-sky-600 ease transform duration-200`;
 
   const menuItems = [
     { name: "Profil", href: `/profile` },
@@ -30,12 +30,12 @@ export default function TopNaviagtion() {
     <Menu>
       <div>
         <Menu.Button
-          className="outline-non ring-sky/60 flex rounded-full text-sm ring-2 ring-offset-1 hover:ring-sky-600"
+          className={`${zoomIn} flex h-9 w-9 items-center justify-center rounded-full text-sm outline-none ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent`}
           aria-label="profile"
         >
           <Image
-            width="40"
-            height="40"
+            width="50"
+            height="50"
             className="h-8 w-8 rounded-full"
             src={sessionData?.user?.image ?? "/guestIcon.svg"}
             alt="Profile Image"
@@ -71,13 +71,26 @@ export default function TopNaviagtion() {
 
   const MainMenuButton = (
     <Menu as={"div"} className="md:hidden">
-      {({ close }) => (
+      {({ open, close }) => (
         <>
           <Menu.Button
+            as="button"
             aria-label="menu"
-            className="ring-sky/60 rounded-md p-1 ring-2 hover:ring-sky-600"
+            className={`group  flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-full ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent ${zoomIn}`}
           >
-            <Bars3Icon className="h-6 w-6 text-sky-600" />
+            <div
+              className={`${genericHamburgerLine} ${
+                open ? "translate-y-2 rotate-45" : ""
+              }`}
+            />
+            <div
+              className={`${genericHamburgerLine} ${open ? "opacity-0" : ""}`}
+            />
+            <div
+              className={`${genericHamburgerLine} ${
+                open ? "-translate-y-2 -rotate-45" : ""
+              }`}
+            />
           </Menu.Button>
           <Transition as={Fragment} {...sideMenu}>
             <Menu.Items
