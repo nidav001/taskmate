@@ -1,10 +1,10 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
+import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import classNames from "../../utils/classNames";
-import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
   todoDone: boolean;
@@ -33,18 +33,16 @@ export default function TodoCard({
   };
 
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
+  const recentlyAddedTodo = useRef(null);
 
-  const mostRecentTodo = trpc.todo.getMostRecentTodo.useQuery().data ?? null;
+  const { mostRecentTodoId, todoCreatedAt } = useMostRecentTodoIdStore();
 
   function isMostRecent() {
-    return mostRecentTodo?.id === todo.id;
+    return mostRecentTodoId === todo.id;
   }
 
   function shouldUseRef() {
-    return (
-      isMostRecent() &&
-      DateTime.now().toMillis() <= mostRecentTodo.createdAt.getTime() + 10000
-    );
+    return isMostRecent() && DateTime.now().toMillis() <= todoCreatedAt + 10000;
   }
 
   useEffect(() => {
@@ -56,6 +54,20 @@ export default function TodoCard({
     }
   }, []);
 
+  const executeScroll = () =>
+    recentlyAddedTodo.current.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "center",
+    });
+
+  useEffect(() => {
+    if (recentlyAddedTodo.current) {
+      executeScroll();
+    }
+    recentlyAddedTodo.current = null;
+  }, [mostRecentTodoId]);
+
   return (
     <div
       {...provided?.draggableProps}
@@ -66,7 +78,7 @@ export default function TodoCard({
       }${showAnimation ? "animate-pulse" : ""}`}
     >
       <div
-        ref={shouldUseRef() ? todoRef : null}
+        ref={shouldUseRef() ? recentlyAddedTodo : null}
         className="group flex items-center justify-between gap-2"
       >
         <input

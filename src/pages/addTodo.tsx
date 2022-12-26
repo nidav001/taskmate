@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import Snackbar from "../components/shared/snackbar";
 import useColumnStore from "../hooks/columnStore";
+import useMostRecentTodoIdStore from "../hooks/mostRecentTodoStore";
 import useSearchStore from "../hooks/searchStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle, inputStyle } from "../styles/basicStyles";
@@ -26,6 +28,7 @@ const AddTodo: NextPage = () => {
   const [selected, setSelected] = useState<Day>(getTodaysDateName());
   const { search, setSearch } = useSearchStore();
   const [showAlert, setShowAlert] = useState(false);
+  const { setMostRecentTodoId, setTodoCreatedAt } = useMostRecentTodoIdStore();
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -37,6 +40,8 @@ const AddTodo: NextPage = () => {
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
         data as Todo,
       ]);
+      setMostRecentTodoId(data.id);
+      setTodoCreatedAt(DateTime.now().toMillis());
     },
   });
 

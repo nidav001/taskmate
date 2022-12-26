@@ -30,22 +30,23 @@ const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todosFromDb = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
   const updateTodo = trpc.todo.updateTodo.useMutation();
-  const mostRecentTodo = trpc.todo.getMostRecentTodo.useQuery().data;
+  // const { mostRecentTodoId } = useMostRecentTodoIdStore();
 
   const recentlyAddedTodo = useRef(null);
-  const executeScroll = () =>
-    recentlyAddedTodo.current.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    });
+  // const executeScroll = () =>
+  //   recentlyAddedTodo.current.scrollIntoView({
+  //     behavior: "smooth",
+  //     block: "center",
+  //     inline: "center",
+  //   });
 
-  useEffect(() => {
-    if (recentlyAddedTodo.current) {
-      executeScroll();
-    }
-    recentlyAddedTodo.current = null;
-  }, [mostRecentTodo]);
+  // useEffect(() => {
+  //   console.log(recentlyAddedTodo.current);
+  //   if (recentlyAddedTodo.current) {
+  //     executeScroll();
+  //   }
+  //   recentlyAddedTodo.current = null;
+  // }, [mostRecentTodoId]);
 
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
   const { columns, setColumnTodoOrder } = useColumnStore();
