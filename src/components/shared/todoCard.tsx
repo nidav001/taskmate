@@ -87,7 +87,7 @@ export default function TodoCard({
     >
       <div
         ref={shouldUseRef() ? recentlyAddedTodo : null}
-        className="group flex items-center justify-between gap-2"
+        className="group flex items-center justify-between"
       >
         <input
           type="checkbox"
