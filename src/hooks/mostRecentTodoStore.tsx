@@ -1,11 +1,12 @@
+import { DateTime } from "luxon";
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface MostRecentTodoIdState {
   mostRecentTodoId: string;
   setMostRecentTodoId: (newId: string) => void;
-  todoCreatedAt: number;
-  setTodoCreatedAt: (newDate: 0) => void;
+  todoCreatedAtMilliseconds: number;
+  setTodoCreatedAtMilliseconds: (newCreatedAt: number) => void;
 }
 
 const useMostRecentTodoIdStore = create<MostRecentTodoIdState>()(
@@ -14,14 +15,15 @@ const useMostRecentTodoIdStore = create<MostRecentTodoIdState>()(
       (set) => ({
         mostRecentTodoId: "",
         setMostRecentTodoId: (newId) => {
-          set(() => {
+          set((state) => {
+            state.setTodoCreatedAtMilliseconds(DateTime.now().toMillis());
             return { mostRecentTodoId: newId };
           });
         },
-        todoCreatedAt: 0,
-        setTodoCreatedAt: (newDate) => {
+        todoCreatedAtMilliseconds: 0,
+        setTodoCreatedAtMilliseconds: (newCreatedAt) => {
           set(() => {
-            return { todoCreatedAt: newDate };
+            return { todoCreatedAtMilliseconds: newCreatedAt };
           });
         },
       }),

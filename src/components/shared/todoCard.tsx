@@ -24,7 +24,6 @@ export default function TodoCard({
   onBlurTextArea,
   isDragging,
   provided,
-  todoRef,
 }: TodoCardProps) {
   const handleOnChange = () => {
     if (setTodoDone) {
@@ -33,9 +32,10 @@ export default function TodoCard({
   };
 
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
-  const recentlyAddedTodo = useRef(null);
+  const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
 
-  const { mostRecentTodoId, todoCreatedAt } = useMostRecentTodoIdStore();
+  const { mostRecentTodoId, todoCreatedAtMilliseconds: todoCreatedAt } =
+    useMostRecentTodoIdStore();
 
   function isMostRecent() {
     return mostRecentTodoId === todo.id;
@@ -52,20 +52,28 @@ export default function TodoCard({
         setShowAnimation(false);
       }, 4000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const executeScroll = () =>
-    recentlyAddedTodo.current.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    });
+  function getIsDragging() {
+    return isDragging === undefined ? true : isDragging;
+  }
+
+  const executeScroll = () => {
+    if (recentlyAddedTodo.current) {
+      recentlyAddedTodo.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  };
 
   useEffect(() => {
     if (recentlyAddedTodo.current) {
       executeScroll();
+      recentlyAddedTodo.current = null;
     }
-    recentlyAddedTodo.current = null;
   }, [mostRecentTodoId]);
 
   return (
@@ -74,7 +82,7 @@ export default function TodoCard({
       {...provided?.dragHandleProps}
       ref={provided?.innerRef}
       className={`group my-1 flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
-        isDragging === undefined ? "bg-sky-200 dark:bg-slate-300" : ""
+        getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : ""
       }${showAnimation ? "animate-pulse" : ""}`}
     >
       <div
@@ -97,7 +105,7 @@ export default function TodoCard({
           }}
           defaultValue={todo.content}
           className={classNames(
-            isDragging === undefined ? "bg-sky-200 dark:bg-slate-300" : "",
+            getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
             todoDone ? "line-through" : "",
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}

@@ -2,7 +2,7 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import {
   DragDropContext,
   resetServerContext,
@@ -30,23 +30,6 @@ const Todos: NextPage = () => {
   const todoQuery = trpc.todo.getTodos.useQuery();
   const todosFromDb = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
   const updateTodo = trpc.todo.updateTodo.useMutation();
-  // const { mostRecentTodoId } = useMostRecentTodoIdStore();
-
-  const recentlyAddedTodo = useRef(null);
-  // const executeScroll = () =>
-  //   recentlyAddedTodo.current.scrollIntoView({
-  //     behavior: "smooth",
-  //     block: "center",
-  //     inline: "center",
-  //   });
-
-  // useEffect(() => {
-  //   console.log(recentlyAddedTodo.current);
-  //   if (recentlyAddedTodo.current) {
-  //     executeScroll();
-  //   }
-  //   recentlyAddedTodo.current = null;
-  // }, [mostRecentTodoId]);
 
   const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
   const { columns, setColumnTodoOrder } = useColumnStore();
@@ -164,7 +147,6 @@ const Todos: NextPage = () => {
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(
                   (day, index) => (
                     <DroppableDayArea
-                      todoRef={recentlyAddedTodo}
                       date={
                         datesOfWeek[index - 1] ??
                         `Woche ${DateTime.now().weekNumber.toString()}`
