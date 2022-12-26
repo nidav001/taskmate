@@ -124,36 +124,36 @@ export default function DroppableDayArea({
   };
 
   return (
-    <Disclosure>
-      <div className="w-80">
-        {DayAreaHeader}
-        <Transition
-          className={!disclosureOpen ? "overflow-hidden" : ""}
-          show={disclosureOpen}
-          {...panel}
+    <Droppable
+      droppableId={day}
+      renderClone={(provided, snapshot, rubric) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const todo = getFilteredAndSortedTodos()[rubric.source.index]!;
+        return (
+          <TodoCard
+            isDragging={true}
+            provided={provided}
+            todo={todo}
+            todoDone={todo.done}
+          />
+        );
+      }}
+    >
+      {(provided) => (
+        <div
+          className="flex w-80 flex-col py-4"
+          ref={provided.innerRef}
+          {...provided.droppableProps}
         >
-          <Disclosure.Panel static>
-            <Droppable
-              droppableId={day}
-              renderClone={(provided, snapshot, rubric) => {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const todo = getFilteredAndSortedTodos()[rubric.source.index]!;
-                return (
-                  <TodoCard
-                    isDragging={true}
-                    provided={provided}
-                    todo={todo}
-                    todoDone={todo.done}
-                  />
-                );
-              }}
-            >
-              {(provided) => (
-                <div
-                  className="flex w-80 flex-col py-4"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
+          <Disclosure>
+            <div className="w-80">
+              {DayAreaHeader}
+              <Transition
+                className={!disclosureOpen ? "overflow-hidden" : ""}
+                show={disclosureOpen}
+                {...panel}
+              >
+                <Disclosure.Panel static>
                   {isLoading
                     ? todoLoadingSkeleton
                     : getFilteredAndSortedTodos().map((todo, index) => {
@@ -169,12 +169,12 @@ export default function DroppableDayArea({
                       })}
 
                   {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </Disclosure.Panel>
-        </Transition>
-      </div>
-    </Disclosure>
+                </Disclosure.Panel>
+              </Transition>
+            </div>
+          </Disclosure>
+        </div>
+      )}
+    </Droppable>
   );
 }
