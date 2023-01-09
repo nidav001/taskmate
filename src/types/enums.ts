@@ -9,7 +9,7 @@ export enum Day {
   Sonntag = "Sonntag",
 }
 
-export enum LogoPosition {
+export enum LogoStyle {
   Top = "md:hidden",
   Side = "",
   Menu = "hidden",

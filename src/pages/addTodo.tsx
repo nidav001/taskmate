@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -104,7 +105,10 @@ const AddTodo: NextPage = () => {
                 setValue={setValue}
               />
               <div className="flex w-full justify-center">
-                <button className={"w-3/4 " + buttonStyle} type="submit">
+                <button
+                  className={classNames("w-3/4", buttonStyle)}
+                  type="submit"
+                >
                   Hinzufügen
                 </button>
               </div>

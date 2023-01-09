@@ -1,4 +1,5 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import classNames from "classnames";
 import useSearchStore from "../../hooks/searchStore";
 import { inputStyle } from "../../styles/basicStyles";
 
@@ -12,7 +13,7 @@ export default function SearchBar() {
       <input
         type="search"
         id="todo-search"
-        className={inputStyle + " block h-14 w-full pl-10"}
+        className={classNames(inputStyle, "block h-14 w-full pl-10")}
         placeholder="Suche..."
         defaultValue={search}
         onChange={(e) => setSearch(e.target.value)}

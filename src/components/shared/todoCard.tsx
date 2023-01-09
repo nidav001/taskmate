@@ -1,10 +1,10 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
-import classNames from "../../utils/classNames";
 
 type TodoCardProps = {
   todoDone: boolean;
@@ -16,6 +16,9 @@ type TodoCardProps = {
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
 };
+
+const millisecondsToBeAbleToSeeScrollAnimation = 10000;
+const millisecondsToAnimateTodoScrolledTo = 4000;
 
 export default function TodoCard({
   todoDone,
@@ -42,21 +45,11 @@ export default function TodoCard({
   }
 
   function shouldUseRef() {
-    return isMostRecent() && DateTime.now().toMillis() <= todoCreatedAt + 10000;
-  }
-
-  useEffect(() => {
-    if (shouldUseRef()) {
-      setShowAnimation(true);
-      setTimeout(() => {
-        setShowAnimation(false);
-      }, 4000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function getIsDragging() {
-    return isDragging === undefined ? true : isDragging;
+    return (
+      isMostRecent() &&
+      DateTime.now().toMillis() <=
+        todoCreatedAt + millisecondsToBeAbleToSeeScrollAnimation
+    );
   }
 
   const executeScroll = () => {
@@ -70,20 +63,36 @@ export default function TodoCard({
   };
 
   useEffect(() => {
+    if (shouldUseRef()) {
+      setShowAnimation(true);
+      setTimeout(() => {
+        setShowAnimation(false);
+      }, millisecondsToAnimateTodoScrolledTo);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (recentlyAddedTodo.current) {
       executeScroll();
       recentlyAddedTodo.current = null;
     }
   }, [mostRecentTodoId]);
 
+  function getIsDragging() {
+    return isDragging === undefined ? true : isDragging;
+  }
+
   return (
     <div
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
       ref={provided?.innerRef}
-      className={`group my-1 flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
-        getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : ""
-      }${showAnimation ? "animate-pulse" : ""}`}
+      className={classNames(
+        "group my-1 flex flex-col rounded-xl bg-gray-300 py-1 px-4 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600",
+        getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
+        showAnimation ? "animate-pulse" : ""
+      )}
     >
       <div
         ref={shouldUseRef() ? recentlyAddedTodo : null}

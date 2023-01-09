@@ -1,12 +1,12 @@
 import { Menu, Transition } from "@headlessui/react";
+import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 import { zoomIn } from "../../../styles/basicStyles";
 import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
-import { LogoPosition } from "../../../types/enums";
-import classNames from "../../../utils/classNames";
+import { LogoStyle } from "../../../types/enums";
 import Logo from "./logo";
 import NavigationMenu from "./navigationMenu";
 
@@ -30,7 +30,10 @@ export default function TopNaviagtion() {
     <Menu>
       <div>
         <Menu.Button
-          className={`${zoomIn} flex h-9 w-9 items-center justify-center rounded-full text-sm outline-none ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent`}
+          className={classNames(
+            "flex h-9 w-9 items-center justify-center rounded-full text-sm outline-none ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent",
+            zoomIn
+          )}
           aria-label="profile"
         >
           <Image
@@ -76,28 +79,36 @@ export default function TopNaviagtion() {
           <Menu.Button
             as="button"
             aria-label="menu"
-            className={`group  flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-full ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent ${zoomIn}`}
+            className={classNames(
+              "group flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-full ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent",
+              zoomIn
+            )}
           >
             <div
-              className={`${genericHamburgerLine} ${
+              className={classNames(
+                genericHamburgerLine,
                 open ? "translate-y-2 rotate-45" : ""
-              }`}
+              )}
             />
             <div
-              className={`${genericHamburgerLine} ${open ? "opacity-0" : ""}`}
+              className={classNames(
+                genericHamburgerLine,
+                open ? "opacity-0" : ""
+              )}
             />
             <div
-              className={`${genericHamburgerLine} ${
+              className={classNames(
+                genericHamburgerLine,
                 open ? "-translate-y-2 -rotate-45" : ""
-              }`}
+              )}
             />
           </Menu.Button>
           <Transition as={Fragment} {...sideMenu}>
             <Menu.Items
               style={getStyle()}
-              className={`absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700`}
+              className="absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700"
             >
-              <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
+              <NavigationMenu closeMenu={close} logoStyle={LogoStyle.Menu} />
             </Menu.Items>
           </Transition>
         </>
@@ -108,7 +119,7 @@ export default function TopNaviagtion() {
   return (
     <div className="min-w-screen sticky top-0 z-10 flex h-20 items-center justify-between gap-2 border-b bg-gray-100 px-4 dark:border-slate-900 dark:bg-slate-700 md:justify-end">
       {MainMenuButton}
-      <Logo logoShown={LogoPosition.Top} />
+      <Logo logoStyle={LogoStyle.Top} />
       {ProfileMenuButton}
     </div>
   );
