@@ -7,27 +7,29 @@ import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import classNames from "../../utils/classNames";
 
 type TodoCardProps = {
-  todoDone: boolean;
-  setTodoDone?: (id: string, done: boolean) => void;
+  setDone?: (id: string, done: boolean) => void;
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging: boolean;
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
+  setRestored?: (id: string, done: boolean) => void;
 };
 
 export default function TodoCard({
-  todoDone,
-  setTodoDone,
+  setDone,
   todo,
   onBlurTextArea,
   isDragging,
   provided,
+  setRestored: setRestore,
 }: TodoCardProps) {
   const handleOnChange = () => {
-    if (setTodoDone) {
-      setTodoDone(todo.id, !todo.done);
+    if (setDone) {
+      setDone(todo.id, !todo.done);
+    } else if (setRestore) {
+      setRestore(todo.id, !todo.restored);
     }
   };
 
@@ -87,17 +89,16 @@ export default function TodoCard({
     >
       <div
         ref={shouldUseRef() ? recentlyAddedTodo : null}
-        className="group flex items-center justify-between gap-2"
+        className="group flex items-center justify-between"
       >
         <input
           type="checkbox"
-          readOnly={setTodoDone ? false : true}
-          checked={todoDone}
+          checked={todo.done && !todo.finalized ? true : false}
           onChange={() => handleOnChange()}
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={setTodoDone ? false : true}
+          disabled={!setDone || !setRestore ? true : false}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);
@@ -106,7 +107,7 @@ export default function TodoCard({
           defaultValue={todo.content}
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
-            todoDone ? "line-through" : "",
+            todo.done && !todo.finalized ? "line-through" : "",
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />

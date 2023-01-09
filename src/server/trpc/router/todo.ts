@@ -61,7 +61,7 @@ export const todoRouter = router({
         },
       });
     }),
-  setTodoDone: protectedProcedure
+  setDone: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -179,4 +179,31 @@ export const todoRouter = router({
       },
     });
   }),
+  setRestored: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          restored: true,
+        },
+      });
+    }),
+  restoreTodos: protectedProcedure
+    .input(z.object({ ids: z.string().array() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.updateMany({
+        where: {
+          authorId: ctx.session?.user?.id,
+          id: { in: input.ids },
+        },
+        data: {
+          restored: false,
+          finalized: false,
+          done: false,
+        },
+      });
+    }),
 });

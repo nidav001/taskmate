@@ -18,11 +18,11 @@ export default function DraggableTodoCard({
   refetch,
   disclosureOpen,
 }: DraggableTodoCardProps) {
-  const [todoDone, setTodoDoneState] = useState<boolean>(todo.done);
+  const [todoDone, setDoneState] = useState<boolean>(todo.done);
   const { todos, setTodos } = useTodoStore();
 
-  const setTodoDoneCallback = (id: string, done: boolean) => {
-    setTodoDone.mutate({ id: id, done: done });
+  const setDoneCallback = (id: string, done: boolean) => {
+    setDone.mutate({ id: id, done: done });
   };
 
   const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
@@ -45,9 +45,9 @@ export default function DraggableTodoCard({
     });
   }
 
-  const setTodoDone = trpc.todo.setTodoDone.useMutation({
+  const setDone = trpc.todo.setDone.useMutation({
     onMutate: () => {
-      setTodoDoneState(!todoDone);
+      setDoneState(!todoDone);
 
       // Update local state
       const newTodos = todos.map((mappedTodo) => {
@@ -69,7 +69,7 @@ export default function DraggableTodoCard({
             isDragging={snapshot.isDragging}
             disclosureOpen={disclosureOpen}
             todoDone={todoDone}
-            setTodoDone={setTodoDoneCallback}
+            setDone={setDoneCallback}
             todo={todo}
             onBlurTextArea={onBlurTextArea}
           />
