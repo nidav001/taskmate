@@ -17,7 +17,7 @@ export const todoRouter = router({
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
-        done: true,
+        checked: true,
         finalized: true,
         archived: false,
       },
@@ -27,7 +27,7 @@ export const todoRouter = router({
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
-        done: false,
+        checked: false,
         finalized: false,
         archived: true,
       },
@@ -61,11 +61,11 @@ export const todoRouter = router({
         },
       });
     }),
-  setDone: protectedProcedure
+  setChecked: protectedProcedure
     .input(
       z.object({
         id: z.string(),
-        done: z.boolean(),
+        checked: z.boolean(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -74,12 +74,12 @@ export const todoRouter = router({
           id: input.id,
         },
         data: {
-          done: input.done,
+          checked: input.checked,
         },
       });
     }),
   finalizeTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
+    .input(z.object({ ids: z.string().array(), checked: z.boolean() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
@@ -87,12 +87,12 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          finalized: input.done,
+          finalized: input.checked,
         },
       });
     }),
   archiveTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
+    .input(z.object({ ids: z.string().array(), checked: z.boolean() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
@@ -100,7 +100,7 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          archived: input.done,
+          archived: input.checked,
         },
       });
     }),
@@ -187,7 +187,7 @@ export const todoRouter = router({
           id: input.id,
         },
         data: {
-          restored: true,
+          checked: true,
         },
       });
     }),
@@ -200,9 +200,8 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          restored: false,
           finalized: false,
-          done: false,
+          checked: false,
         },
       });
     }),

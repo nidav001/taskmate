@@ -23,9 +23,14 @@ export default function Toolbar({ refetch }: ToolbarProps) {
     }, 3000);
   }, [showAlert]);
 
-  const getTodoIds = (todos: Todo[] | undefined, done: boolean): string[] => {
+  const getTodoIds = (
+    todos: Todo[] | undefined,
+    checked: boolean
+  ): string[] => {
     return (
-      todos?.filter((todo) => todo.done === done).map((todo) => todo.id) ?? []
+      todos
+        ?.filter((todo) => todo.checked === checked)
+        .map((todo) => todo.id) ?? []
     );
   };
 
@@ -50,7 +55,7 @@ export default function Toolbar({ refetch }: ToolbarProps) {
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({
         ids: doneTodoIds,
-        done: true,
+        checked: true,
       });
     }
   }

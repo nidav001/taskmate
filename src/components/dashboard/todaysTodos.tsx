@@ -34,7 +34,7 @@ export default function TodaysTodos({ todos }: TodaysTodosProps) {
         {getFilteredAndSortedTodos().map((todo) => (
           <TodoCard
             isDragging={false}
-            todoDone={todo.done}
+            todoDone={todo.checked}
             key={todo.id}
             todo={todo}
           />

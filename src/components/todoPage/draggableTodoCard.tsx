@@ -18,11 +18,11 @@ export default function DraggableTodoCard({
   refetch,
   disclosureOpen,
 }: DraggableTodoCardProps) {
-  const [todoDone, setDoneState] = useState<boolean>(todo.done);
+  const [todoDone, setDoneState] = useState<boolean>(todo.checked);
   const { todos, setTodos } = useTodoStore();
 
-  const setDoneCallback = (id: string, done: boolean) => {
-    setDone.mutate({ id: id, done: done });
+  const setDoneCallback = (id: string, checked: boolean) => {
+    setChecked.mutate({ id: id, checked: checked });
   };
 
   const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
@@ -45,14 +45,14 @@ export default function DraggableTodoCard({
     });
   }
 
-  const setDone = trpc.todo.setDone.useMutation({
+  const setChecked = trpc.todo.setChecked.useMutation({
     onMutate: () => {
       setDoneState(!todoDone);
 
       // Update local state
       const newTodos = todos.map((mappedTodo) => {
         if (todo.id === mappedTodo.id) {
-          return { ...mappedTodo, done: !mappedTodo.done };
+          return { ...mappedTodo, checked: !mappedTodo.checked };
         }
         return mappedTodo;
       });
@@ -69,7 +69,7 @@ export default function DraggableTodoCard({
             isDragging={snapshot.isDragging}
             disclosureOpen={disclosureOpen}
             todoDone={todoDone}
-            setDone={setDoneCallback}
+            setChecked={setDoneCallback}
             todo={todo}
             onBlurTextArea={onBlurTextArea}
           />

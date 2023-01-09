@@ -1,6 +1,5 @@
 import { type Todo } from "@prisma/client";
 import { useState } from "react";
-import { trpc } from "../../utils/trpc";
 import CustomHead from "../shared/customHead";
 import SideNavigation from "../shared/navigation/sideNavigation";
 import TopNaviagtion from "../shared/navigation/topNavigation";
@@ -18,22 +17,22 @@ export default function GeneralAndFinalizedTodos({
 }: GeneralAndFinalizedTodosProps) {
   const [todosToRestore, setTodosToRestore] = useState<Todo[]>();
 
-  const setRestoredTodos = (id: string) => {
-    setRestored.mutate({ id: id });
-  };
+  // const setRestoredTodos = (id: string) => {
+  //   setRestored.mutate({ id: id });
+  // };
 
-  const setRestored = trpc.todo.setRestored.useMutation({
-    onMutate: (data) => {
-      // Update local state
-      const newTodos = todos.map((mappedTodo) => {
-        if (todo.id === mappedTodo.id) {
-          return { ...mappedTodo, done: !mappedTodo.done };
-        }
-        return mappedTodo;
-      });
-      setTodos(newTodos);
-    },
-  });
+  // const setRestored = trpc.todo.setRestored.useMutation({
+  //   onMutate: (data) => {
+  //     // Update local state
+  //     const newTodos = todos.map((mappedTodo) => {
+  //       if (todo.id === mappedTodo.id) {
+  //         return { ...mappedTodo, checked: !mappedTodo.checked };
+  //       }
+  //       return mappedTodo;
+  //     });
+  //     setTodos(newTodos);
+  //   },
+  // });
 
   return (
     <>

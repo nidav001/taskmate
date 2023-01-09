@@ -41,9 +41,8 @@ export default function GeneralAndFinalizedToolbar({
     const todosToRestore = todos.filter((todo) => ids.includes(todo.id));
     const newTodos = localTodos;
     todosToRestore.forEach((todo) => {
-      todo.restored = false;
       todo.finalized = false;
-      todo.done = false;
+      todo.checked = false;
       newTodos.push(todo);
     });
     setTodos(newTodos);

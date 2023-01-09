@@ -7,18 +7,18 @@ import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import classNames from "../../utils/classNames";
 
 type TodoCardProps = {
-  setDone?: (id: string, done: boolean) => void;
+  setChecked?: (id: string, checked: boolean) => void;
   todo: Todo;
   onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging: boolean;
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
-  setRestored?: (id: string, done: boolean) => void;
+  setRestored?: (id: string, checked: boolean) => void;
 };
 
 export default function TodoCard({
-  setDone,
+  setChecked,
   todo,
   onBlurTextArea,
   isDragging,
@@ -26,8 +26,8 @@ export default function TodoCard({
   setRestored: setRestore,
 }: TodoCardProps) {
   const handleOnChange = () => {
-    if (setDone) {
-      setDone(todo.id, !todo.done);
+    if (setChecked) {
+      setChecked(todo.id, !todo.checked);
     } else if (setRestore) {
       setRestore(todo.id, !todo.restored);
     }
@@ -93,12 +93,12 @@ export default function TodoCard({
       >
         <input
           type="checkbox"
-          checked={todo.done && !todo.finalized ? true : false}
+          checked={todo.checked && !todo.finalized ? true : false}
           onChange={() => handleOnChange()}
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={!setDone || !setRestore ? true : false}
+          disabled={!setChecked || !setRestore ? true : false}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);
@@ -107,7 +107,7 @@ export default function TodoCard({
           defaultValue={todo.content}
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
-            todo.done && !todo.finalized ? "line-through" : "",
+            todo.checked && !todo.finalized ? "line-through" : "",
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />
