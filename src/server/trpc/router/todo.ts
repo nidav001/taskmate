@@ -17,27 +17,7 @@ export const todoRouter = router({
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
-        checked: true,
         finalized: true,
-        archived: false,
-      },
-    });
-  }),
-  getArchivedTodos: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findMany({
-      where: {
-        authorId: ctx.session?.user?.id,
-        checked: false,
-        finalized: false,
-        archived: true,
-      },
-    });
-  }),
-  getDeletedTodos: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findMany({
-      where: {
-        authorId: ctx.session?.user?.id,
-        deleted: true,
       },
     });
   }),
@@ -88,6 +68,7 @@ export const todoRouter = router({
         },
         data: {
           finalized: input.checked,
+          checked: false,
         },
       });
     }),
@@ -144,28 +125,14 @@ export const todoRouter = router({
         });
       }
     }),
-  deleteTodo: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.delete({
-        where: {
-          id: input.id,
-        },
-      });
-    }),
-  deleteTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.updateMany({
-        where: {
-          authorId: ctx.session?.user?.id,
-          id: { in: input.ids },
-        },
-        data: {
-          deleted: true,
-        },
-      });
-    }),
+  deleteFinalizedTodos: protectedProcedure.mutation(({ ctx }) => {
+    return ctx.prisma.todo.deleteMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        finalized: true,
+      },
+    });
+  }),
   getMostRecentTodo: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todo.findFirst({
       where: {
@@ -179,18 +146,6 @@ export const todoRouter = router({
       },
     });
   }),
-  setRestored: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          checked: true,
-        },
-      });
-    }),
   restoreTodos: protectedProcedure
     .input(z.object({ ids: z.string().array() }))
     .mutation(({ ctx, input }) => {

@@ -4,37 +4,79 @@ import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
+import useTodoStore from "../../hooks/todoStore";
 import classNames from "../../utils/classNames";
+import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
-  setChecked?: (id: string, checked: boolean) => void;
   todo: Todo;
-  onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging: boolean;
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
-  setRestored?: (id: string, checked: boolean) => void;
+  restore: boolean;
+  refetch: () => void;
 };
 
 export default function TodoCard({
-  setChecked,
   todo,
-  onBlurTextArea,
   isDragging,
   provided,
-  setRestored: setRestore,
+  refetch,
+  restore,
 }: TodoCardProps) {
+  const [showAnimation, setShowAnimation] = useState<boolean>(false);
+  const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
+  const { todos, setTodos } = useTodoStore();
+  const [checked, setCheckedState] = useState<boolean>(todo.checked);
+
+  const setChecked = (id: string, checked: boolean) => {
+    setDone.mutate({ id: id, checked: checked });
+  };
+
+  const setDone = trpc.todo.setChecked.useMutation({
+    onMutate: () => {
+      setCheckedState(!checked);
+
+      // if (restore) {
+      // } else {
+      // Update local state
+      const newTodos = todos.map((mappedTodo) => {
+        if (todo.id === mappedTodo.id) {
+          return { ...mappedTodo, checked: !mappedTodo.checked };
+        }
+        return mappedTodo;
+      });
+      setTodos(newTodos);
+      // }
+    },
+  });
+
   const handleOnChange = () => {
     if (setChecked) {
       setChecked(todo.id, !todo.checked);
-    } else if (setRestore) {
-      setRestore(todo.id, !todo.restored);
     }
   };
 
-  const [showAnimation, setShowAnimation] = useState<boolean>(false);
-  const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
+  const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  function onBlurTextArea(newContent: string) {
+    //Change local todos
+    if (newContent === todo.content) return;
+
+    if (newContent === "") {
+      setTodos(todos.filter((mappedTodo) => mappedTodo.id !== todo.id));
+    }
+    //Change database
+    updateTodoContent.mutate({
+      id: todo.id,
+      content: newContent,
+    });
+  }
 
   const { mostRecentTodoId, todoCreatedAtMilliseconds: todoCreatedAt } =
     useMostRecentTodoIdStore();
@@ -93,12 +135,12 @@ export default function TodoCard({
       >
         <input
           type="checkbox"
-          checked={todo.checked && !todo.finalized ? true : false}
+          checked={checked ? true : false}
           onChange={() => handleOnChange()}
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={!setChecked || !setRestore ? true : false}
+          disabled={!setChecked ? true : false}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);

@@ -1,5 +1,4 @@
 import { type Todo } from "@prisma/client";
-import { useState } from "react";
 import CustomHead from "../shared/customHead";
 import SideNavigation from "../shared/navigation/sideNavigation";
 import TopNaviagtion from "../shared/navigation/topNavigation";
@@ -9,31 +8,14 @@ import GeneralAndFinalizedToolbar from "./generalAndFinalizedToolbar";
 type GeneralAndFinalizedTodosProps = {
   todos: Todo[];
   title: string;
+  refetch: () => void;
 };
 
 export default function GeneralAndFinalizedTodos({
   todos,
   title,
+  refetch,
 }: GeneralAndFinalizedTodosProps) {
-  const [todosToRestore, setTodosToRestore] = useState<Todo[]>();
-
-  // const setRestoredTodos = (id: string) => {
-  //   setRestored.mutate({ id: id });
-  // };
-
-  // const setRestored = trpc.todo.setRestored.useMutation({
-  //   onMutate: (data) => {
-  //     // Update local state
-  //     const newTodos = todos.map((mappedTodo) => {
-  //       if (todo.id === mappedTodo.id) {
-  //         return { ...mappedTodo, checked: !mappedTodo.checked };
-  //       }
-  //       return mappedTodo;
-  //     });
-  //     setTodos(newTodos);
-  //   },
-  // });
-
   return (
     <>
       <CustomHead title={title} />
@@ -46,16 +28,13 @@ export default function GeneralAndFinalizedTodos({
             {title}
           </h1>
           <div className="flex flex-row justify-center">
-            <GeneralAndFinalizedToolbar
-              setTodosToRestore={setTodosToRestore}
-              todosToRestore={todosToRestore}
-              todos={todos}
-            />
+            <GeneralAndFinalizedToolbar todos={todos} refetch={refetch} />
           </div>
           <div className="flex flex-wrap justify-evenly px-5 pt-5">
             {todos?.map((todo) => (
               <TodoCard
-                setRestored={setRestoredTodos}
+                refetch={refetch}
+                restore={true}
                 isDragging={false}
                 key={todo.id}
                 todo={todo}
