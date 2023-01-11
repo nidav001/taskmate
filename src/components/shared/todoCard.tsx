@@ -3,9 +3,12 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
+import useColumnStore from "../../hooks/columnStore";
+import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
-import useTodoStore from "../../hooks/todoStore";
+import useOpenTodoStore from "../../hooks/openTodoStore";
 import classNames from "../../utils/classNames";
+import { removeTodoFromTodoOrder } from "../../utils/todoUtils";
 import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
@@ -15,7 +18,7 @@ type TodoCardProps = {
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
   restore: boolean;
-  refetch: () => void;
+  refetch?: () => void;
 };
 
 export default function TodoCard({
@@ -27,40 +30,49 @@ export default function TodoCard({
 }: TodoCardProps) {
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
   const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
-  const { todos, setTodos } = useTodoStore();
-  const [checked, setCheckedState] = useState<boolean>(todo.checked);
+  const { todos: openTodos, setTodos: setOpenTodos } = useOpenTodoStore();
+  const { todos: finalizedTodos, setTodos: setFinalizedTodos } =
+    useFinalizedTodoStore();
 
-  const setChecked = (id: string, checked: boolean) => {
-    setDone.mutate({ id: id, checked: checked });
-  };
+  const { columns, setColumnTodoOrder } = useColumnStore();
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  const setDone = trpc.todo.setChecked.useMutation({
+  const setChecked = trpc.todo.setChecked.useMutation({
     onMutate: () => {
-      setCheckedState(!checked);
-
-      // if (restore) {
-      // } else {
-      // Update local state
-      const newTodos = todos.map((mappedTodo) => {
-        if (todo.id === mappedTodo.id) {
-          return { ...mappedTodo, checked: !mappedTodo.checked };
-        }
-        return mappedTodo;
-      });
-      setTodos(newTodos);
-      // }
+      if (restore) {
+        const newTodos = finalizedTodos.map((mappedTodo) => {
+          if (todo.id === mappedTodo.id) {
+            return { ...mappedTodo, checked: !mappedTodo.checked };
+          }
+          return mappedTodo;
+        });
+        setFinalizedTodos(newTodos);
+      } else {
+        // Update local state
+        const newTodos = openTodos.map((mappedTodo) => {
+          if (todo.id === mappedTodo.id) {
+            return { ...mappedTodo, checked: !mappedTodo.checked };
+          }
+          return mappedTodo;
+        });
+        setOpenTodos(newTodos);
+      }
     },
   });
 
-  const handleOnChange = () => {
-    if (setChecked) {
-      setChecked(todo.id, !todo.checked);
-    }
-  };
-
   const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
     onSuccess: () => {
-      refetch();
+      if (refetch) {
+        refetch();
+      }
+    },
+    onMutate: () => {
+      removeTodoFromTodoOrder(
+        columns,
+        todo,
+        setColumnTodoOrder,
+        updateTodoPosition
+      );
     },
   });
 
@@ -68,10 +80,12 @@ export default function TodoCard({
     //Change local todos
     if (newContent === todo.content) return;
 
+    // If empty --> delete locally and later in db
     if (newContent === "") {
-      setTodos(todos.filter((mappedTodo) => mappedTodo.id !== todo.id));
+      setOpenTodos(openTodos.filter((mappedTodo) => mappedTodo.id !== todo.id));
     }
-    //Change database
+
+    //Update todo in db
     updateTodoContent.mutate({
       id: todo.id,
       content: newContent,
@@ -134,13 +148,16 @@ export default function TodoCard({
         className="group flex items-center justify-between"
       >
         <input
+          disabled={refetch ? false : true}
           type="checkbox"
-          checked={checked ? true : false}
-          onChange={() => handleOnChange()}
+          checked={todo.checked ? true : false}
+          onChange={() =>
+            setChecked.mutate({ id: todo.id, checked: !todo.checked })
+          }
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={!setChecked ? true : false}
+          disabled={refetch ? false : true}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);

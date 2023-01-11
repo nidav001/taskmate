@@ -1,9 +1,16 @@
 import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { type Todo } from "@prisma/client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import useTodoStore from "../../hooks/todoStore";
+import { useState } from "react";
+import useColumnStore from "../../hooks/columnStore";
+import useOpenTodoStore from "../../hooks/openTodoStore";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
+import {
+  getCheckedTodoIds,
+  getCheckedTodos,
+  refreshLocalTodos,
+  removeTodoFromTodoOrder,
+} from "../../utils/todoUtils";
+import { useAlertEffect } from "../../utils/toolbarUtils";
 import { trpc } from "../../utils/trpc";
 import Snackbar from "../shared/snackbar";
 
@@ -11,69 +18,63 @@ type ToolbarProps = {
   refetch: () => void;
 };
 
+const funnyMessages = [
+  "Endlich geschafft 🥹",
+  "Schneller als gedacht 😘",
+  "Super 😍",
+  "Weiter so 😘",
+  "Hammer 🤩",
+  "Gut gemacht 😍",
+  "Liebe dich 🥰",
+  "Nicht so schnell, der Server kommt nicht hinterher 🥵",
+  "Beeindruckend 😳",
+  "Das nächste Todo wartet schon 🫡",
+  "Du coole Socke 😎",
+  "Ganz stark 💪",
+];
+
 export default function Toolbar({ refetch }: ToolbarProps) {
-  const { todos: localTodos, setTodos } = useTodoStore();
+  const { todos, setTodos } = useOpenTodoStore();
   const [showAlert, setShowAlert] = useState(false);
+  const { columns, setColumnTodoOrder } = useColumnStore();
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  useEffect(() => {
-    if (!showAlert) return;
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 3000);
-  }, [showAlert]);
-
-  const getTodoIds = (
-    todos: Todo[] | undefined,
-    checked: boolean
-  ): string[] => {
-    return (
-      todos
-        ?.filter((todo) => todo.checked === checked)
-        .map((todo) => todo.id) ?? []
-    );
-  };
-
-  const refreshLocalTodos = (ids: string[]) => {
-    const newTodos = localTodos?.filter((todo) => !ids.includes(todo.id));
-    setTodos(newTodos);
-  };
+  useAlertEffect(showAlert, setShowAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onSuccess: () => {
       refetch();
     },
     onMutate: (data) => {
-      refreshLocalTodos(data.ids);
+      const todosToRemoveFromTodoOrder = getCheckedTodos(todos, data.ids);
+      todosToRemoveFromTodoOrder.forEach((todo) => {
+        removeTodoFromTodoOrder(
+          columns,
+          todo,
+          setColumnTodoOrder,
+          updateTodoPosition
+        );
+        updateTodoPosition.mutate({
+          id: todo.id,
+          day: todo.day,
+          index: -1,
+        });
+      });
+
+      refreshLocalTodos(data.ids, setTodos, todos);
       setShowAlert(true);
     },
   });
 
   function handleOnClickFinalize() {
-    const doneTodoIds = getTodoIds(localTodos, true);
+    const doneTodoIds = getCheckedTodoIds(todos);
 
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({
         ids: doneTodoIds,
-        checked: true,
       });
     }
   }
-
-  const funnyMessages = [
-    "Endlich geschafft 🥹",
-    "Schneller als gedacht 😘",
-    "Super 😍",
-    "Weiter so 😘",
-    "Hammer 🤩",
-    "Gut gemacht 😍",
-    "Liebe dich 🥰",
-    "Nicht so schnell, der Server kommt nicht hinterher 🥵",
-    "Beeindruckend 😳",
-    "Das nächste Todo wartet schon 🫡",
-    "Du coole Socke 😎",
-    "Ganz stark 💪",
-  ];
 
   return (
     <>

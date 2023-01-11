@@ -11,7 +11,7 @@ import { trpc } from "../utils/trpc";
 
 const Dashboard: NextPage = () => {
   const [isLayoutSmall, setIsLayoutSmall] = useState<boolean>(false);
-  const todosFromDb = trpc.todo.getTodos.useQuery();
+  const todosFromDb = trpc.todo.getOpenTodos.useQuery();
   const finalizedTodosFromDb = trpc.todo.getFinalizedTodos.useQuery();
 
   useEffect(() => {

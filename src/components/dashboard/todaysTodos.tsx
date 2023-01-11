@@ -30,13 +30,13 @@ export default function TodaysTodos({ todos }: TodaysTodosProps) {
     <div className="flex w-full flex-col items-center px-5 pt-5">
       <h2 className="text-xl font-bold dark:text-white">Heutige Todos</h2>
       <div className="dark:text-slate-400">{todaysDate}</div>
-      <div className="flex flex-col pt-2">
+      <div className="flex w-80 flex-col pt-2">
         {getFilteredAndSortedTodos().map((todo) => (
           <TodoCard
             isDragging={false}
-            todoDone={todo.checked}
             key={todo.id}
             todo={todo}
+            restore={false}
           />
         ))}
       </div>

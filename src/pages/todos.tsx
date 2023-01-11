@@ -15,10 +15,11 @@ import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
 import Toolbar from "../components/todoPage/toolbar";
 import useColumnStore from "../hooks/columnStore";
+import useOpenTodoStore from "../hooks/openTodoStore";
 import useSearchStore from "../hooks/searchStore";
-import useTodoStore from "../hooks/todoStore";
 import serverProps from "../lib/serverProps";
 import { Day } from "../types/enums";
+import { persistTodoOrderInDb } from "../utils/todoUtils";
 import { trpc } from "../utils/trpc";
 
 const startOfWeek = DateTime.now().startOf("week");
@@ -27,18 +28,21 @@ const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
 );
 
 const Todos: NextPage = () => {
-  const todoQuery = trpc.todo.getTodos.useQuery();
-  const todosFromDb = useMemo(() => todoQuery?.data ?? [], [todoQuery?.data]);
-  const updateTodo = trpc.todo.updateTodo.useMutation();
+  const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
+  const openTodosFromDb = useMemo(
+    () => openTodosQuery?.data ?? [],
+    [openTodosQuery?.data]
+  );
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  const { todos: localTodos, setTodos: setLocalTodos } = useTodoStore();
+  const { todos: localTodos, setTodos: setLocalTodos } = useOpenTodoStore();
   const { columns, setColumnTodoOrder } = useColumnStore();
 
   const { search } = useSearchStore();
 
   const validateColumnTodoOrders = () => {
     columns.map((col) => {
-      const columnTodos = todosFromDb
+      const columnTodos = openTodosFromDb
         .filter((todo) => todo.day === col.id)
         .sort((a, b) => a.index - b.index);
 
@@ -48,9 +52,9 @@ const Todos: NextPage = () => {
 
   useEffect(() => {
     validateColumnTodoOrders();
-    setLocalTodos(todosFromDb);
+    setLocalTodos(openTodosFromDb);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [todosFromDb]);
+  }, [openTodosFromDb]);
 
   function reorder(result: Todo[], startIndex: number, endIndex: number) {
     const [removed] = result.splice(startIndex, 1);
@@ -76,7 +80,7 @@ const Todos: NextPage = () => {
 
     const start = columns.find((col) => col.id === source.droppableId);
     const finish = columns.find((col) => col.id === destination.droppableId);
-    const draggedItem = todosFromDb.find((todo) => todo.id === draggableId);
+    const draggedItem = openTodosFromDb.find((todo) => todo.id === draggableId);
 
     if (!start || !finish || !draggedItem) return;
 
@@ -118,18 +122,7 @@ const Todos: NextPage = () => {
       setColumnTodoOrder(newFinish.id, newFinish.todos);
     }
 
-    // Persist changes in database based on local state
-    columns.map((col) => {
-      col.todoOrder.map((todo, index) => {
-        if (todo.index !== index || todo.day !== col.id) {
-          updateTodo.mutate({
-            id: todo.id,
-            day: col.id,
-            index: index,
-          });
-        }
-      });
-    });
+    persistTodoOrderInDb(columns, updateTodoPosition);
   }
 
   return (
@@ -141,7 +134,7 @@ const Todos: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
             <SearchBar />
-            <Toolbar refetch={() => todoQuery.refetch()} />
+            <Toolbar refetch={() => openTodosQuery.refetch()} />
             <div className="flex flex-row flex-wrap items-start justify-center gap-3">
               <DragDropContext onDragEnd={onDragEnd}>
                 {(Object.keys(Day) as Array<keyof typeof Day>).map(
@@ -151,12 +144,12 @@ const Todos: NextPage = () => {
                         datesOfWeek[index - 1] ??
                         `Woche ${DateTime.now().weekNumber.toString()}`
                       }
-                      refetch={todoQuery.refetch}
+                      refetch={openTodosQuery.refetch}
                       searchValue={search}
                       todos={localTodos.filter((todo) => todo.day === day)}
                       key={day}
                       day={day as Day}
-                      isLoading={todoQuery.isLoading}
+                      isLoading={openTodosQuery.isLoading}
                     />
                   )
                 )}

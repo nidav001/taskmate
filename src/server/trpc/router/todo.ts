@@ -3,13 +3,11 @@ import { any, z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 
 export const todoRouter = router({
-  getTodos: protectedProcedure.query(({ ctx }) => {
+  getOpenTodos: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
         finalized: false,
-        archived: false,
-        deleted: false,
       },
     });
   }),
@@ -18,6 +16,14 @@ export const todoRouter = router({
       where: {
         authorId: ctx.session?.user?.id,
         finalized: true,
+      },
+    });
+  }),
+  getGeneralTodos: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        // general: true,
       },
     });
   }),
@@ -59,7 +65,7 @@ export const todoRouter = router({
       });
     }),
   finalizeTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), checked: z.boolean() }))
+    .input(z.object({ ids: z.string().array() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
@@ -67,25 +73,12 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          finalized: input.checked,
+          finalized: true,
           checked: false,
         },
       });
     }),
-  archiveTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), checked: z.boolean() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.updateMany({
-        where: {
-          authorId: ctx.session.user.id,
-          id: { in: input.ids },
-        },
-        data: {
-          archived: input.checked,
-        },
-      });
-    }),
-  updateTodo: protectedProcedure
+  updateTodoPosition: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -138,8 +131,6 @@ export const todoRouter = router({
       where: {
         authorId: ctx.session?.user?.id,
         finalized: false,
-        archived: false,
-        deleted: false,
       },
       orderBy: {
         createdAt: "desc",

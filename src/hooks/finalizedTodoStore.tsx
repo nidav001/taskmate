@@ -8,7 +8,7 @@ interface TodoState {
   resetTodos: () => void;
 }
 
-const useTodoStore = create<TodoState>()(
+const useFinalizedTodoStore = create<TodoState>()(
   devtools(
     persist(
       (set) => ({
@@ -28,4 +28,4 @@ const useTodoStore = create<TodoState>()(
   )
 );
 
-export default useTodoStore;
+export default useFinalizedTodoStore;
