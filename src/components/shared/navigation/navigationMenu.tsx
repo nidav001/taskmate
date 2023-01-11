@@ -9,12 +9,12 @@ import { basicIcon } from "../../../styles/basicStyles";
 import Logo from "./logo";
 
 type NavigationMenuProps = {
-  logoStyle: string;
+  logoShown: string;
   closeMenu?: () => void;
 };
 
 export default function NavigationMenu({
-  logoStyle,
+  logoShown,
   closeMenu,
 }: NavigationMenuProps) {
   const menuItemStyle =
@@ -37,7 +37,7 @@ export default function NavigationMenu({
 
   return (
     <div className="absolute sticky top-0 z-10 w-2/3 sm:w-full">
-      <Logo logoStyle={logoStyle} />
+      <Logo logoShown={logoShown} />
       {getMenuItem("/", <HomeIcon className={iconStyle} />, "Dashboard")}
       {getMenuItem(
         "/todos",

@@ -1,17 +1,17 @@
-import classNames from "classnames";
 import Link from "next/link";
+import classNames from "../../../utils/classNames";
 
 type LogoProps = {
-  logoStyle: string;
+  logoShown: string;
 };
 
-export default function Logo({ logoStyle }: LogoProps) {
+export default function Logo({ logoShown }: LogoProps) {
   return (
     <Link
       href="/"
       aria-label="home"
       className={classNames(
-        logoStyle,
+        logoShown,
         "py-3 pl-1 text-2xl font-bold tracking-tight text-black dark:text-white"
       )}
     >

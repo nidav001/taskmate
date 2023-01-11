@@ -2,7 +2,6 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Disclosure, Transition } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
-import classNames from "classnames";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
@@ -97,20 +96,18 @@ export default function DroppableDayArea({
         </div>
         <div className="flex flex-col">
           <div
-            className={classNames(
-              "flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white",
+            className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
               isLoading ? "animate-pulse bg-gray-400" : ""
-            )}
+            }`}
           >
             {isLoading ? null : todos.length}
           </div>
           <div>
             <FontAwesomeIcon
               icon={faChevronDown}
-              className={classNames(
-                "h-5 transition-all dark:text-white",
+              className={`h-5 transition-all dark:text-white ${
                 disclosureOpen ? "rotate-180" : "rotate-0"
-              )}
+              }`}
             />
           </div>
         </div>

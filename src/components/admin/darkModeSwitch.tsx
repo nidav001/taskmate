@@ -1,6 +1,5 @@
 import { Switch } from "@headlessui/react";
 import { MoonIcon, SunIcon } from "@heroicons/react/20/solid";
-import classNames from "classnames";
 import { useState } from "react";
 
 export default function DarkModeSwitch() {
@@ -10,10 +9,8 @@ export default function DarkModeSwitch() {
       id="theme-toggle"
       checked={darkMode}
       onChange={setDarkMode}
-      className={classNames(
-        darkMode ? "bg-sky-600" : "bg-sky-300",
-        "relative flex h-[40px] w-[80px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75"
-      )}
+      className={`${darkMode ? "bg-sky-600" : "bg-sky-300"}
+  relative flex h-[40px] w-[80px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
     >
       <span className="sr-only">Switch dark mode</span>
       <div
