@@ -3,13 +3,11 @@ import { any, z } from "zod";
 import { protectedProcedure, router } from "../trpc";
 
 export const todoRouter = router({
-  getTodos: protectedProcedure.query(({ ctx }) => {
+  getOpenTodos: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
         finalized: false,
-        archived: false,
-        deleted: false,
       },
     });
   }),
@@ -17,27 +15,15 @@ export const todoRouter = router({
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
-        done: true,
         finalized: true,
-        archived: false,
       },
     });
   }),
-  getArchivedTodos: protectedProcedure.query(({ ctx }) => {
+  getGeneralTodos: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.todo.findMany({
       where: {
         authorId: ctx.session?.user?.id,
-        done: false,
-        finalized: false,
-        archived: true,
-      },
-    });
-  }),
-  getDeletedTodos: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findMany({
-      where: {
-        authorId: ctx.session?.user?.id,
-        deleted: true,
+        // general: true,
       },
     });
   }),
@@ -61,11 +47,11 @@ export const todoRouter = router({
         },
       });
     }),
-  setTodoDone: protectedProcedure
+  setChecked: protectedProcedure
     .input(
       z.object({
         id: z.string(),
-        done: z.boolean(),
+        checked: z.boolean(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -74,12 +60,12 @@ export const todoRouter = router({
           id: input.id,
         },
         data: {
-          done: input.done,
+          checked: input.checked,
         },
       });
     }),
   finalizeTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
+    .input(z.object({ ids: z.string().array() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
         where: {
@@ -87,24 +73,12 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          finalized: input.done,
+          finalized: true,
+          checked: false,
         },
       });
     }),
-  archiveTodos: protectedProcedure
-    .input(z.object({ ids: z.string().array(), done: z.boolean() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.updateMany({
-        where: {
-          authorId: ctx.session.user.id,
-          id: { in: input.ids },
-        },
-        data: {
-          archived: input.done,
-        },
-      });
-    }),
-  updateTodo: protectedProcedure
+  updateTodoPosition: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -144,16 +118,26 @@ export const todoRouter = router({
         });
       }
     }),
-  deleteTodo: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.delete({
-        where: {
-          id: input.id,
-        },
-      });
-    }),
-  deleteTodos: protectedProcedure
+  deleteFinalizedTodos: protectedProcedure.mutation(({ ctx }) => {
+    return ctx.prisma.todo.deleteMany({
+      where: {
+        authorId: ctx.session?.user?.id,
+        finalized: true,
+      },
+    });
+  }),
+  getMostRecentTodo: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findFirst({
+      where: {
+        authorId: ctx.session?.user?.id,
+        finalized: false,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
+  restoreTodos: protectedProcedure
     .input(z.object({ ids: z.string().array() }))
     .mutation(({ ctx, input }) => {
       return ctx.prisma.todo.updateMany({
@@ -162,21 +146,9 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
-          deleted: true,
+          finalized: false,
+          checked: false,
         },
       });
     }),
-  getMostRecentTodo: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findFirst({
-      where: {
-        authorId: ctx.session?.user?.id,
-        finalized: false,
-        archived: false,
-        deleted: false,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  }),
 });

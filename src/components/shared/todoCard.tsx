@@ -3,36 +3,94 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
+import useColumnStore from "../../hooks/columnStore";
+import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
+import useOpenTodoStore from "../../hooks/openTodoStore";
 import classNames from "../../utils/classNames";
+import { removeTodoFromTodoOrder } from "../../utils/todoUtils";
+import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
-  todoDone: boolean;
-  setTodoDone?: (id: string, done: boolean) => void;
   todo: Todo;
-  onBlurTextArea?: (newContent: string) => void;
   disclosureOpen?: boolean;
   isDragging: boolean;
   provided?: DraggableProvided;
   todoRef?: React.RefObject<HTMLDivElement>;
+  restore: boolean;
+  refetch?: () => void;
 };
 
 export default function TodoCard({
-  todoDone,
-  setTodoDone,
   todo,
-  onBlurTextArea,
   isDragging,
   provided,
+  refetch,
+  restore,
 }: TodoCardProps) {
-  const handleOnChange = () => {
-    if (setTodoDone) {
-      setTodoDone(todo.id, !todo.done);
-    }
-  };
-
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
   const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
+  const { todos: openTodos, setTodos: setOpenTodos } = useOpenTodoStore();
+  const { todos: finalizedTodos, setTodos: setFinalizedTodos } =
+    useFinalizedTodoStore();
+
+  const { columns, setColumnTodoOrder } = useColumnStore();
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
+
+  const setChecked = trpc.todo.setChecked.useMutation({
+    onMutate: () => {
+      if (restore) {
+        const newTodos = finalizedTodos.map((mappedTodo) => {
+          if (todo.id === mappedTodo.id) {
+            return { ...mappedTodo, checked: !mappedTodo.checked };
+          }
+          return mappedTodo;
+        });
+        setFinalizedTodos(newTodos);
+      } else {
+        // Update local state
+        const newTodos = openTodos.map((mappedTodo) => {
+          if (todo.id === mappedTodo.id) {
+            return { ...mappedTodo, checked: !mappedTodo.checked };
+          }
+          return mappedTodo;
+        });
+        setOpenTodos(newTodos);
+      }
+    },
+  });
+
+  const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
+    onSuccess: () => {
+      if (refetch) {
+        refetch();
+      }
+    },
+    onMutate: () => {
+      removeTodoFromTodoOrder(
+        columns,
+        todo,
+        setColumnTodoOrder,
+        updateTodoPosition
+      );
+    },
+  });
+
+  function onBlurTextArea(newContent: string) {
+    //Change local todos
+    if (newContent === todo.content) return;
+
+    // If empty --> delete locally and later in db
+    if (newContent === "") {
+      setOpenTodos(openTodos.filter((mappedTodo) => mappedTodo.id !== todo.id));
+    }
+
+    //Update todo in db
+    updateTodoContent.mutate({
+      id: todo.id,
+      content: newContent,
+    });
+  }
 
   const { mostRecentTodoId, todoCreatedAtMilliseconds: todoCreatedAt } =
     useMostRecentTodoIdStore();
@@ -87,17 +145,19 @@ export default function TodoCard({
     >
       <div
         ref={shouldUseRef() ? recentlyAddedTodo : null}
-        className="group flex items-center justify-between gap-2"
+        className="group flex items-center justify-between"
       >
         <input
+          disabled={refetch ? false : true}
           type="checkbox"
-          readOnly={setTodoDone ? false : true}
-          checked={todoDone}
-          onChange={() => handleOnChange()}
+          checked={todo.checked ? true : false}
+          onChange={() =>
+            setChecked.mutate({ id: todo.id, checked: !todo.checked })
+          }
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={setTodoDone ? false : true}
+          disabled={refetch ? false : true}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);
@@ -106,7 +166,7 @@ export default function TodoCard({
           defaultValue={todo.content}
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
-            todoDone ? "line-through" : "",
+            todo.checked && !todo.finalized ? "line-through" : "",
             "resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />

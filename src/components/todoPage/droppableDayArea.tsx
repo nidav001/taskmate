@@ -143,7 +143,7 @@ export default function DroppableDayArea({
                     isDragging={true}
                     provided={provided}
                     todo={todo}
-                    todoDone={todo.done}
+                    todoDone={todo.checked}
                   />
                 );
               }}

@@ -1,12 +1,8 @@
 import { type Todo } from "@prisma/client";
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { type Column } from "../types/column";
 import { Day } from "../types/enums";
-
-type Column = {
-  id: Day;
-  todoOrder: Todo[];
-};
 
 interface ColumnState {
   columns: Column[];

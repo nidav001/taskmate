@@ -1,18 +1,11 @@
 import { type NextPage } from "next";
-import GeneralAndFinalizedTodos from "../../components/archivedAndFinalizedTodos/generalAndFinalizedTodos";
 import getServerSideProps from "../../lib/serverProps";
-import { trpc } from "../../utils/trpc";
 
-const ArchivedTodos: NextPage = () => {
-  const generalTodos = trpc.todo.getArchivedTodos.useQuery().data;
-  return (
-    <GeneralAndFinalizedTodos
-      todos={generalTodos ?? []}
-      title="Archivierte Todos"
-    />
-  );
+const GeneralTodos: NextPage = () => {
+  // const generalTodos = trpc.todo.getGeneralTodos.useQuery().data;
+  return null;
 };
 
-export default ArchivedTodos;
+export default GeneralTodos;
 
 export { getServerSideProps };

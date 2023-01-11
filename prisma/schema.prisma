@@ -21,12 +21,10 @@ model Todo {
   author   User     @relation(fields: [authorId], references: [id])
   authorId String
   content  String
-  done     Boolean   @default(false)
+  checked     Boolean   @default(false) @map("done")
   day     String
   index Int @default(0)
   finalized Boolean @default(false)
-  archived Boolean @default(false)
-  deleted Boolean @default(false)
 }
 
 // Necessary for Next auth
@@ -65,7 +63,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   todos         Todo[] 
-
 }
 
 model VerificationToken {
