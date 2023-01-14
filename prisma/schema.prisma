@@ -21,7 +21,7 @@ model Todo {
   author   User     @relation(fields: [authorId], references: [id])
   authorId String
   content  String
-  checked     Boolean   @default(false) @map("done")
+  checked     Boolean   @default(false)
   day     String
   index Int @default(0)
   finalized Boolean @default(false)
