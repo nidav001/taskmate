@@ -3,32 +3,35 @@ import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import { inputStyle } from "../../styles/basicStyles";
 import { dropdown } from "../../styles/transitionClasses";
-import { Day } from "../../types/enums";
 
-type DayComboboxProps = {
-  selected: Day;
-  setSelected: (day: Day) => void;
-  setValue: (name: "day" | "content", value: Day) => void;
+type GenericComboboxProps<T> = {
+  selected: T;
+  setSelected: (selectedValue: T) => void;
+  setValue?: (name: "day" | "content", value: T) => void;
+  comboboxOptions: T[];
 };
 
-export default function DayCombobox({
+export default function GenericCombobox<T extends string>({
   selected,
   setSelected,
   setValue,
-}: DayComboboxProps) {
+  comboboxOptions,
+}: GenericComboboxProps<T>) {
   return (
     <Listbox
       as={"div"}
       className="w-80"
       value={selected}
-      onChange={(val: Day) => {
+      onChange={(val: T) => {
         setSelected(val);
-        setValue("day", val);
+        if (setValue) {
+          setValue("day", val);
+        }
       }}
     >
       <Listbox.Button
         className={
-          inputStyle + " relative w-full cursor-default pr-10 text-left"
+          inputStyle + " relative h-14 w-full cursor-default pr-10 text-left"
         }
       >
         <span className="block truncate dark:text-white">{selected}</span>
@@ -41,7 +44,7 @@ export default function DayCombobox({
       </Listbox.Button>
       <Transition as={Fragment} {...dropdown}>
         <Listbox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-1 dark:bg-slate-700">
-          {(Object.keys(Day) as Array<keyof typeof Day>).map((key) => (
+          {comboboxOptions.map((key) => (
             <Listbox.Option
               className={({ active }) =>
                 `relative w-full cursor-default select-none py-2 pl-10 pr-4 dark:text-white ${

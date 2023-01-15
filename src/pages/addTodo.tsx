@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import DayCombobox from "../components/addTodo/dayCombobox";
+import GenericCombobox from "../components/addTodo/dayCombobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
@@ -14,7 +14,7 @@ import useMostRecentTodoIdStore from "../hooks/mostRecentTodoStore";
 import useSearchStore from "../hooks/searchStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle, inputStyle } from "../styles/basicStyles";
-import { type Day } from "../types/enums";
+import { Day } from "../types/enums";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
@@ -98,10 +98,11 @@ const AddTodo: NextPage = () => {
                 type="text"
                 {...register("day", { required: true })}
               />
-              <DayCombobox
+              <GenericCombobox
                 selected={selected}
                 setSelected={setSelected}
                 setValue={setValue}
+                comboboxOptions={Object.keys(Day) as Array<keyof typeof Day>}
               />
               <div className="flex w-full justify-center">
                 <button className={"w-3/4 " + buttonStyle} type="submit">

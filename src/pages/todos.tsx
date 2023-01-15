@@ -1,13 +1,16 @@
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   resetServerContext,
   type DropResult,
 } from "react-beautiful-dnd";
+import GenericCombobox from "../components/addTodo/dayCombobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
@@ -17,7 +20,9 @@ import Toolbar from "../components/todoPage/toolbar";
 import useColumnStore from "../hooks/columnStore";
 import useOpenTodoStore from "../hooks/openTodoStore";
 import useSearchStore from "../hooks/searchStore";
+import useSharedTodoStore from "../hooks/sharedTodoStore";
 import serverProps from "../lib/serverProps";
+import { basicIcon, zoomIn } from "../styles/basicStyles";
 import { Day } from "../types/enums";
 import { persistTodoOrderInDb } from "../utils/todoUtils";
 import { trpc } from "../utils/trpc";
@@ -33,12 +38,27 @@ const Todos: NextPage = () => {
     () => openTodosQuery?.data ?? [],
     [openTodosQuery?.data]
   );
+
+  const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery();
+  const sharedTodosFromDb = useMemo(
+    () => sharedTodosQuery?.data ?? [],
+    [sharedTodosQuery?.data]
+  );
+
+  const { todos: localSharedTodos, setTodos: setLocalSharedTodos } =
+    useSharedTodoStore();
+
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   const { todos: localTodos, setTodos: setLocalTodos } = useOpenTodoStore();
   const { columns, setColumnTodoOrder } = useColumnStore();
 
   const { search } = useSearchStore();
+
+  const [showSharedTodos, setShowSharedTodos] = useState(false);
+  const [selectedCollaborateur, setSelectedCollaborateur] = useState<
+    string | undefined
+  >(undefined);
 
   const validateColumnTodoOrders = () => {
     columns.map((col) => {
@@ -125,6 +145,42 @@ const Todos: NextPage = () => {
     persistTodoOrderInDb(columns, updateTodoPosition);
   }
 
+  const TodoView = () => {
+    const isLoading = showSharedTodos
+      ? openTodosQuery.isLoading
+      : sharedTodosQuery.isLoading;
+    const refetch = showSharedTodos
+      ? openTodosQuery.refetch
+      : sharedTodosQuery.refetch;
+    const todos = showSharedTodos ? localTodos : localSharedTodos;
+
+    return (
+      <div
+        className={classNames(
+          "flex flex-row flex-wrap items-start justify-center gap-3",
+          showSharedTodos && selectedCollaborateur === undefined ? "hidden" : ""
+        )}
+      >
+        <DragDropContext onDragEnd={onDragEnd}>
+          {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
+            <DroppableDayArea
+              date={
+                datesOfWeek[index - 1] ??
+                `Woche ${DateTime.now().weekNumber.toString()}`
+              }
+              refetch={refetch}
+              searchValue={search}
+              todos={todos.filter((todo) => todo.day === day)}
+              key={day}
+              day={day as Day}
+              isLoading={isLoading}
+            />
+          ))}
+        </DragDropContext>
+      </div>
+    );
+  };
+
   return (
     <>
       <CustomHead title="Todos" />
@@ -133,28 +189,43 @@ const Todos: NextPage = () => {
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-col items-center gap-8 pt-5">
+            <div className="flex w-full items-center justify-evenly">
+              <button
+                onClick={() => setShowSharedTodos(false)}
+                className={classNames(
+                  zoomIn,
+                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
+                )}
+              >
+                <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
+              </button>
+              <h1>{showSharedTodos ? "Geteilte Todos" : "Deine Todos"}</h1>
+              <button
+                onClick={() => setShowSharedTodos(true)}
+                className={classNames(
+                  zoomIn,
+                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
+                )}
+              >
+                <ArrowRightIcon className={classNames(basicIcon)} />
+              </button>
+            </div>
+            <div
+              className={classNames(
+                "flex justify-center",
+                !showSharedTodos ? "hidden" : ""
+              )}
+            >
+              <GenericCombobox
+                selected={selectedCollaborateur}
+                setSelected={setSelectedCollaborateur}
+                comboboxOptions={["Niklas"]}
+              />
+            </div>
             <SearchBar />
             <Toolbar refetch={() => openTodosQuery.refetch()} />
-            <div className="flex flex-row flex-wrap items-start justify-center gap-3">
-              <DragDropContext onDragEnd={onDragEnd}>
-                {(Object.keys(Day) as Array<keyof typeof Day>).map(
-                  (day, index) => (
-                    <DroppableDayArea
-                      date={
-                        datesOfWeek[index - 1] ??
-                        `Woche ${DateTime.now().weekNumber.toString()}`
-                      }
-                      refetch={openTodosQuery.refetch}
-                      searchValue={search}
-                      todos={localTodos.filter((todo) => todo.day === day)}
-                      key={day}
-                      day={day as Day}
-                      isLoading={openTodosQuery.isLoading}
-                    />
-                  )
-                )}
-              </DragDropContext>
-            </div>
+
+            <TodoView />
           </div>
         </main>
       </div>
