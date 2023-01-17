@@ -25,6 +25,8 @@ model Todo {
   day     String
   index Int @default(0)
   finalized Boolean @default(false)
+  shared Boolean @default(false)
+  sharedWithEmail String?
 }
 
 // Necessary for Next auth

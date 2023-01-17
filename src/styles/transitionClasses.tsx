@@ -69,3 +69,24 @@ export const snackbar = {
   leaveFrom: "opacity-100 translate-y-0",
   leaveTo: "opacity-0 translate-y-4",
 };
+
+export const slideInSharedView = {
+  enter: "transform transition ease-in-out duration-500",
+  enterFrom: "translate-x-full",
+  enterTo: "translate-x-0",
+};
+
+// export const slideInSharedView = {
+//   enter: "transform transition ease-in-out duration-500",
+//   enterFrom: "translate-x-full",
+//   enterTo: "translate-x-0",
+//   leave: "transform transition ease-in-out duration-500",
+//   leaveFrom: "translate-x-full",
+//   leaveTo: "translate-x-0",
+// };
+
+export const slideIn = {
+  enter: "transform transition ease-in-out duration-500",
+  enterFrom: "-translate-x-full",
+  enterTo: "-translate-x-0",
+};

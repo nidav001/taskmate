@@ -1,5 +1,6 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import classNames from "classnames";
 import { Fragment } from "react";
 import { inputStyle } from "../../styles/basicStyles";
 import { dropdown } from "../../styles/transitionClasses";
@@ -7,8 +8,11 @@ import { dropdown } from "../../styles/transitionClasses";
 type GenericComboboxProps<T> = {
   selected: T;
   setSelected: (selectedValue: T) => void;
-  setValue?: (name: "day" | "content", value: T) => void;
+  setValue?: (name: "day" | "sharedWithEmail", value: T) => void;
+  formValueType?: "day" | "sharedWithEmail";
   comboboxOptions: T[];
+  show: boolean;
+  sharedView: boolean;
 };
 
 export default function GenericCombobox<T extends string>({
@@ -16,16 +20,22 @@ export default function GenericCombobox<T extends string>({
   setSelected,
   setValue,
   comboboxOptions,
+  show,
+  sharedView,
+  formValueType,
 }: GenericComboboxProps<T>) {
   return (
     <Listbox
       as={"div"}
-      className="w-80"
+      className={classNames(
+        sharedView ? "w-1/2" : "w-80",
+        show ? "" : "hidden"
+      )}
       value={selected}
       onChange={(val: T) => {
         setSelected(val);
-        if (setValue) {
-          setValue("day", val);
+        if (setValue && formValueType) {
+          setValue(formValueType, val);
         }
       }}
     >

@@ -1,80 +1,113 @@
+import { Transition } from "@headlessui/react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
-import { DateTime } from "luxon";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
 import { useEffect, useMemo, useState } from "react";
-import {
-  DragDropContext,
-  resetServerContext,
-  type DropResult,
-} from "react-beautiful-dnd";
-import GenericCombobox from "../components/addTodo/dayCombobox";
+import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CustomHead from "../components/shared/customHead";
+import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
-import DroppableDayArea from "../components/todoPage/droppableDayArea";
 import SearchBar from "../components/todoPage/searchBar";
+import TodoViewBase from "../components/todoPage/todoViewBase";
 import Toolbar from "../components/todoPage/toolbar";
 import useColumnStore from "../hooks/columnStore";
 import useOpenTodoStore from "../hooks/openTodoStore";
 import useSearchStore from "../hooks/searchStore";
+import useSharedColumnStore from "../hooks/sharedColumnStore";
 import useSharedTodoStore from "../hooks/sharedTodoStore";
 import serverProps from "../lib/serverProps";
 import { basicIcon, zoomIn } from "../styles/basicStyles";
-import { Day } from "../types/enums";
+import { slideIn, slideInSharedView } from "../styles/transitionClasses";
+import { type Column } from "../types/column";
+import { type Day } from "../types/enums";
 import { persistTodoOrderInDb } from "../utils/todoUtils";
 import { trpc } from "../utils/trpc";
 
-const startOfWeek = DateTime.now().startOf("week");
-const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
-  startOfWeek.plus({ days: i })
-);
-
 const Todos: NextPage = () => {
+  //Own Todos
   const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
+
   const openTodosFromDb = useMemo(
     () => openTodosQuery?.data ?? [],
     [openTodosQuery?.data]
   );
+  const { todos: localTodos, setTodos: setLocalTodos } = useOpenTodoStore();
 
-  const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery();
+  const { columns, setColumnTodoOrder } = useColumnStore();
+
+  //Shared Todos
+  const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
+
+  const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
+    sharedWithEmail: selectedCollaborator,
+  });
+
   const sharedTodosFromDb = useMemo(
     () => sharedTodosQuery?.data ?? [],
     [sharedTodosQuery?.data]
   );
 
+  const collaboratorsQuery = trpc.todo.getCollaborators.useQuery();
+
+  const collaboratorsEmails = useMemo(
+    () =>
+      collaboratorsQuery?.data.map(
+        (collaborator) => collaborator.sharedWithEmail
+      ) ?? [],
+    [collaboratorsQuery?.data]
+  );
+
   const { todos: localSharedTodos, setTodos: setLocalSharedTodos } =
     useSharedTodoStore();
 
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
-  const { todos: localTodos, setTodos: setLocalTodos } = useOpenTodoStore();
-  const { columns, setColumnTodoOrder } = useColumnStore();
-
-  const { search } = useSearchStore();
+  const { sharedColumns, setSharedColumnTodoOrder } = useSharedColumnStore();
 
   const [showSharedTodos, setShowSharedTodos] = useState(false);
-  const [selectedCollaborateur, setSelectedCollaborateur] = useState<
-    string | undefined
-  >(undefined);
 
-  const validateColumnTodoOrders = () => {
+  //General
+  const { search } = useSearchStore();
+
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
+
+  function validateColumnTodoOrder(
+    columns: Column[],
+    todos: Todo[],
+    shared: boolean,
+    setColumnTodoOrder: (id: Day, todos: Todo[]) => void
+  ) {
     columns.map((col) => {
-      const columnTodos = openTodosFromDb
-        .filter((todo) => todo.day === col.id)
+      const columnTodos = todos
+        .filter((todo) => todo.shared === shared && todo.day === col.id)
         .sort((a, b) => a.index - b.index);
 
       setColumnTodoOrder(col.id, columnTodos);
     });
-  };
+  }
 
   useEffect(() => {
-    validateColumnTodoOrders();
+    validateColumnTodoOrder(
+      columns,
+      openTodosFromDb,
+      false,
+      setColumnTodoOrder
+    );
     setLocalTodos(openTodosFromDb);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openTodosFromDb]);
+
+  useEffect(() => {
+    validateColumnTodoOrder(
+      sharedColumns,
+      sharedTodosFromDb,
+      true,
+      setSharedColumnTodoOrder
+    );
+    setLocalSharedTodos(sharedTodosFromDb);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sharedTodosFromDb]);
 
   function reorder(result: Todo[], startIndex: number, endIndex: number) {
     const [removed] = result.splice(startIndex, 1);
@@ -145,41 +178,29 @@ const Todos: NextPage = () => {
     persistTodoOrderInDb(columns, updateTodoPosition);
   }
 
-  const TodoView = () => {
-    const isLoading = showSharedTodos
-      ? openTodosQuery.isLoading
-      : sharedTodosQuery.isLoading;
-    const refetch = showSharedTodos
-      ? openTodosQuery.refetch
-      : sharedTodosQuery.refetch;
-    const todos = showSharedTodos ? localTodos : localSharedTodos;
+  const TodoView = (
+    <TodoViewBase
+      onDragEnd={onDragEnd}
+      search={search}
+      selectedCollaborator={selectedCollaborator}
+      showSharedTodos={showSharedTodos}
+      isLoading={openTodosQuery.isLoading}
+      todos={localTodos}
+      refetch={openTodosQuery.refetch}
+    />
+  );
 
-    return (
-      <div
-        className={classNames(
-          "flex flex-row flex-wrap items-start justify-center gap-3",
-          showSharedTodos && selectedCollaborateur === undefined ? "hidden" : ""
-        )}
-      >
-        <DragDropContext onDragEnd={onDragEnd}>
-          {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
-            <DroppableDayArea
-              date={
-                datesOfWeek[index - 1] ??
-                `Woche ${DateTime.now().weekNumber.toString()}`
-              }
-              refetch={refetch}
-              searchValue={search}
-              todos={todos.filter((todo) => todo.day === day)}
-              key={day}
-              day={day as Day}
-              isLoading={isLoading}
-            />
-          ))}
-        </DragDropContext>
-      </div>
-    );
-  };
+  const SharedTodoView = (
+    <TodoViewBase
+      onDragEnd={onDragEnd}
+      search={search}
+      selectedCollaborator={selectedCollaborator}
+      showSharedTodos={showSharedTodos}
+      isLoading={sharedTodosQuery.isLoading}
+      todos={localSharedTodos}
+      refetch={sharedTodosQuery.refetch}
+    />
+  );
 
   return (
     <>
@@ -212,20 +233,27 @@ const Todos: NextPage = () => {
             </div>
             <div
               className={classNames(
-                "flex justify-center",
-                !showSharedTodos ? "hidden" : ""
+                "flex w-full max-w-2xl justify-center gap-2 px-2"
               )}
             >
               <GenericCombobox
-                selected={selectedCollaborateur}
-                setSelected={setSelectedCollaborateur}
-                comboboxOptions={["Niklas"]}
+                sharedView={showSharedTodos}
+                show={showSharedTodos}
+                selected={selectedCollaborator}
+                setSelected={setSelectedCollaborator}
+                comboboxOptions={collaboratorsEmails}
               />
+              <SearchBar sharedView={showSharedTodos} />
             </div>
-            <SearchBar />
+
             <Toolbar refetch={() => openTodosQuery.refetch()} />
 
-            <TodoView />
+            <Transition show={!showSharedTodos} {...slideIn}>
+              {!showSharedTodos ? TodoView : null}
+            </Transition>
+            <Transition show={showSharedTodos} {...slideInSharedView}>
+              {showSharedTodos ? SharedTodoView : null}
+            </Transition>
           </div>
         </main>
       </div>

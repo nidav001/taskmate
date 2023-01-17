@@ -8,6 +8,7 @@ export const todoRouter = router({
       where: {
         authorId: ctx.session?.user?.id,
         finalized: false,
+        shared: false,
       },
     });
   }),
@@ -34,9 +35,12 @@ export const todoRouter = router({
         content: z.string(),
         day: z.string(),
         index: z.number(),
+        shared: z.boolean(),
+        sharedWithEmail: z.string().optional(),
       })
     )
     .mutation(({ ctx, input }) => {
+      if (!input.shared) input.sharedWithEmail = "";
       return ctx.prisma.todo.create({
         data: {
           id: input.id,
@@ -44,6 +48,8 @@ export const todoRouter = router({
           content: input.content,
           day: input.day,
           index: input.index,
+          shared: input.shared,
+          sharedWithEmail: input.sharedWithEmail,
         },
       });
     }),
@@ -151,4 +157,86 @@ export const todoRouter = router({
         },
       });
     }),
+  getSharedTodos: protectedProcedure
+    .input(
+      z.object({ sharedWithEmail: z.string(), authorId: z.string().optional() })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.todo.findMany({
+        where: {
+          OR: [
+            {
+              sharedWithEmail: input.sharedWithEmail,
+              authorId: ctx.session?.user?.id,
+            },
+            {
+              authorId: input.authorId,
+              sharedWithEmail: ctx.session?.user?.email ?? "",
+            },
+          ],
+          AND: [
+            {
+              shared: true,
+            },
+          ],
+        },
+      });
+    }),
+  //unused
+  shareTodo: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        sharedWithEmail: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          shared: true,
+          sharedWithEmail: input.sharedWithEmail,
+        },
+      });
+    }),
+  //unused
+  unshareTodo: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          shared: false,
+          sharedWithEmail: "",
+        },
+      });
+    }),
+  getCollaborators: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        OR: [
+          {
+            authorId: ctx.session?.user?.id,
+          },
+          {
+            sharedWithEmail: ctx.session?.user?.email ?? "",
+          },
+        ],
+        AND: {
+          shared: true,
+        },
+      },
+      select: {
+        sharedWithEmail: true,
+      },
+    });
+  }),
 });

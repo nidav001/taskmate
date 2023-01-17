@@ -1,11 +1,11 @@
 import { type Todo } from "@prisma/client";
 import { type NextPage } from "next";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import GenericCombobox from "../components/addTodo/dayCombobox";
 import CustomHead from "../components/shared/customHead";
+import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import Snackbar from "../components/shared/snackbar";
@@ -15,6 +15,7 @@ import useSearchStore from "../hooks/searchStore";
 import getServerSideProps from "../lib/serverProps";
 import { buttonStyle, inputStyle } from "../styles/basicStyles";
 import { Day } from "../types/enums";
+import { useAlertEffect } from "../utils/toolbarUtils";
 import { trpc } from "../utils/trpc";
 
 function getTodaysDateName() {
@@ -24,16 +25,18 @@ function getTodaysDateName() {
 
 const AddTodo: NextPage = () => {
   const { columns, setColumnTodoOrder } = useColumnStore();
-  const [selected, setSelected] = useState<Day>(getTodaysDateName());
+  const [selectedDay, setSelectedDay] = useState<Day>(getTodaysDateName());
+  const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
   const { search, setSearch } = useSearchStore();
   const [showAlert, setShowAlert] = useState(false);
   const { setMostRecentTodoId } = useMostRecentTodoIdStore();
+  useAlertEffect(showAlert, setShowAlert);
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
       // Optimistically reset the form. Better use onSuccess if form gets more complex
       reset();
-      setValue("day", selected);
+      setValue("day", selectedDay);
 
       setColumnTodoOrder(data.day as Day, [
         ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
@@ -46,21 +49,16 @@ const AddTodo: NextPage = () => {
   type FormValues = {
     content: string;
     day: Day;
+    shared: boolean;
+    sharedWithEmail: string;
   };
 
-  const { register, handleSubmit, setValue, reset } = useForm<FormValues>({
-    defaultValues: {
-      day: selected,
-    },
-  });
-
-  useEffect(() => {
-    if (!showAlert) return;
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 5000);
-  }, [showAlert]);
+  const { register, handleSubmit, setValue, watch, reset } =
+    useForm<FormValues>({
+      defaultValues: {
+        day: selectedDay,
+      },
+    });
 
   const onSubmit = (data: FormValues) => {
     setShowAlert(true);
@@ -99,11 +97,36 @@ const AddTodo: NextPage = () => {
                 {...register("day", { required: true })}
               />
               <GenericCombobox
-                selected={selected}
-                setSelected={setSelected}
+                show={true}
+                sharedView={false}
+                selected={selectedDay}
+                setSelected={setSelectedDay}
                 setValue={setValue}
+                formValueType="day"
                 comboboxOptions={Object.keys(Day) as Array<keyof typeof Day>}
               />
+
+              <div className="flex flex-row-reverse items-center justify-end gap-2">
+                <label htmlFor="shared">Geteiltes Todo</label>
+                <input
+                  id="shared"
+                  className={inputStyle}
+                  type="checkbox"
+                  defaultChecked={false}
+                  {...register("shared", { required: false })}
+                />
+              </div>
+              {watch("shared") ? (
+                <GenericCombobox
+                  show={true}
+                  sharedView={false}
+                  selected={selectedCollaborator}
+                  setSelected={setSelectedCollaborator}
+                  setValue={setValue}
+                  formValueType="sharedWithEmail"
+                  comboboxOptions={["niklas.davidsohn@gmail.com"]}
+                />
+              ) : null}
               <div className="flex w-full justify-center">
                 <button className={"w-3/4 " + buttonStyle} type="submit">
                   Hinzufügen
