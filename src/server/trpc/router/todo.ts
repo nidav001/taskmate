@@ -93,8 +93,8 @@ export const todoRouter = router({
         index: z.number(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.update({
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.todo.update({
         where: {
           id: input.id,
         },
@@ -102,8 +102,9 @@ export const todoRouter = router({
           day: input.day,
           index: input.index,
         },
-      });
-    }),
+      })
+    ),
+
   updateTodoContent: protectedProcedure
     .input(z.object({ id: z.string(), content: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -219,8 +220,8 @@ export const todoRouter = router({
         },
       });
     }),
-  getCollaborators: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.todo.findMany({
+  getCollaborators: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.todo.findMany({
       where: {
         OR: [
           {
@@ -237,6 +238,6 @@ export const todoRouter = router({
       select: {
         sharedWithEmail: true,
       },
-    });
-  }),
+    })
+  ),
 });

@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
 import { useEffect, useMemo, useState } from "react";
-import { resetServerContext, type DropResult } from "react-beautiful-dnd";
+import { resetServerContext } from "react-beautiful-dnd";
 import CustomHead from "../components/shared/customHead";
 import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -23,11 +23,10 @@ import { basicIcon, zoomIn } from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
 import { type Column } from "../types/column";
 import { type Day } from "../types/enums";
-import { persistTodoOrderInDb } from "../utils/todoUtils";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
-  //Own Todos
+  // Own Todos
   const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
 
   const openTodosFromDb = useMemo(
@@ -38,7 +37,7 @@ const Todos: NextPage = () => {
 
   const { columns, setColumnTodoOrder } = useColumnStore();
 
-  //Shared Todos
+  // Shared Todos
   const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
 
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
@@ -67,10 +66,8 @@ const Todos: NextPage = () => {
 
   const [showSharedTodos, setShowSharedTodos] = useState(false);
 
-  //General
+  // General
   const { search } = useSearchStore();
-
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   function validateColumnTodoOrder(
     columns: Column[],
@@ -109,81 +106,11 @@ const Todos: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sharedTodosFromDb]);
 
-  function reorder(result: Todo[], startIndex: number, endIndex: number) {
-    const [removed] = result.splice(startIndex, 1);
-    if (removed) {
-      result.splice(endIndex, 0, removed);
-    }
-    return result;
-  }
-
-  function onDragEnd(result: DropResult) {
-    const { destination, source, draggableId } = result;
-
-    //If dropped outside list or dropped in same place
-    if (!destination) return;
-
-    //If dropped in same place
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    const start = columns.find((col) => col.id === source.droppableId);
-    const finish = columns.find((col) => col.id === destination.droppableId);
-    const draggedItem = openTodosFromDb.find((todo) => todo.id === draggableId);
-
-    if (!start || !finish || !draggedItem) return;
-
-    if (start === finish) {
-      // Reorder in same column
-      const newTodoOrder = reorder(
-        start.todoOrder,
-        source.index,
-        destination.index
-      );
-
-      setColumnTodoOrder(start.id, newTodoOrder);
-    } else {
-      // Reorder in different column
-      start.todoOrder.splice(source.index, 1);
-      const newStart = {
-        ...start,
-        todos: start.todoOrder,
-      };
-
-      finish.todoOrder.splice(destination.index, 0, draggedItem);
-      const newFinish = {
-        ...finish,
-        todos: finish.todoOrder,
-      };
-
-      const newTodos = [...localTodos];
-      newTodos.splice(
-        newTodos.findIndex((todo) => todo.id === draggedItem.id),
-        1,
-        {
-          ...draggedItem,
-          day: newFinish.id,
-        }
-      );
-      setLocalTodos(newTodos);
-
-      setColumnTodoOrder(newStart.id, newStart.todos);
-      setColumnTodoOrder(newFinish.id, newFinish.todos);
-    }
-
-    persistTodoOrderInDb(columns, updateTodoPosition);
-  }
-
   const TodoView = (
     <TodoViewBase
-      onDragEnd={onDragEnd}
       search={search}
       selectedCollaborator={selectedCollaborator}
-      showSharedTodos={showSharedTodos}
+      isSharedTodosView={showSharedTodos}
       isLoading={openTodosQuery.isLoading}
       todos={localTodos}
       refetch={openTodosQuery.refetch}
@@ -192,10 +119,9 @@ const Todos: NextPage = () => {
 
   const SharedTodoView = (
     <TodoViewBase
-      onDragEnd={onDragEnd}
       search={search}
       selectedCollaborator={selectedCollaborator}
-      showSharedTodos={showSharedTodos}
+      isSharedTodosView={showSharedTodos}
       isLoading={sharedTodosQuery.isLoading}
       todos={localSharedTodos}
       refetch={sharedTodosQuery.refetch}
@@ -212,6 +138,7 @@ const Todos: NextPage = () => {
           <div className="flex flex-col items-center gap-8 pt-5">
             <div className="flex w-full items-center justify-evenly">
               <button
+                type="button"
                 onClick={() => setShowSharedTodos(false)}
                 className={classNames(
                   zoomIn,
@@ -222,6 +149,7 @@ const Todos: NextPage = () => {
               </button>
               <h1>{showSharedTodos ? "Geteilte Todos" : "Deine Todos"}</h1>
               <button
+                type="button"
                 onClick={() => setShowSharedTodos(true)}
                 className={classNames(
                   zoomIn,
