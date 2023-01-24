@@ -3,12 +3,10 @@ import { type Todo } from "@prisma/client";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
-import useColumnStore from "../../hooks/columnStore";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import useOpenTodoStore from "../../hooks/openTodoStore";
 import classNames from "../../utils/classNames";
-import { removeTodoFromTodoOrder } from "../../utils/todoUtils";
 import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
@@ -34,9 +32,6 @@ export default function TodoCard({
   const { todos: finalizedTodos, setTodos: setFinalizedTodos } =
     useFinalizedTodoStore();
 
-  const { columns, setColumnTodoOrder } = useColumnStore();
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
   const setChecked = trpc.todo.setChecked.useMutation({
     onMutate: () => {
       if (restore) {
@@ -60,19 +55,13 @@ export default function TodoCard({
     },
   });
 
+  const deleteTodo = trpc.todo.deleteTodo.useMutation();
+
   const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
     onSuccess: () => {
       if (refetch) {
         refetch();
       }
-    },
-    onMutate: () => {
-      removeTodoFromTodoOrder(
-        columns,
-        todo,
-        setColumnTodoOrder,
-        updateTodoPosition
-      );
     },
   });
 
@@ -80,9 +69,11 @@ export default function TodoCard({
     //Change local todos
     if (newContent === todo.content) return;
 
-    // If empty --> delete locally and later in db
+    // If empty --> delete
     if (newContent === "") {
       setOpenTodos(openTodos.filter((mappedTodo) => mappedTodo.id !== todo.id));
+      deleteTodo.mutate({ id: todo.id });
+      return;
     }
 
     //Update todo in db

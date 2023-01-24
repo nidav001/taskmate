@@ -33,6 +33,7 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
   columns.forEach((col) => {
     col.todoOrder.forEach((todo, index) => {
       if (todo.index !== index || todo.day !== col.id) {
+        console.log("mutating");
         updateTodo.mutate({
           id: todo.id,
           day: col.id,
@@ -43,23 +44,38 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
   });
 }
 
-export function removeTodoFromTodoOrder(
+export function removeTodosFromTodoOrder(
   columns: Column[],
-  todo: Todo,
+  todos: Todo[],
   setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void,
   updateTodoPosition: any
 ) {
-  const oldColumnTodoOrder = columns.find(
-    (col) => col.id === todo.day
-  )?.todoOrder;
+  const removedTodos: Todo[] = [];
 
-  const newColumnTodoOrder = oldColumnTodoOrder?.splice(
-    oldColumnTodoOrder.findIndex(
-      (todoToCompare) => todoToCompare.id === todo.id
-    ),
-    1
-  );
+  todos.forEach((todo) => {
+    const newColumnTodoOrder = columns.find(
+      (col) => col.id === todo.day
+    )?.todoOrder;
 
-  setColumnTodoOrder(todo.day as Day, newColumnTodoOrder ?? []);
+    removedTodos.push(
+      newColumnTodoOrder?.splice(
+        newColumnTodoOrder.findIndex(
+          (todoToCompare) => todoToCompare.id === todo.id
+        ),
+        1
+      )[0] as Todo
+    );
+
+    setColumnTodoOrder(todo.day as Day, newColumnTodoOrder ?? []);
+  });
+
+  removedTodos.forEach((todo) => {
+    updateTodoPosition.mutate({
+      id: todo.id,
+      day: todo.day,
+      index: -1,
+    });
+  });
+
   persistTodoOrderInDb(columns, updateTodoPosition);
 }

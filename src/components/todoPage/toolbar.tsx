@@ -8,7 +8,7 @@ import {
   getCheckedTodoIds,
   getCheckedTodos,
   refreshLocalTodos,
-  removeTodoFromTodoOrder,
+  removeTodosFromTodoOrder,
 } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
 import { trpc } from "../../utils/trpc";
@@ -37,29 +37,20 @@ export default function Toolbar({ refetch }: ToolbarProps) {
   const { todos, setTodos } = useOpenTodoStore();
   const [showAlert, setShowAlert] = useState(false);
   const { columns, setColumnTodoOrder } = useColumnStore();
+
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   useAlertEffect(showAlert, setShowAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
     onMutate: (data) => {
       const todosToRemoveFromTodoOrder = getCheckedTodos(todos, data.ids);
-      todosToRemoveFromTodoOrder.forEach((todo) => {
-        removeTodoFromTodoOrder(
-          columns,
-          todo,
-          setColumnTodoOrder,
-          updateTodoPosition
-        );
-        updateTodoPosition.mutate({
-          id: todo.id,
-          day: todo.day,
-          index: -1,
-        });
-      });
+      removeTodosFromTodoOrder(
+        columns,
+        todosToRemoveFromTodoOrder,
+        setColumnTodoOrder,
+        updateTodoPosition
+      );
 
       refreshLocalTodos(data.ids, setTodos, todos);
       setShowAlert(true);
