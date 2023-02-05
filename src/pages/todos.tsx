@@ -69,14 +69,11 @@ const Todos: NextPage = () => {
 
     //If dropped outside list or dropped in same place
     if (!destination) return;
-
-    //If dropped in same place
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
-    ) {
+    )
       return;
-    }
 
     const start = columns.find((col) => col.id === source.droppableId);
     const finish = columns.find((col) => col.id === destination.droppableId);
@@ -85,28 +82,25 @@ const Todos: NextPage = () => {
     if (!start || !finish || !draggedItem) return;
 
     if (start === finish) {
-      // Reorder in same column
       const newTodoOrder = reorder(
         start.todoOrder,
         source.index,
         destination.index
       );
-
       setColumnTodoOrder(start.id, newTodoOrder);
     } else {
-      // Reorder in different column
-      start.todoOrder.splice(source.index, 1);
+      const { todoOrder: startTodoOrder } = start;
+      startTodoOrder.splice(source.index, 1);
       const newStart = {
         ...start,
-        todos: start.todoOrder,
+        todos: startTodoOrder,
       };
-
-      finish.todoOrder.splice(destination.index, 0, draggedItem);
+      const { todoOrder: finishTodoOrder } = finish;
+      finishTodoOrder.splice(destination.index, 0, draggedItem);
       const newFinish = {
         ...finish,
-        todos: finish.todoOrder,
+        todos: finishTodoOrder,
       };
-
       const newTodos = [...localTodos];
       newTodos.splice(
         newTodos.findIndex((todo) => todo.id === draggedItem.id),
@@ -117,11 +111,9 @@ const Todos: NextPage = () => {
         }
       );
       setLocalTodos(newTodos);
-
       setColumnTodoOrder(newStart.id, newStart.todos);
       setColumnTodoOrder(newFinish.id, newFinish.todos);
     }
-
     persistTodoOrderInDb(columns, updateTodoPosition);
   }
 

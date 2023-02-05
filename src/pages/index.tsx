@@ -16,11 +16,7 @@ const Dashboard: NextPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsLayoutSmall(true);
-      } else {
-        setIsLayoutSmall(false);
-      }
+      setIsLayoutSmall(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);

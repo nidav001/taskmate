@@ -18,16 +18,13 @@ export default function Snackbar({
   useEffect(() => {
     if (!showAlert) return;
 
-    let randomMessage = "";
-    if (randomMessages) {
-      randomMessage =
-        randomMessages[
+    const randomMessage = randomMessages
+      ? randomMessages[
           Math.floor(Math.random() * randomMessages.length)
-        ]?.toString() ?? "";
-    }
+        ]?.toString()
+      : "";
 
     setMessageToDisplay(`${message} ${randomMessage}`);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAlert]);
 
