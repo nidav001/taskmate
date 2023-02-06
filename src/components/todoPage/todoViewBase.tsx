@@ -1,7 +1,7 @@
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { DateTime } from "luxon";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { Day } from "../../types/enums";
 import DroppableDayArea from "./droppableDayArea";
 
@@ -17,6 +17,7 @@ const TodoViewBase: React.FC<{
   search: string;
   isSharedTodosView: boolean;
   selectedCollaborator: string;
+  onDragEnd: (result: DropResult) => void;
 }> = ({
   todos,
   isLoading,
@@ -24,6 +25,7 @@ const TodoViewBase: React.FC<{
   search,
   isSharedTodosView: showSharedTodos,
   selectedCollaborator,
+  onDragEnd,
 }) => {
   return (
     <div
@@ -32,7 +34,7 @@ const TodoViewBase: React.FC<{
         showSharedTodos && selectedCollaborator === "" ? "hidden" : ""
       )}
     >
-      <DragDropContext onDragEnd={onDragEnd1}>
+      <DragDropContext onDragEnd={onDragEnd}>
         {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
           <DroppableDayArea
             date={

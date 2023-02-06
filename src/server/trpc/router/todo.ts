@@ -40,7 +40,8 @@ export const todoRouter = router({
       })
     )
     .mutation(({ ctx, input }) => {
-      if (!input.shared) input.sharedWithEmail = "";
+      let validatedSharedWithEmail = "";
+      if (!input.shared) validatedSharedWithEmail = input.sharedWithEmail ?? "";
       return ctx.prisma.todo.create({
         data: {
           id: input.id,
@@ -49,7 +50,7 @@ export const todoRouter = router({
           day: input.day,
           index: input.index,
           shared: input.shared,
-          sharedWithEmail: input.sharedWithEmail,
+          sharedWithEmail: validatedSharedWithEmail,
         },
       });
     }),
@@ -220,24 +221,34 @@ export const todoRouter = router({
         },
       });
     }),
-  getCollaborators: protectedProcedure.query(({ ctx }) =>
-    ctx.prisma.todo.findMany({
-      where: {
-        OR: [
-          {
-            authorId: ctx.session?.user?.id,
-          },
-          {
-            sharedWithEmail: ctx.session?.user?.email ?? "",
-          },
-        ],
-        AND: {
-          shared: true,
+  getCollaborators: protectedProcedure
+    .output(
+      z
+        .object({
+          sharedWithEmail: z.string().nullable(),
+        })
+        .array()
+    )
+    .query(({ ctx }) => {
+      return ctx.prisma.todo.findMany({
+        where: {
+          OR: [
+            {
+              authorId: ctx.session?.user?.id,
+            },
+            {
+              sharedWithEmail: ctx.session?.user?.email ?? "",
+            },
+          ],
+          AND: [
+            {
+              shared: true,
+            },
+          ],
         },
-      },
-      select: {
-        sharedWithEmail: true,
-      },
-    })
-  ),
+        select: {
+          sharedWithEmail: true,
+        },
+      });
+    }),
 });

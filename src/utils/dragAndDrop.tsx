@@ -1,15 +1,8 @@
 import { type Todo } from "@prisma/client";
 import { type DropResult } from "react-beautiful-dnd";
-import useSharedColumnStore from "../hooks/sharedColumnStore";
-import useSharedTodoStore from "../hooks/sharedTodoStore";
 import { type Column } from "../types/column";
 import { type Day } from "../types/enums";
 import { persistTodoOrderInDb } from "./todoUtils";
-import { trpc } from "./trpc";
-
-const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
-const sharedTodosFromDb = trpc.todo.getSharedTodos.useQuery();
 
 function reorder(result: Todo[], startIndex: number, endIndex: number) {
   const [removed] = result.splice(startIndex, 1);
@@ -19,7 +12,7 @@ function reorder(result: Todo[], startIndex: number, endIndex: number) {
   return result;
 }
 
-function onDragEnd(
+export function handleDragEnd(
   result: DropResult,
   columns: Column[],
   todosFromDb: Todo[],
@@ -84,31 +77,4 @@ function onDragEnd(
     setColumnTodoOrder(newFinish.id, newFinish.todos);
   }
   persistTodoOrderInDb(columns, updateTodoPosition);
-}
-
-export function onDragEndShared(result: DropResult) {
-  const { todos: localSharedTodos, setTodos: setLocalSharedTodos } =
-    useSharedTodoStore();
-
-  const { sharedColumns, setSharedColumnTodoOrder } = useSharedColumnStore();
-
-  return onDragEnd(
-    result,
-    sharedTodosFromDb,
-    sharedColumns,
-    setSharedColumnTodoOrder,
-    localSharedTodos,
-    setLocalSharedTodos
-  );
-}
-
-export function onDragEndOwn(result: DropResult) {
-  return onDragEnd(
-    result,
-    sharedTodosFromDb,
-    sharedColumns,
-    setSharedColumnTodoOrder,
-    localSharedTodos,
-    setLocalSharedTodos
-  );
 }

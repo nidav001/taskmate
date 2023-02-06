@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
 import { useEffect, useMemo, useState } from "react";
-import { resetServerContext } from "react-beautiful-dnd";
+import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CustomHead from "../components/shared/customHead";
 import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -23,6 +23,7 @@ import { basicIcon, zoomIn } from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
 import { type Column } from "../types/column";
 import { type Day } from "../types/enums";
+import { handleDragEnd } from "../utils/dragAndDrop";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
@@ -49,15 +50,13 @@ const Todos: NextPage = () => {
     [sharedTodosQuery?.data]
   );
 
-  const collaboratorsQuery = trpc.todo.getCollaborators.useQuery();
+  const collaborators = trpc.todo.getCollaborators.useQuery().data ?? [];
 
-  const collaboratorsEmails = useMemo(
-    () =>
-      collaboratorsQuery?.data.map(
-        (collaborator) => collaborator.sharedWithEmail
-      ) ?? [],
-    [collaboratorsQuery?.data]
-  );
+  const collaboratorsEmails = [
+    ...new Set(
+      collaborators?.map((collaborator) => collaborator.sharedWithEmail) ?? []
+    ),
+  ];
 
   const { todos: localSharedTodos, setTodos: setLocalSharedTodos } =
     useSharedTodoStore();
@@ -70,17 +69,17 @@ const Todos: NextPage = () => {
   const { search } = useSearchStore();
 
   function validateColumnTodoOrder(
-    columns: Column[],
+    columnsToCheck: Column[],
     todos: Todo[],
     shared: boolean,
-    setColumnTodoOrder: (id: Day, todos: Todo[]) => void
+    set: (id: Day, todos: Todo[]) => void
   ) {
-    columns.map((col) => {
+    columnsToCheck.forEach((col) => {
       const columnTodos = todos
         .filter((todo) => todo.shared === shared && todo.day === col.id)
         .sort((a, b) => a.index - b.index);
 
-      setColumnTodoOrder(col.id, columnTodos);
+      set(col.id, columnTodos);
     });
   }
 
@@ -106,8 +105,20 @@ const Todos: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sharedTodosFromDb]);
 
+  function onDragEnd(result: DropResult, shared: boolean) {
+    return handleDragEnd(
+      result,
+      shared ? sharedColumns : columns,
+      shared ? localTodos : localTodos,
+      shared ? setSharedColumnTodoOrder : setColumnTodoOrder,
+      shared ? localSharedTodos : localTodos,
+      shared ? setLocalSharedTodos : setLocalTodos
+    );
+  }
+
   const TodoView = (
     <TodoViewBase
+      onDragEnd={(res) => onDragEnd(res, false)}
       search={search}
       selectedCollaborator={selectedCollaborator}
       isSharedTodosView={showSharedTodos}
@@ -119,6 +130,7 @@ const Todos: NextPage = () => {
 
   const SharedTodoView = (
     <TodoViewBase
+      onDragEnd={(res) => onDragEnd(res, true)}
       search={search}
       selectedCollaborator={selectedCollaborator}
       isSharedTodosView={showSharedTodos}

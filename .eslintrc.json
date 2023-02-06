@@ -28,6 +28,7 @@
       }
     ],
     "arrow-body-style": "off",
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "implicit-arrow-linebreak": "off"
   }
 }
