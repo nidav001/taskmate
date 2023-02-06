@@ -1,5 +1,6 @@
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
@@ -7,8 +8,6 @@ import useColumnStore from "../../hooks/columnStore";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import useTodoStore from "../../hooks/todoStore";
-import classNames from "../../utils/classNames";
-import { removeTodoFromTodoOrder } from "../../utils/todoUtils";
 import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
@@ -59,19 +58,13 @@ export default function TodoCard({
     },
   });
 
+  const deleteTodo = trpc.todo.deleteTodo.useMutation();
+
   const updateTodoContent = trpc.todo.updateTodoContent.useMutation({
     onSuccess: () => {
       if (refetch) {
         refetch();
       }
-    },
-    onMutate: () => {
-      removeTodoFromTodoOrder(
-        regularColumns,
-        todo,
-        setTodoOrder,
-        updateTodoPosition
-      );
     },
   });
 
@@ -79,12 +72,14 @@ export default function TodoCard({
     // Change local todos
     if (newContent === todo.content) return;
 
-    // If empty --> delete locally and later in db
+    // If empty --> delete
     if (newContent === "") {
       setTodos(
         false,
         regularTodos.filter((mappedTodo) => mappedTodo.id !== todo.id)
       );
+      deleteTodo.mutate({ id: todo.id });
+      return;
     }
 
     // Update todo in db

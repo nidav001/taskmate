@@ -38,9 +38,10 @@ export default function GenericCombobox<T extends string>({
       }}
     >
       <Listbox.Button
-        className={
-          inputStyle + " relative h-14 w-full cursor-default pr-10 text-left"
-        }
+        className={classNames(
+          inputStyle,
+          "relative h-14 w-full cursor-default pr-10 text-left"
+        )}
       >
         <span className="block truncate dark:text-white">{selected}</span>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2">

@@ -19,8 +19,7 @@ const funnyMessages = [
 ];
 
 export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
-  const { finalizedTodos: todos, setFinalizedTodos: setTodos } =
-    useFinalizedTodoStore();
+  const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -28,7 +27,7 @@ export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
 
   const restoreTodos = trpc.todo.restoreTodos.useMutation({
     onMutate: (data) => {
-      refreshLocalTodos(data.ids, setTodos, todos);
+      refreshLocalTodos(data.ids, setFinalizedTodos, finalizedTodos);
       setShowAlert(true);
     },
     onSuccess: () => {
@@ -47,7 +46,7 @@ export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
   }
 
   function handleOnClickRestore() {
-    const todoIdsToRestore = getCheckedTodoIds(todos);
+    const todoIdsToRestore = getCheckedTodoIds(finalizedTodos);
 
     if (todoIdsToRestore.length > 0) {
       restoreTodos.mutate({
@@ -57,37 +56,37 @@ export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
   }
 
   return (
-    <>
-      <div className="flex w-full justify-evenly px-3 pt-4 md:w-3/4 lg:w-1/2">
-        <button
-          title="Wiederherstellen"
-          onClick={() => handleOnClickRestore()}
-          className={buttonStyle}
-        >
-          <ArrowUturnLeftIcon className={basicIcon} />
-        </button>
-        <button
-          title="Alle löschen"
-          onClick={() => setShowModal(true)}
-          className={buttonStyle}
-        >
-          <TrashIcon className={basicIcon} />
-        </button>
-        <Snackbar
-          showAlert={showAlert}
-          message={"Wiederhergestellt."}
-          randomMessages={funnyMessages}
-        />
-        <GenericModal
-          title={"Alle Todos löschen"}
-          content={"Es werden ALLE finalisierten Todos gelöscht."}
-          isOpen={showModal}
-          buttonAccept={"Okay"}
-          buttonDecline={"Abbrechen"}
-          setIsOpen={() => setShowModal(!showModal)}
-          onAccept={() => handleOnClickDelete()}
-        />
-      </div>
-    </>
+    <div className="flex w-full justify-evenly px-3 pt-4 md:w-3/4 lg:w-1/2">
+      <button
+        type="button"
+        title="Wiederherstellen"
+        onClick={() => handleOnClickRestore()}
+        className={buttonStyle}
+      >
+        <ArrowUturnLeftIcon className={basicIcon} />
+      </button>
+      <button
+        type="button"
+        title="Alle löschen"
+        onClick={() => setShowModal(true)}
+        className={buttonStyle}
+      >
+        <TrashIcon className={basicIcon} />
+      </button>
+      <Snackbar
+        showAlert={showAlert}
+        message="Wiederhergestellt."
+        randomMessages={funnyMessages}
+      />
+      <GenericModal
+        title="Alle Todos löschen"
+        content="Es werden ALLE finalisierten Todos gelöscht."
+        isOpen={showModal}
+        buttonAccept="Okay"
+        buttonDecline="Abbrechen"
+        setIsOpen={() => setShowModal(!showModal)}
+        onAccept={() => handleOnClickDelete()}
+      />
+    </div>
   );
 }

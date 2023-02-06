@@ -1,4 +1,5 @@
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { type NextPage } from "next";
 import Link from "next/link";
 import { useState } from "react";
@@ -120,18 +121,20 @@ const AddTodo: NextPage = () => {
                 comboboxOptions={Object.keys(Day) as Array<keyof typeof Day>}
               />
 
-              <div className="flex flex-row-reverse items-center justify-end gap-2">
-                <label htmlFor="shared">
-                  Geteiltes Todo
-                  <input
-                    id="shared"
-                    className={inputStyle}
-                    type="checkbox"
-                    defaultChecked={false}
-                    {...register("shared", { required: false })}
-                  />
-                </label>
-              </div>
+              <label
+                htmlFor="shared "
+                className="flex flex-row-reverse items-center justify-end gap-2"
+              >
+                <p>Geteiltes Todo</p>
+                <input
+                  id="shared"
+                  className={inputStyle}
+                  type="checkbox"
+                  defaultChecked={false}
+                  {...register("shared", { required: false })}
+                />
+              </label>
+
               <GenericCombobox
                 show={watch("shared")}
                 sharedView={false}
@@ -142,7 +145,10 @@ const AddTodo: NextPage = () => {
                 comboboxOptions={collaboratorEmails}
               />
               <div className="flex w-full justify-center">
-                <button className={"w-3/4 " + buttonStyle} type="submit">
+                <button
+                  className={classNames("w-3/4", buttonStyle)}
+                  type="submit"
+                >
                   Hinzufügen
                 </button>
               </div>

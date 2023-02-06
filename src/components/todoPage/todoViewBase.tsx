@@ -39,10 +39,7 @@ const TodoViewBase: React.FC<TodoViewBaseProps> = ({
       <DragDropContext onDragEnd={onDragEnd}>
         {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
           <DroppableDayArea
-            date={
-              datesOfWeek[index - 1] ??
-              `Woche ${DateTime.now().weekNumber.toString()}`
-            }
+            date={datesOfWeek[index - 1] ?? DateTime.now()}
             refetch={refetch}
             searchValue={search}
             todos={todos.filter((todo) => todo.day === day)}

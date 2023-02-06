@@ -9,7 +9,6 @@ export const userRouter = router({
       })
     )
     .query(({ ctx, input }) => {
-      console.log(input.ids);
       return ctx.prisma.user.findMany({
         where: {
           id: { in: input.ids },

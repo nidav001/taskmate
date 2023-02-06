@@ -36,6 +36,7 @@
     "object-curly-newline": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
-    "function-paren-newline": "off"
+    "function-paren-newline": "off",
+    "@typescript-eslint/indent": "off"
   }
 }

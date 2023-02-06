@@ -43,27 +43,38 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
   });
 }
 
-export function removeTodoFromTodoOrder(
+export function removeTodosFromTodoOrder(
   columns: Column[],
-  todo: Todo,
-  setColumnTodoOrder: (
-    shared: boolean,
-    columnId: Day,
-    newTodoOrder: Todo[]
-  ) => void,
+  todos: Todo[],
+  setTodoOrder: (shared: boolean, columnId: Day, newTodoOrder: Todo[]) => void,
   updateTodoPosition: any
 ) {
-  const oldColumnTodoOrder = columns.find(
-    (col) => col.id === todo.day
-  )?.todoOrder;
+  const removedTodos: Todo[] = [];
 
-  const newColumnTodoOrder = oldColumnTodoOrder?.splice(
-    oldColumnTodoOrder.findIndex(
-      (todoToCompare) => todoToCompare.id === todo.id
-    ),
-    1
-  );
+  todos.forEach((todo) => {
+    const newColumnTodoOrder = columns.find(
+      (col) => col.id === todo.day
+    )?.todoOrder;
 
-  setColumnTodoOrder(false, todo.day as Day, newColumnTodoOrder ?? []);
+    removedTodos.push(
+      newColumnTodoOrder?.splice(
+        newColumnTodoOrder.findIndex(
+          (todoToCompare) => todoToCompare.id === todo.id
+        ),
+        1
+      )[0] as Todo
+    );
+
+    setTodoOrder(false, todo.day as Day, newColumnTodoOrder ?? []);
+  });
+
+  removedTodos.forEach((todo) => {
+    updateTodoPosition.mutate({
+      id: todo.id,
+      day: todo.day,
+      index: -1,
+    });
+  });
+
   persistTodoOrderInDb(columns, updateTodoPosition);
 }

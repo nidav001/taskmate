@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
 import { panel } from "../../styles/transitionClasses";
-import { type Day } from "../../types/enums";
+import { Day } from "../../types/enums";
 import { sortTodos } from "../../utils/todoUtils";
 import TodoCard from "../shared/todoCard";
 import DraggableTodoCard from "./draggableTodoCard";
@@ -17,15 +17,15 @@ type DroppableDayAreaProps = {
   todos: Todo[];
   searchValue: string;
   refetch: () => void;
-  date: DateTime | string;
+  date: DateTime;
   isLoading: boolean;
 };
 
 const todoLoadingSkeleton = (
   <div role="status" className="max-w-sm animate-pulse">
-    <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-400"></div>
-    <div className="mb-2.5 h-2 max-w-[240px] rounded-full bg-gray-400 "></div>
-    <div className="mb-2.5 h-2 max-w-[270px] rounded-full bg-gray-400"></div>
+    <div className="mb-2.5 h-2 max-w-[300px] rounded-full bg-gray-400" />
+    <div className="mb-2.5 h-2 max-w-[240px] rounded-full bg-gray-400 " />
+    <div className="mb-2.5 h-2 max-w-[270px] rounded-full bg-gray-400" />
     <span className="sr-only">Loading...</span>
   </div>
 );
@@ -41,6 +41,41 @@ export default function DroppableDayArea({
   const [disclosureOpen, setDisclosureOpen] = useState(false);
   const [dayModified, setDayModified] = useState(false);
 
+  function checkIfDisclosureShouldBeOpen() {
+    // Skip if day is manually modified
+    let returnValue = disclosureOpen;
+    if (dayModified) return disclosureOpen;
+
+    // Create conditions for disclosure to be open
+    const dateIsString = typeof date === "string";
+    let dateIsBiggerOrEqualsToday = false;
+    if (!dateIsString) {
+      dateIsBiggerOrEqualsToday =
+        date.startOf("day") >= DateTime.now().startOf("day");
+    }
+
+    // Check if conditions are met
+    if (!dateIsString && !dateIsBiggerOrEqualsToday) {
+      returnValue = false;
+    } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
+      returnValue = true;
+    }
+    return returnValue;
+  }
+
+  const todoOrder =
+    useColumnStore((state) => state.regularColumns).find(
+      (col) => col.id === day
+    )?.todoOrder ?? [];
+
+  const getFilteredAndSortedTodos = (): Todo[] => {
+    const filteredTodos = todos?.filter((todo) =>
+      todo.content.toLowerCase().includes(searchValue.toLowerCase())
+    );
+
+    return sortTodos(filteredTodos, todoOrder);
+  };
+
   useEffect(() => {
     if (searchValue !== "" && getFilteredAndSortedTodos.length > 0) {
       setDisclosureOpen(true);
@@ -51,38 +86,17 @@ export default function DroppableDayArea({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
-  const todoOrder =
-    useColumnStore((state) => state.regularColumns).find(
-      (col) => col.id === day
-    )?.todoOrder ?? [];
-
-  const currentDate = <p>{date.toLocaleString().toString()}</p>;
+  const currentDate = () => {
+    return day !== Day.Allgemein ? (
+      <p>{new Date(date).toLocaleDateString("de-DE")}</p>
+    ) : (
+      `Woche ${DateTime.now().weekNumber.toString()}`
+    );
+  };
 
   function handleDisclosureButtonClick() {
     setDisclosureOpen(!disclosureOpen);
     setDayModified(true);
-  }
-
-  function checkIfDisclosureShouldBeOpen() {
-    //Skip if day is manually modified
-    let returnValue = disclosureOpen;
-    if (dayModified) return returnValue;
-
-    //Create conditions for disclosure to be open
-    const dateIsString = typeof date === "string";
-    let dateIsBiggerOrEqualsToday = false;
-    if (!dateIsString) {
-      dateIsBiggerOrEqualsToday =
-        date.startOf("day") >= DateTime.now().startOf("day");
-    }
-
-    //Check if conditions are met
-    if (!dateIsString && !dateIsBiggerOrEqualsToday) {
-      returnValue = false;
-    } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
-      returnValue = true;
-    }
-    return returnValue;
   }
 
   const DayAreaHeader = (
@@ -93,7 +107,7 @@ export default function DroppableDayArea({
       <div className="flex flex-row items-center">
         <div className="flex w-full flex-col justify-evenly">
           <h1 className="text-xl font-bold dark:text-white">{day}</h1>
-          <div className="text-slate-400">{currentDate}</div>
+          <div className="text-slate-400">{currentDate()}</div>
         </div>
         <div className="flex flex-col">
           <div
@@ -116,14 +130,6 @@ export default function DroppableDayArea({
     </Disclosure.Button>
   );
 
-  const getFilteredAndSortedTodos = (): Todo[] => {
-    const filteredTodos = todos?.filter((todo) =>
-      todo.content.toLowerCase().includes(searchValue.toLowerCase())
-    );
-
-    return sortTodos(filteredTodos, todoOrder);
-  };
-
   return (
     <Disclosure>
       <div className="w-80">
@@ -141,10 +147,10 @@ export default function DroppableDayArea({
                 const todo = getFilteredAndSortedTodos()[rubric.source.index]!;
                 return (
                   <TodoCard
-                    isDragging={true}
+                    isDragging
                     provided={provided}
                     todo={todo}
-                    todoDone={todo.checked}
+                    restore={false}
                   />
                 );
               }}
@@ -168,7 +174,6 @@ export default function DroppableDayArea({
                           />
                         );
                       })}
-
                   {provided.placeholder}
                 </div>
               )}

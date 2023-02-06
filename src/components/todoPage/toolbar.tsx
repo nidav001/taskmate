@@ -8,15 +8,11 @@ import {
   getCheckedTodoIds,
   getCheckedTodos,
   refreshLocalTodos,
-  removeTodoFromTodoOrder,
+  removeTodosFromTodoOrder,
 } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
 import { trpc } from "../../utils/trpc";
 import Snackbar from "../shared/snackbar";
-
-type ToolbarProps = {
-  refetch: () => void;
-};
 
 const funnyMessages = [
   "Endlich geschafft 🥹",
@@ -33,7 +29,7 @@ const funnyMessages = [
   "Ganz stark 💪",
 ];
 
-export default function Toolbar({ refetch }: ToolbarProps) {
+export default function Toolbar() {
   const { regularTodos, setTodos } = useTodoStore();
   const [showAlert, setShowAlert] = useState(false);
   const { regularColumns, setTodoOrder } = useColumnStore();
@@ -42,18 +38,15 @@ export default function Toolbar({ refetch }: ToolbarProps) {
   useAlertEffect(showAlert, setShowAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
-    onSuccess: () => {
-      refetch();
-    },
     onMutate: (data) => {
       const todosToRemoveFromTodoOrder = getCheckedTodos(
         regularTodos,
         data.ids
       );
       todosToRemoveFromTodoOrder.forEach((todo) => {
-        removeTodoFromTodoOrder(
+        removeTodosFromTodoOrder(
           regularColumns,
-          todo,
+          todosToRemoveFromTodoOrder,
           setTodoOrder,
           updateTodoPosition
         );

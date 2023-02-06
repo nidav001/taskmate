@@ -1,4 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
+import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +7,6 @@ import { Fragment } from "react";
 import { zoomIn } from "../../../styles/basicStyles";
 import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
 import { LogoPosition } from "../../../types/enums";
-import classNames from "../../../utils/classNames";
 import Logo from "./logo";
 import NavigationMenu from "./navigationMenu";
 

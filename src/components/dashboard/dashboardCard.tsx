@@ -1,5 +1,5 @@
+import classNames from "classnames";
 import Link from "next/link";
-import classNames from "../../utils/classNames";
 
 type DashboardCardProps = {
   title: string;
@@ -11,10 +11,10 @@ type DashboardCardProps = {
 
 const loadingSkeleton = (
   <div role="status" className="max-w-sm animate-pulse">
-    <div className="mb-4 h-2.5 w-36 rounded-full bg-gray-400"></div>
-    <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-400"></div>
-    <div className="mb-2.5 h-2 rounded-full bg-gray-400"></div>
-    <div className="mb-2.5 h-2 max-w-[200px] rounded-full bg-gray-400"></div>
+    <div className="mb-4 h-2.5 w-36 rounded-full bg-gray-400" />
+    <div className="mb-2.5 h-2 max-w-[360px] rounded-full bg-gray-400" />
+    <div className="mb-2.5 h-2 rounded-full bg-gray-400" />
+    <div className="mb-2.5 h-2 max-w-[200px] rounded-full bg-gray-400" />
     <span className="sr-only">Loading...</span>
   </div>
 );

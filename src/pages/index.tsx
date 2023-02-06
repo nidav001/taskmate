@@ -16,11 +16,7 @@ const Dashboard: NextPage = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsLayoutSmall(true);
-      } else {
-        setIsLayoutSmall(false);
-      }
+      setIsLayoutSmall(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -43,13 +39,13 @@ const Dashboard: NextPage = () => {
               isLoading={todosFromDb.isLoading}
               smallWidth={isLayoutSmall}
             />
-            <DashboardCard
-              content={"Vielen Dank für Ihr Verständnis."}
+            {/* <DashboardCard
+              content="Vielen Dank für Ihr Verständnis."
               title="Umbau 🚧👷‍♂️"
               href="/todos/general"
               isLoading={false}
               smallWidth={isLayoutSmall}
-            />
+            /> */}
             <DashboardCard
               content={finalizedTodosFromDb.data?.length}
               title="Finalisiert"

@@ -9,22 +9,22 @@ type TodaysTodosProps = {
 };
 
 export default function TodaysTodos({ todos }: TodaysTodosProps) {
-  const todaysDate = new Date().toLocaleDateString();
+  const todaysDate = new Date().toLocaleDateString("de-DE");
   const weekday = DateTime.now().weekdayLong;
 
   const filteredTodos = () => {
     return todos.filter((todo) => todo.day === weekday);
   };
 
-  const getFilteredAndSortedTodos = () => {
-    return sortTodos(filteredTodos(), todoOrder);
-  };
-
-  //Maybe use day as prop
+  // Maybe use day as prop
   const todoOrder =
     useColumnStore((state) => state.regularColumns).find(
       (col) => col.id === filteredTodos()[0]?.day
     )?.todoOrder ?? [];
+
+  const getFilteredAndSortedTodos = () => {
+    return sortTodos(filteredTodos(), todoOrder);
+  };
 
   return (
     <div className="flex w-full flex-col items-center px-5 pt-5">
