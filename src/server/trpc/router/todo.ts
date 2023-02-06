@@ -40,8 +40,11 @@ export const todoRouter = router({
       })
     )
     .mutation(({ ctx, input }) => {
-      let validatedSharedWithEmail = "";
-      if (!input.shared) validatedSharedWithEmail = input.sharedWithEmail ?? "";
+      if (validatedShared(input.shared, input.sharedWithEmail)) {
+        input.shared = false;
+        input.sharedWithEmail = undefined;
+      }
+
       return ctx.prisma.todo.create({
         data: {
           id: input.id,
@@ -50,7 +53,7 @@ export const todoRouter = router({
           day: input.day,
           index: input.index,
           shared: input.shared,
-          sharedWithEmail: validatedSharedWithEmail,
+          sharedWithEmail: input.sharedWithEmail,
         },
       });
     }),
@@ -105,7 +108,6 @@ export const todoRouter = router({
         },
       })
     ),
-
   updateTodoContent: protectedProcedure
     .input(z.object({ id: z.string(), content: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -115,16 +117,16 @@ export const todoRouter = router({
             id: input.id,
           },
         });
-      } else {
-        return ctx.prisma.todo.update({
-          where: {
-            id: input.id,
-          },
-          data: {
-            content: input.content,
-          },
-        });
       }
+
+      return ctx.prisma.todo.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          content: input.content,
+        },
+      });
     }),
   deleteFinalizedTodos: protectedProcedure.mutation(({ ctx }) => {
     return ctx.prisma.todo.deleteMany({
@@ -184,7 +186,7 @@ export const todoRouter = router({
         },
       });
     }),
-  //unused
+  // unused
   shareTodo: protectedProcedure
     .input(
       z.object({
@@ -203,7 +205,7 @@ export const todoRouter = router({
         },
       });
     }),
-  //unused
+  // unused
   unshareTodo: protectedProcedure
     .input(
       z.object({
@@ -242,6 +244,9 @@ export const todoRouter = router({
           ],
           AND: [
             {
+              NOT: {
+                sharedWithEmail: null || "",
+              },
               shared: true,
             },
           ],
@@ -252,3 +257,13 @@ export const todoRouter = router({
       });
     }),
 });
+
+function validatedShared(shared: boolean, sharedWithEmail: string | undefined) {
+  if (shared && (sharedWithEmail === "" || sharedWithEmail === undefined)) {
+    return false;
+  }
+  if (!shared && sharedWithEmail !== null) {
+    return false;
+  }
+  return true;
+}

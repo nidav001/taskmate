@@ -16,10 +16,10 @@ const FinalizedTodos: NextPage = () => {
     [finalizedTodosQuery?.data]
   );
 
-  const { todos, setTodos } = useFinalizedTodoStore();
+  const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
 
   useEffect(() => {
-    setTodos(finalizedTodosFromDb);
+    setFinalizedTodos(finalizedTodosFromDb);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalizedTodosFromDb]);
 
@@ -41,10 +41,10 @@ const FinalizedTodos: NextPage = () => {
 
           <div className="flex flex-wrap justify-evenly px-5 pt-5">
             <div className="flex w-80 flex-col">
-              {todos?.map((todo) => (
+              {finalizedTodos?.map((todo) => (
                 <TodoCard
                   refetch={finalizedTodosQuery.refetch}
-                  restore={true}
+                  restore
                   isDragging={false}
                   key={todo.id}
                   todo={todo}

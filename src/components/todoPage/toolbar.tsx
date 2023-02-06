@@ -2,7 +2,7 @@ import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
-import useOpenTodoStore from "../../hooks/openTodoStore";
+import useTodoStore from "../../hooks/todoStore";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import {
   getCheckedTodoIds,
@@ -34,9 +34,9 @@ const funnyMessages = [
 ];
 
 export default function Toolbar({ refetch }: ToolbarProps) {
-  const { todos, setTodos } = useOpenTodoStore();
+  const { regularTodos, setTodos } = useTodoStore();
   const [showAlert, setShowAlert] = useState(false);
-  const { columns, setColumnTodoOrder } = useColumnStore();
+  const { regularColumns, setTodoOrder } = useColumnStore();
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   useAlertEffect(showAlert, setShowAlert);
@@ -46,12 +46,15 @@ export default function Toolbar({ refetch }: ToolbarProps) {
       refetch();
     },
     onMutate: (data) => {
-      const todosToRemoveFromTodoOrder = getCheckedTodos(todos, data.ids);
+      const todosToRemoveFromTodoOrder = getCheckedTodos(
+        regularTodos,
+        data.ids
+      );
       todosToRemoveFromTodoOrder.forEach((todo) => {
         removeTodoFromTodoOrder(
-          columns,
+          regularColumns,
           todo,
-          setColumnTodoOrder,
+          setTodoOrder,
           updateTodoPosition
         );
         updateTodoPosition.mutate({
@@ -61,13 +64,13 @@ export default function Toolbar({ refetch }: ToolbarProps) {
         });
       });
 
-      refreshLocalTodos(data.ids, setTodos, todos);
+      refreshLocalTodos(data.ids, setTodos, regularTodos);
       setShowAlert(true);
     },
   });
 
   function handleOnClickFinalize() {
-    const doneTodoIds = getCheckedTodoIds(todos);
+    const doneTodoIds = getCheckedTodoIds(regularTodos);
 
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({
@@ -77,24 +80,23 @@ export default function Toolbar({ refetch }: ToolbarProps) {
   }
 
   return (
-    <>
-      <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
-        <Link href="/addTodo" className={buttonStyle}>
-          <PlusIcon className={basicIcon} />
-        </Link>
-        <button
-          title="Finalisieren"
-          onClick={() => handleOnClickFinalize()}
-          className={buttonStyle}
-        >
-          <CheckIcon className={basicIcon} />
-        </button>
-        <Snackbar
-          showAlert={showAlert}
-          message={"Erledigt."}
-          randomMessages={funnyMessages}
-        />
-      </div>
-    </>
+    <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
+      <Link href="/addTodo" className={buttonStyle}>
+        <PlusIcon className={basicIcon} />
+      </Link>
+      <button
+        type="submit"
+        title="Finalisieren"
+        onClick={() => handleOnClickFinalize()}
+        className={buttonStyle}
+      >
+        <CheckIcon className={basicIcon} />
+      </button>
+      <Snackbar
+        showAlert={showAlert}
+        message="Erledigt."
+        randomMessages={funnyMessages}
+      />
+    </div>
   );
 }

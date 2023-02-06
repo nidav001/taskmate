@@ -14,11 +14,13 @@ function reorder(result: Todo[], startIndex: number, endIndex: number) {
 
 export function handleDragEnd(
   result: DropResult,
+  shared: boolean,
   columns: Column[],
   todosFromDb: Todo[],
-  setColumnTodoOrder: (columnId: Day, todos: Todo[]) => void,
+  setTodoOrder: (isRegular: boolean, columnId: Day, todos: Todo[]) => void,
   localTodos: Todo[],
-  setLocalTodos: (todos: Todo[]) => void
+  setLocalTodos: (shared: boolean, todos: Todo[]) => void,
+  updateTodoPosition: () => void
 ) {
   const { destination, source, draggableId } = result;
 
@@ -47,7 +49,7 @@ export function handleDragEnd(
       destination.index
     );
 
-    setColumnTodoOrder(start.id, newTodoOrder);
+    setTodoOrder(shared, start.id, newTodoOrder);
   } else {
     // Reorder in different column
     start.todoOrder.splice(source.index, 1);
@@ -71,10 +73,10 @@ export function handleDragEnd(
         day: newFinish.id,
       }
     );
-    setLocalTodos(newTodos);
+    setLocalTodos(shared, newTodos);
 
-    setColumnTodoOrder(newStart.id, newStart.todos);
-    setColumnTodoOrder(newFinish.id, newFinish.todos);
+    setTodoOrder(shared, newStart.id, newStart.todos);
+    setTodoOrder(shared, newFinish.id, newFinish.todos);
   }
   persistTodoOrderInDb(columns, updateTodoPosition);
 }

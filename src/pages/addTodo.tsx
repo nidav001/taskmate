@@ -24,7 +24,7 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
-  const { columns, setColumnTodoOrder } = useColumnStore();
+  const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const [selectedDay, setSelectedDay] = useState<Day>(getTodaysDateName());
   const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
   const { search, setSearch } = useSearchStore();
@@ -32,14 +32,32 @@ const AddTodo: NextPage = () => {
   const { setMostRecentTodoId } = useMostRecentTodoIdStore();
   useAlertEffect(showAlert, setShowAlert);
 
+  const { register, handleSubmit, setValue, watch, reset } =
+    useForm<FormValues>({
+      defaultValues: {
+        day: selectedDay,
+        sharedWithEmail: undefined,
+      },
+    });
+
+  const collaboratorEmails = [
+    ...new Set(
+      (trpc.todo.getCollaborators.useQuery().data ?? [])?.map(
+        (c) => c.sharedWithEmail
+      ) ?? []
+    ),
+  ];
+
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
       // Optimistically reset the form. Better use onSuccess if form gets more complex
       reset();
       setValue("day", selectedDay);
 
-      setColumnTodoOrder(data.day as Day, [
-        ...(columns.find((col) => col.id === data.day)?.todoOrder ?? []),
+      setTodoOrder(data.shared, data.day as Day, [
+        ...((data.shared ? sharedColumns : regularColumns).find(
+          (col) => col.id === data.day
+        )?.todoOrder ?? []),
         data as Todo,
       ]);
       setMostRecentTodoId(data.id);
@@ -53,21 +71,17 @@ const AddTodo: NextPage = () => {
     sharedWithEmail: string;
   };
 
-  const { register, handleSubmit, setValue, watch, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        day: selectedDay,
-      },
-    });
-
   const onSubmit = (data: FormValues) => {
     setShowAlert(true);
     setSearch("");
     addTodo.mutate({
       id: uuidv4(),
       ...data,
-      index: (columns.find((col) => col.id === data.day)?.todoOrder ?? [])
-        .length,
+      index: (
+        (data.shared ? sharedColumns : regularColumns).find(
+          (col) => col.id === data.day
+        )?.todoOrder ?? []
+      ).length,
     });
   };
 
@@ -97,7 +111,7 @@ const AddTodo: NextPage = () => {
                 {...register("day", { required: true })}
               />
               <GenericCombobox
-                show={true}
+                show
                 sharedView={false}
                 selected={selectedDay}
                 setSelected={setSelectedDay}
@@ -107,26 +121,26 @@ const AddTodo: NextPage = () => {
               />
 
               <div className="flex flex-row-reverse items-center justify-end gap-2">
-                <label htmlFor="shared">Geteiltes Todo</label>
-                <input
-                  id="shared"
-                  className={inputStyle}
-                  type="checkbox"
-                  defaultChecked={false}
-                  {...register("shared", { required: false })}
-                />
+                <label htmlFor="shared">
+                  Geteiltes Todo
+                  <input
+                    id="shared"
+                    className={inputStyle}
+                    type="checkbox"
+                    defaultChecked={false}
+                    {...register("shared", { required: false })}
+                  />
+                </label>
               </div>
-              {watch("shared") ? (
-                <GenericCombobox
-                  show={true}
-                  sharedView={false}
-                  selected={selectedCollaborator}
-                  setSelected={setSelectedCollaborator}
-                  setValue={setValue}
-                  formValueType="sharedWithEmail"
-                  comboboxOptions={["niklas.davidsohn@gmail.com"]}
-                />
-              ) : null}
+              <GenericCombobox
+                show={watch("shared")}
+                sharedView={false}
+                selected={selectedCollaborator}
+                setSelected={setSelectedCollaborator}
+                setValue={setValue}
+                formValueType="sharedWithEmail"
+                comboboxOptions={collaboratorEmails}
+              />
               <div className="flex w-full justify-center">
                 <button className={"w-3/4 " + buttonStyle} type="submit">
                   Hinzufügen

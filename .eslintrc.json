@@ -20,15 +20,22 @@
     "@function-paren-newline": "off",
     "operator-linebreak": "off",
     "import-extemsions": "off",
-    "react/function-component-definition": [
-      2,
-      {
-        "namedComponents": "arrow-function",
-        "unnamedComponents": "arrow-function"
-      }
-    ],
+    // "react/function-component-definition": [
+    //   2,
+    //   {
+    //     "namedComponents": "arrow-function",
+    //     "unnamedComponents": "arrow-function"
+    //   }
+    // ],
+    "react/function-component-definition": "off",
     "arrow-body-style": "off",
     "react/jsx-props-no-spreading": "off",
-    "implicit-arrow-linebreak": "off"
+    "implicit-arrow-linebreak": "off",
+    "require-default-props": "off",
+    "react/jsx-curly-newline": "off",
+    "object-curly-newline": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "function-paren-newline": "off"
   }
 }

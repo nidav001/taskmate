@@ -52,8 +52,9 @@ export default function DroppableDayArea({
   }, [searchValue]);
 
   const todoOrder =
-    useColumnStore((state) => state.columns).find((col) => col.id === day)
-      ?.todoOrder ?? [];
+    useColumnStore((state) => state.regularColumns).find(
+      (col) => col.id === day
+    )?.todoOrder ?? [];
 
   const currentDate = <p>{date.toLocaleString().toString()}</p>;
 

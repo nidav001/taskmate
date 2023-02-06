@@ -3,22 +3,22 @@ import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface TodoState {
-  todos: Todo[];
-  setTodos: (newTodos: Todo[]) => void;
-  resetTodos: () => void;
+  finalizedTodos: Todo[];
+  setFinalizedTodos: (newTodos: Todo[]) => void;
+  resetFinalizedTodos: () => void;
 }
 
 const useFinalizedTodoStore = create<TodoState>()(
   devtools(
     persist(
       (set) => ({
-        todos: [],
-        setTodos: (newTodos) => {
+        finalizedTodos: [],
+        setFinalizedTodos: (newTodos) => {
           set(() => {
-            return { todos: newTodos };
+            return { finalizedTodos: newTodos };
           });
         },
-        resetTodos: () => set(() => ({ todos: [] })),
+        resetFinalizedTodos: () => set(() => ({ finalizedTodos: [] })),
       }),
 
       {

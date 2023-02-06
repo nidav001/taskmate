@@ -5,27 +5,37 @@ import { type Column } from "../types/column";
 import { Day } from "../types/enums";
 
 interface ColumnState {
-  columns: Column[];
-  setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void;
+  regularColumns: Column[];
+  sharedColumns: Column[];
+  setTodoOrder: (shared: boolean, columnId: Day, newTodoOrder: Todo[]) => void;
+  resetTodoOrder: (shared: boolean) => void;
 }
+
+const defaultColumns = [
+  { id: Day.Allgemein, todoOrder: [] },
+  { id: Day.Montag, todoOrder: [] },
+  { id: Day.Dienstag, todoOrder: [] },
+  { id: Day.Mittwoch, todoOrder: [] },
+  { id: Day.Donnerstag, todoOrder: [] },
+  { id: Day.Freitag, todoOrder: [] },
+  { id: Day.Samstag, todoOrder: [] },
+  { id: Day.Sonntag, todoOrder: [] },
+];
 
 const useColumnStore = create<ColumnState>()(
   devtools(
     persist(
       (set) => ({
-        columns: [
-          { id: Day.Allgemein, todoOrder: [] },
-          { id: Day.Montag, todoOrder: [] },
-          { id: Day.Dienstag, todoOrder: [] },
-          { id: Day.Mittwoch, todoOrder: [] },
-          { id: Day.Donnerstag, todoOrder: [] },
-          { id: Day.Freitag, todoOrder: [] },
-          { id: Day.Samstag, todoOrder: [] },
-          { id: Day.Sonntag, todoOrder: [] },
-        ],
-        setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => {
+        regularColumns: defaultColumns,
+        sharedColumns: defaultColumns,
+        setTodoOrder: (
+          shared: boolean,
+          columnId: Day,
+          newTodoOrder: Todo[]
+        ) => {
           set((state) => {
-            const newColumns = state.columns.map((column) => {
+            const columns = shared ? state.sharedColumns : state.regularColumns;
+            const newColumns = columns.map((column) => {
               if (column.id === columnId) {
                 return {
                   ...column,
@@ -35,15 +45,30 @@ const useColumnStore = create<ColumnState>()(
               return column;
             });
 
-            return {
-              columns: newColumns,
-            };
+            return shared
+              ? { sharedColumns: newColumns }
+              : { regularColumns: newColumns };
+          });
+        },
+        resetTodoOrder: (shared: boolean) => {
+          set((state) => {
+            const columns = shared ? state.sharedColumns : state.regularColumns;
+            const newColumns = columns.map((column) => {
+              return {
+                ...column,
+                todoOrder: [],
+              };
+            });
+
+            return shared
+              ? { sharedColumns: newColumns }
+              : { regularColumns: newColumns };
           });
         },
       }),
 
       {
-        name: "todoorder-storage",
+        name: "todo-order-storage-v1",
       }
     )
   )

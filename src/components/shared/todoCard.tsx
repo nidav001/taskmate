@@ -6,17 +6,15 @@ import { type DraggableProvided } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
-import useOpenTodoStore from "../../hooks/openTodoStore";
+import useTodoStore from "../../hooks/todoStore";
 import classNames from "../../utils/classNames";
 import { removeTodoFromTodoOrder } from "../../utils/todoUtils";
 import { trpc } from "../../utils/trpc";
 
 type TodoCardProps = {
   todo: Todo;
-  disclosureOpen?: boolean;
   isDragging: boolean;
   provided?: DraggableProvided;
-  todoRef?: React.RefObject<HTMLDivElement>;
   restore: boolean;
   refetch?: () => void;
 };
@@ -30,11 +28,12 @@ export default function TodoCard({
 }: TodoCardProps) {
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
   const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
-  const { todos: openTodos, setTodos: setOpenTodos } = useOpenTodoStore();
-  const { todos: finalizedTodos, setTodos: setFinalizedTodos } =
-    useFinalizedTodoStore();
+  const { regularTodos, setTodos } = useTodoStore();
 
-  const { columns, setColumnTodoOrder } = useColumnStore();
+  const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
+
+  const { regularColumns, setTodoOrder } = useColumnStore();
+
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   const setChecked = trpc.todo.setChecked.useMutation({
@@ -49,13 +48,13 @@ export default function TodoCard({
         setFinalizedTodos(newTodos);
       } else {
         // Update local state
-        const newTodos = openTodos.map((mappedTodo) => {
+        const newTodos = regularTodos.map((mappedTodo) => {
           if (todo.id === mappedTodo.id) {
             return { ...mappedTodo, checked: !mappedTodo.checked };
           }
           return mappedTodo;
         });
-        setOpenTodos(newTodos);
+        setTodos(false, newTodos);
       }
     },
   });
@@ -68,24 +67,27 @@ export default function TodoCard({
     },
     onMutate: () => {
       removeTodoFromTodoOrder(
-        columns,
+        regularColumns,
         todo,
-        setColumnTodoOrder,
+        setTodoOrder,
         updateTodoPosition
       );
     },
   });
 
   function onBlurTextArea(newContent: string) {
-    //Change local todos
+    // Change local todos
     if (newContent === todo.content) return;
 
     // If empty --> delete locally and later in db
     if (newContent === "") {
-      setOpenTodos(openTodos.filter((mappedTodo) => mappedTodo.id !== todo.id));
+      setTodos(
+        false,
+        regularTodos.filter((mappedTodo) => mappedTodo.id !== todo.id)
+      );
     }
 
-    //Update todo in db
+    // Update todo in db
     updateTodoContent.mutate({
       id: todo.id,
       content: newContent,
@@ -148,16 +150,16 @@ export default function TodoCard({
         className="group flex items-center justify-between"
       >
         <input
-          disabled={refetch ? false : true}
+          disabled={!refetch}
           type="checkbox"
-          checked={todo.checked ? true : false}
+          checked={todo.checked}
           onChange={() =>
             setChecked.mutate({ id: todo.id, checked: !todo.checked })
           }
           className="h-6 w-6 rounded-full"
         />
         <textarea
-          disabled={refetch ? false : true}
+          disabled={!refetch}
           onBlur={(e) => {
             if (onBlurTextArea) {
               onBlurTextArea(e.target.value);

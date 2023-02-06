@@ -22,11 +22,11 @@ export function getCheckedTodos(todos: Todo[], ids: string[]) {
 
 export function refreshLocalTodos(
   ids: string[],
-  setTodos: (todos: Todo[]) => void,
+  setTodos: (shared: boolean, todos: Todo[]) => void,
   todos: Todo[]
 ) {
   const newTodos = todos.filter((todo) => !ids.includes(todo.id));
-  setTodos(newTodos);
+  setTodos(false, newTodos);
 }
 
 export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
@@ -36,7 +36,7 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
         updateTodo.mutate({
           id: todo.id,
           day: col.id,
-          index: index,
+          index,
         });
       }
     });
@@ -46,7 +46,11 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
 export function removeTodoFromTodoOrder(
   columns: Column[],
   todo: Todo,
-  setColumnTodoOrder: (columnId: Day, newTodoOrder: Todo[]) => void,
+  setColumnTodoOrder: (
+    shared: boolean,
+    columnId: Day,
+    newTodoOrder: Todo[]
+  ) => void,
   updateTodoPosition: any
 ) {
   const oldColumnTodoOrder = columns.find(
@@ -60,6 +64,6 @@ export function removeTodoFromTodoOrder(
     1
   );
 
-  setColumnTodoOrder(todo.day as Day, newColumnTodoOrder ?? []);
+  setColumnTodoOrder(false, todo.day as Day, newColumnTodoOrder ?? []);
   persistTodoOrderInDb(columns, updateTodoPosition);
 }

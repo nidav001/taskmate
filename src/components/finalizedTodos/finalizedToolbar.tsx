@@ -19,7 +19,8 @@ const funnyMessages = [
 ];
 
 export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
-  const { todos, setTodos } = useFinalizedTodoStore();
+  const { finalizedTodos: todos, setFinalizedTodos: setTodos } =
+    useFinalizedTodoStore();
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
 

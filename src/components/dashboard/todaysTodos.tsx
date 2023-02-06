@@ -22,7 +22,7 @@ export default function TodaysTodos({ todos }: TodaysTodosProps) {
 
   //Maybe use day as prop
   const todoOrder =
-    useColumnStore((state) => state.columns).find(
+    useColumnStore((state) => state.regularColumns).find(
       (col) => col.id === filteredTodos()[0]?.day
     )?.todoOrder ?? [];
 

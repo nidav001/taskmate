@@ -1,7 +1,7 @@
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { DateTime } from "luxon";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, type DropResult } from "react-beautiful-dnd";
 import { Day } from "../../types/enums";
 import DroppableDayArea from "./droppableDayArea";
 
@@ -10,7 +10,7 @@ const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
   startOfWeek.plus({ days: i })
 );
 
-const TodoViewBase: React.FC<{
+interface TodoViewBaseProps {
   refetch: () => void;
   todos: Todo[];
   isLoading: boolean;
@@ -18,7 +18,9 @@ const TodoViewBase: React.FC<{
   isSharedTodosView: boolean;
   selectedCollaborator: string;
   onDragEnd: (result: DropResult) => void;
-}> = ({
+}
+
+const TodoViewBase: React.FC<TodoViewBaseProps> = ({
   todos,
   isLoading,
   refetch,

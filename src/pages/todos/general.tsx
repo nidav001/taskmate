@@ -5,6 +5,7 @@ import CustomHead from "../../components/shared/customHead";
 import SideNavigation from "../../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../../components/shared/navigation/topNavigation";
 import TodoCard from "../../components/shared/todoCard";
+import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import getServerSideProps from "../../lib/serverProps";
 import { trpc } from "../../utils/trpc";
 
@@ -16,7 +17,8 @@ const GeneralTodos: NextPage = () => {
     [finalizedTodosQuery?.data]
   );
 
-  const { todos, setTodos } = useFinalizedTodoStore();
+  const { finalizedTodos: todos, setFinalizedTodos: setTodos } =
+    useFinalizedTodoStore();
 
   useEffect(() => {
     setTodos(finalizedTodosFromDb);

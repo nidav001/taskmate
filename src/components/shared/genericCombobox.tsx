@@ -26,7 +26,7 @@ export default function GenericCombobox<T extends string>({
 }: GenericComboboxProps<T>) {
   return (
     <Listbox
-      as={"div"}
+      as="div"
       className={classNames(
         sharedView ? "w-1/2" : "w-80",
         show ? "" : "hidden"
@@ -34,9 +34,7 @@ export default function GenericCombobox<T extends string>({
       value={selected}
       onChange={(val: T) => {
         setSelected(val);
-        if (setValue && formValueType) {
-          setValue(formValueType, val);
-        }
+        if (setValue && formValueType) setValue(formValueType, val);
       }}
     >
       <Listbox.Button
