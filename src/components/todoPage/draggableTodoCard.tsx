@@ -6,14 +6,12 @@ type DraggableTodoCardProps = {
   todo: Todo;
   index: number;
   refetch: () => void;
-  disclosureOpen: boolean;
 };
 
 export default function DraggableTodoCard({
   todo,
   index,
   refetch,
-  disclosureOpen,
 }: DraggableTodoCardProps) {
   return (
     <Draggable key={todo.id} draggableId={todo.id} index={index}>
@@ -23,7 +21,6 @@ export default function DraggableTodoCard({
             restore={false}
             provided={provided}
             isDragging={snapshot.isDragging}
-            disclosureOpen={disclosureOpen}
             todo={todo}
             refetch={refetch}
           />

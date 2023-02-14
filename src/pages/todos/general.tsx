@@ -44,7 +44,7 @@ const GeneralTodos: NextPage = () => {
               {todos?.map((todo) => (
                 <TodoCard
                   refetch={finalizedTodosQuery.refetch}
-                  restore={true}
+                  restore
                   isDragging={false}
                   key={todo.id}
                   todo={todo}

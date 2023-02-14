@@ -20,6 +20,12 @@ interface TodoViewBaseProps {
   onDragEnd: (result: DropResult) => void;
 }
 
+function onDragStart() {
+  if (window.navigator.vibrate) {
+    window.navigator.vibrate(400);
+  }
+}
+
 const TodoViewBase: React.FC<TodoViewBaseProps> = ({
   todos,
   isLoading,
@@ -36,7 +42,7 @@ const TodoViewBase: React.FC<TodoViewBaseProps> = ({
         showSharedTodos && selectedCollaborator === "" ? "hidden" : ""
       )}
     >
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
           <DroppableDayArea
             date={datesOfWeek[index - 1] ?? DateTime.now()}

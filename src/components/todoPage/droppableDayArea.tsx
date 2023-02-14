@@ -167,7 +167,6 @@ export default function DroppableDayArea({
                         return (
                           <DraggableTodoCard
                             key={todo.id}
-                            disclosureOpen={disclosureOpen}
                             refetch={refetch}
                             index={index}
                             todo={todo}

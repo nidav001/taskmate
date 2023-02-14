@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { DateTime } from "luxon";
 import { useEffect, useRef, useState } from "react";
 import { type DraggableProvided } from "react-beautiful-dnd";
-import useColumnStore from "../../hooks/columnStore";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import useMostRecentTodoIdStore from "../../hooks/mostRecentTodoStore";
 import useTodoStore from "../../hooks/todoStore";
@@ -27,13 +26,9 @@ export default function TodoCard({
 }: TodoCardProps) {
   const [showAnimation, setShowAnimation] = useState<boolean>(false);
   const recentlyAddedTodo = useRef<null | HTMLDivElement>(null);
-  const { regularTodos, setTodos } = useTodoStore();
+  const { regularTodos, sharedTodos, setTodos } = useTodoStore();
 
   const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
-
-  const { regularColumns, setTodoOrder } = useColumnStore();
-
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   const setChecked = trpc.todo.setChecked.useMutation({
     onMutate: () => {
@@ -47,13 +42,15 @@ export default function TodoCard({
         setFinalizedTodos(newTodos);
       } else {
         // Update local state
-        const newTodos = regularTodos.map((mappedTodo) => {
-          if (todo.id === mappedTodo.id) {
-            return { ...mappedTodo, checked: !mappedTodo.checked };
+        const newTodos = (todo.shared ? sharedTodos : regularTodos).map(
+          (mappedTodo) => {
+            if (todo.id === mappedTodo.id) {
+              return { ...mappedTodo, checked: !mappedTodo.checked };
+            }
+            return mappedTodo;
           }
-          return mappedTodo;
-        });
-        setTodos(false, newTodos);
+        );
+        setTodos(todo.shared, newTodos);
       }
     },
   });
