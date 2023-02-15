@@ -29,7 +29,7 @@ const Dashboard: NextPage = () => {
     } else {
       greeting = "Guten Abend";
     }
-    greeting += ` ${user.data?.name?.split(" ")[0]}`;
+    greeting += user.data?.name ? ` ${user.data?.name?.split(" ")[0]}` : "";
 
     return greeting;
   }
