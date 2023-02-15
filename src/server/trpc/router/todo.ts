@@ -182,6 +182,7 @@ export const todoRouter = router({
           AND: [
             {
               shared: true,
+              finalized: false,
             },
           ],
         },

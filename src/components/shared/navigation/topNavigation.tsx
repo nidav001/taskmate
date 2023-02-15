@@ -1,4 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -14,15 +15,12 @@ export default function TopNaviagtion() {
   const sessionData = useSession().data;
   const genericHamburgerLine = `h-1 w-5 rounded-full transition bg-sky-600 ease transform duration-200`;
 
+  // Sign in not used because user is redirected to /auth/signin
   const menuItems = [
-    { name: "Profil", href: `/profile` },
-    {
-      name: "Einstellungen",
-      href: `/profile`,
-    },
     {
       name: `${sessionData?.user?.id ? "Abmelden" : "Anmelden"}`,
       href: `${sessionData?.user?.id ? "api/auth/signout" : "auth/signin"}`,
+      icon: <ArrowRightOnRectangleIcon className="h-5 w-5" />,
     },
   ];
 
@@ -55,7 +53,10 @@ export default function TopNaviagtion() {
                     "block px-4 py-2 text-sm text-gray-700"
                   )}
                 >
-                  {item.name}
+                  <span className="flex flex-row items-center gap-2">
+                    {item.icon}
+                    {item.name}
+                  </span>
                 </Link>
               )}
             </Menu.Item>
@@ -65,12 +66,8 @@ export default function TopNaviagtion() {
     </Menu>
   );
 
-  const getStyle = () => {
-    if (typeof window !== "undefined") return { height: screen.height - 80 };
-  };
-
   const MainMenuButton = (
-    <Menu as={"div"} className="md:hidden">
+    <Menu as="div" className="md:hidden">
       {({ open, close }) => (
         <>
           <Menu.Button
@@ -94,8 +91,12 @@ export default function TopNaviagtion() {
           </Menu.Button>
           <Transition as={Fragment} {...sideMenu}>
             <Menu.Items
-              style={getStyle()}
-              className={`absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700`}
+              style={
+                typeof window !== "undefined"
+                  ? { height: screen.height - 80 }
+                  : {}
+              }
+              className="absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700"
             >
               <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
             </Menu.Items>

@@ -14,3 +14,8 @@ export enum LogoPosition {
   Side = "",
   Menu = "hidden",
 }
+
+export enum View {
+  Regular = "regular",
+  Shared = "shared",
+}

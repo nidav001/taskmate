@@ -14,6 +14,7 @@ const Signout: NextPage = () => {
       <CustomHead title="Abmelden" />
       <main className="flex h-screen w-screen items-center justify-center bg-white dark:bg-slate-800">
         <button
+          type="button"
           onClick={() =>
             signOut({
               callbackUrl: `${window.location.origin}/auth/signin`,

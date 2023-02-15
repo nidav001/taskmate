@@ -15,9 +15,11 @@ import Toolbar from "../components/todoPage/toolbar";
 import useColumnStore from "../hooks/columnStore";
 import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
+import useViewStore from "../hooks/viewStore";
 import serverProps from "../lib/serverProps";
-import { basicIcon, zoomIn } from "../styles/basicStyles";
+import { basicIcon, gradientTextStyle, zoomIn } from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
+import { View } from "../types/enums";
 import { handleDragEnd } from "../utils/dragAndDrop";
 import { trpc } from "../utils/trpc";
 
@@ -54,7 +56,8 @@ const Todos: NextPage = () => {
     ),
   ];
 
-  const [showSharedTodos, setShowSharedTodos] = useState(false);
+  const { view, setView } = useViewStore();
+  const isSharedView = view === View.Shared;
 
   // General
   const { search } = useSearchStore();
@@ -101,7 +104,7 @@ const Todos: NextPage = () => {
       onDragEnd={(res) => onDragEnd(res, false)}
       search={search}
       selectedCollaborator={selectedCollaborator}
-      isSharedTodosView={showSharedTodos}
+      isSharedTodosView={isSharedView}
       isLoading={openTodosQuery.isLoading}
       todos={regularTodos}
       refetch={openTodosQuery.refetch}
@@ -113,7 +116,7 @@ const Todos: NextPage = () => {
       onDragEnd={(res) => onDragEnd(res, true)}
       search={search}
       selectedCollaborator={selectedCollaborator}
-      isSharedTodosView={showSharedTodos}
+      isSharedTodosView={isSharedView}
       isLoading={sharedTodosQuery.isLoading}
       todos={sharedTodos}
       refetch={sharedTodosQuery.refetch}
@@ -127,11 +130,11 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-8 pt-5">
+          <div className="flex flex-col items-center gap-2 pt-5">
             <div className="flex w-full items-center justify-evenly">
               <button
                 type="button"
-                onClick={() => setShowSharedTodos(false)}
+                onClick={() => setView(View.Regular)}
                 className={classNames(
                   zoomIn,
                   "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
@@ -139,10 +142,12 @@ const Todos: NextPage = () => {
               >
                 <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
               </button>
-              <h1>{showSharedTodos ? "Geteilte Todos" : "Deine Todos"}</h1>
+              <h1 className={classNames(gradientTextStyle, "text-2xl")}>
+                {view === View.Shared ? "Geteilte Todos" : "Deine Todos"}
+              </h1>
               <button
                 type="button"
-                onClick={() => setShowSharedTodos(true)}
+                onClick={() => setView(View.Shared)}
                 className={classNames(
                   zoomIn,
                   "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
@@ -151,28 +156,23 @@ const Todos: NextPage = () => {
                 <ArrowRightIcon className={classNames(basicIcon)} />
               </button>
             </div>
-            <div
-              className={classNames(
-                "flex w-full max-w-2xl justify-center gap-2 px-2"
-              )}
-            >
-              <GenericCombobox
-                sharedView={showSharedTodos}
-                show={showSharedTodos}
-                selected={selectedCollaborator}
-                setSelected={setSelectedCollaborator}
-                comboboxOptions={collaboratorEmails}
-              />
-              <SearchBar sharedView={showSharedTodos} />
-            </div>
 
-            <Toolbar refetch={() => openTodosQuery.refetch()} />
+            <GenericCombobox
+              sharedView={isSharedView}
+              show={isSharedView}
+              selected={selectedCollaborator}
+              setSelected={setSelectedCollaborator}
+              comboboxOptions={collaboratorEmails}
+            />
+            <SearchBar sharedView={isSharedView} />
 
-            <Transition show={!showSharedTodos} {...slideIn}>
-              {!showSharedTodos ? TodoView : null}
+            <Toolbar />
+
+            <Transition show={!isSharedView} {...slideIn}>
+              {!isSharedView ? TodoView : null}
             </Transition>
-            <Transition show={showSharedTodos} {...slideInSharedView}>
-              {showSharedTodos ? SharedTodoView : null}
+            <Transition show={isSharedView} {...slideInSharedView}>
+              {isSharedView ? SharedTodoView : null}
             </Transition>
           </div>
         </main>

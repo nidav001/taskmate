@@ -28,6 +28,7 @@ export default function GenericCombobox<T extends string>({
     <Listbox
       as="div"
       className={classNames(
+        "max-w-sm",
         sharedView ? "w-1/2" : "w-80",
         show ? "" : "hidden"
       )}
@@ -42,6 +43,7 @@ export default function GenericCombobox<T extends string>({
           inputStyle,
           "relative h-14 w-full cursor-default pr-10 text-left"
         )}
+        placeholder="Select an option"
       >
         <span className="block truncate dark:text-white">{selected}</span>
         <span className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -52,11 +54,11 @@ export default function GenericCombobox<T extends string>({
         </span>
       </Listbox.Button>
       <Transition as={Fragment} {...dropdown}>
-        <Listbox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-1 dark:bg-slate-700">
+        <Listbox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-3 dark:bg-slate-700">
           {comboboxOptions.map((key) => (
             <Listbox.Option
               className={({ active }) =>
-                `relative w-full cursor-default select-none py-2 pl-10 pr-4 dark:text-white ${
+                `relative w-full cursor-default select-none py-2 px-4 dark:text-white ${
                   active
                     ? "bg-blue-100 text-blue-900 dark:bg-blue-500 dark:text-blue-100"
                     : ""

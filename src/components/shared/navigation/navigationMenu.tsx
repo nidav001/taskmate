@@ -18,7 +18,7 @@ export default function NavigationMenu({
   closeMenu,
 }: NavigationMenuProps) {
   const menuItemStyle =
-    "rounded-full p-3 my-1 mx-1 hover:bg-sky-400 transform transition flex items-center hover:scale-110 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40 bg-opacity-20 font-medium backface-visibility-hidden text-sm dark:text-white";
+    "rounded-full p-3 my-1 mx-1 hover:bg-sky-400 transform transition flex items-center active:scale-110 hover:bg-opacity-30 active:bg-opacity-40 bg-opacity-20 backface-visibility-hidden group";
 
   const iconStyle = `${basicIcon} text-sky-600`;
 
@@ -28,8 +28,10 @@ export default function NavigationMenu({
     return (
       <Link onClick={closeMenu} href={href} className={menuItemStyle}>
         <div className={itemWrapperStyle}>
-          {icon}
-          {title}
+          <p>{icon}</p>
+          <p className="text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
+            {title}
+          </p>
         </div>
       </Link>
     );
@@ -49,7 +51,11 @@ export default function NavigationMenu({
         <PlusCircleIcon className={iconStyle} />,
         "Hinzufügen"
       )}
-      {getMenuItem("/admin", <Cog6ToothIcon className={iconStyle} />, "Admin")}
+      {getMenuItem(
+        "/settings",
+        <Cog6ToothIcon className={iconStyle} />,
+        "Einstellungen"
+      )}
     </div>
   );
 }

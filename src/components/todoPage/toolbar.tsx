@@ -3,7 +3,9 @@ import Link from "next/link";
 import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
 import useTodoStore from "../../hooks/todoStore";
+import useViewStore from "../../hooks/viewStore";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
+import { View } from "../../types/enums";
 import {
   getCheckedTodoIds,
   getCheckedTodos,
@@ -30,23 +32,27 @@ const funnyMessages = [
 ];
 
 export default function Toolbar() {
-  const { regularTodos, setTodos } = useTodoStore();
+  const { regularTodos, sharedTodos, setTodos } = useTodoStore();
+  const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
+  const { view } = useViewStore();
+  const viewIsShared = view === View.Shared;
+  const [columns, todos] = viewIsShared
+    ? [sharedColumns, sharedTodos]
+    : [regularColumns, regularTodos];
+
   const [showAlert, setShowAlert] = useState(false);
-  const { regularColumns, setTodoOrder } = useColumnStore();
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
   useAlertEffect(showAlert, setShowAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onMutate: (data) => {
-      const todosToRemoveFromTodoOrder = getCheckedTodos(
-        regularTodos,
-        data.ids
-      );
+      const todosToRemoveFromTodoOrder = getCheckedTodos(todos, data.ids);
       todosToRemoveFromTodoOrder.forEach((todo) => {
         removeTodosFromTodoOrder(
-          regularColumns,
+          columns,
           todosToRemoveFromTodoOrder,
+          viewIsShared,
           setTodoOrder,
           updateTodoPosition
         );
@@ -57,13 +63,13 @@ export default function Toolbar() {
         });
       });
 
-      refreshLocalTodos(data.ids, setTodos, regularTodos);
+      refreshLocalTodos(data.ids, setTodos, todos);
       setShowAlert(true);
     },
   });
 
   function handleOnClickFinalize() {
-    const doneTodoIds = getCheckedTodoIds(regularTodos);
+    const doneTodoIds = getCheckedTodoIds(todos);
 
     if (doneTodoIds.length > 0) {
       finalizeTodos.mutate({

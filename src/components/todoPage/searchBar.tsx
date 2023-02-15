@@ -22,7 +22,7 @@ export default function SearchBar({ sharedView }: SearchBarProps) {
       <input
         type="search"
         id="todo-search"
-        className={inputStyle + " block h-14 w-full pl-10"}
+        className={classNames(inputStyle, "block h-14 w-full pl-10")}
         placeholder="Suche..."
         defaultValue={search}
         onChange={(e) => setSearch(e.target.value)}

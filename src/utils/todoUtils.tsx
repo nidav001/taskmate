@@ -46,6 +46,7 @@ export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {
 export function removeTodosFromTodoOrder(
   columns: Column[],
   todos: Todo[],
+  shared: boolean,
   setTodoOrder: (shared: boolean, columnId: Day, newTodoOrder: Todo[]) => void,
   updateTodoPosition: any
 ) {
@@ -65,7 +66,7 @@ export function removeTodosFromTodoOrder(
       )[0] as Todo
     );
 
-    setTodoOrder(false, todo.day as Day, newColumnTodoOrder ?? []);
+    setTodoOrder(shared, todo.day as Day, newColumnTodoOrder ?? []);
   });
 
   removedTodos.forEach((todo) => {

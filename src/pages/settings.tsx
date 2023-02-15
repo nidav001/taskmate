@@ -5,10 +5,10 @@ import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
 
-const Admin: NextPage = () => {
+const Settings: NextPage = () => {
   return (
     <>
-      <CustomHead title="Admin" />
+      <CustomHead title="Einstellungen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
@@ -22,6 +22,6 @@ const Admin: NextPage = () => {
   );
 };
 
-export default Admin;
+export default Settings;
 
 export { getServerSideProps };

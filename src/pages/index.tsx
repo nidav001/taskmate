@@ -1,5 +1,7 @@
+import classNames from "classnames";
+import { DateTime } from "luxon";
 import { type NextPage } from "next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardCard from "../components/dashboard/dashboardCard";
 import FloatingButton from "../components/dashboard/floatingButton";
 import TodaysTodos from "../components/dashboard/todaysTodos";
@@ -7,22 +9,30 @@ import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
+import { gradientTextStyle } from "../styles/basicStyles";
 import { trpc } from "../utils/trpc";
 
 const Dashboard: NextPage = () => {
   const [isLayoutSmall, setIsLayoutSmall] = useState<boolean>(false);
   const todosFromDb = trpc.todo.getOpenTodos.useQuery();
   const finalizedTodosFromDb = trpc.todo.getFinalizedTodos.useQuery();
+  const user = trpc.user.getCurrentUser.useQuery();
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsLayoutSmall(window.innerWidth < 768);
-    };
+  function getGreeting() {
+    const { hour } = DateTime.local();
 
-    window.addEventListener("resize", handleResize);
+    let greeting;
+    if (hour >= 5 && hour < 12) {
+      greeting = "Guten Morgen";
+    } else if (hour >= 12 && hour < 18) {
+      greeting = "Guten Tag";
+    } else {
+      greeting = "Guten Abend";
+    }
+    greeting += ` ${user.data?.name?.split(" ")[0]}`;
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return greeting;
+  }
 
   return (
     <>
@@ -31,6 +41,11 @@ const Dashboard: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
+          <div className="flex justify-center pt-5">
+            <h1 className={classNames(gradientTextStyle, "text-2xl")}>
+              {getGreeting()}
+            </h1>
+          </div>
           <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
             <DashboardCard
               content={todosFromDb.data?.length}
@@ -39,13 +54,6 @@ const Dashboard: NextPage = () => {
               isLoading={todosFromDb.isLoading}
               smallWidth={isLayoutSmall}
             />
-            {/* <DashboardCard
-              content="Vielen Dank für Ihr Verständnis."
-              title="Umbau 🚧👷‍♂️"
-              href="/todos/general"
-              isLoading={false}
-              smallWidth={isLayoutSmall}
-            /> */}
             <DashboardCard
               content={finalizedTodosFromDb.data?.length}
               title="Finalisiert"

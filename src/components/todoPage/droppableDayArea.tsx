@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
+import useViewStore from "../../hooks/viewStore";
 import { panel } from "../../styles/transitionClasses";
 import { Day } from "../../types/enums";
 import { sortTodos } from "../../utils/todoUtils";
@@ -38,37 +39,16 @@ export default function DroppableDayArea({
   isLoading,
   date,
 }: DroppableDayAreaProps) {
-  const [disclosureOpen, setDisclosureOpen] = useState(false);
-  const [dayModified, setDayModified] = useState(false);
+  const { regularColumns, sharedColumns } = useColumnStore();
+  const columns = useViewStore().view ? sharedColumns : regularColumns;
 
-  function checkIfDisclosureShouldBeOpen() {
-    // Skip if day is manually modified
-    let returnValue = disclosureOpen;
-    if (dayModified) return disclosureOpen;
+  const shouldDisclosureBeOpen =
+    date.startOf("day") >= DateTime.now().startOf("day");
+  const [disclosureOpen, setDisclosureOpen] = useState(shouldDisclosureBeOpen);
 
-    // Create conditions for disclosure to be open
-    const dateIsString = typeof date === "string";
-    let dateIsBiggerOrEqualsToday = false;
-    if (!dateIsString) {
-      dateIsBiggerOrEqualsToday =
-        date.startOf("day") >= DateTime.now().startOf("day");
-    }
+  const todoOrder = columns.find((col) => col.id === day)?.todoOrder ?? [];
 
-    // Check if conditions are met
-    if (!dateIsString && !dateIsBiggerOrEqualsToday) {
-      returnValue = false;
-    } else if ((!dateIsString && dateIsBiggerOrEqualsToday) || dateIsString) {
-      returnValue = true;
-    }
-    return returnValue;
-  }
-
-  const todoOrder =
-    useColumnStore((state) => state.regularColumns).find(
-      (col) => col.id === day
-    )?.todoOrder ?? [];
-
-  const getFilteredAndSortedTodos = (): Todo[] => {
+  const filteredAndSortedTodos = () => {
     const filteredTodos = todos?.filter((todo) =>
       todo.content.toLowerCase().includes(searchValue.toLowerCase())
     );
@@ -77,32 +57,28 @@ export default function DroppableDayArea({
   };
 
   useEffect(() => {
-    if (searchValue !== "" && getFilteredAndSortedTodos.length > 0) {
+    // console.log(shouldDisclosureBeOpen);
+    if (searchValue !== "" && filteredAndSortedTodos().length > 0) {
       setDisclosureOpen(true);
     } else {
-      const open = checkIfDisclosureShouldBeOpen();
-      setDisclosureOpen(open);
+      setDisclosureOpen(shouldDisclosureBeOpen);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchValue]);
 
   const currentDate = () => {
     return day !== Day.Allgemein ? (
-      <p>{new Date(date).toLocaleDateString("de-DE")}</p>
+      <p>{date.setLocale("de-DE").toLocaleString()}</p>
     ) : (
       `Woche ${DateTime.now().weekNumber.toString()}`
     );
   };
 
-  function handleDisclosureButtonClick() {
-    setDisclosureOpen(!disclosureOpen);
-    setDayModified(true);
-  }
-
   const DayAreaHeader = (
     <Disclosure.Button
       className="w-80 rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
-      onClick={() => handleDisclosureButtonClick()}
+      onClick={() => setDisclosureOpen(!disclosureOpen)}
     >
       <div className="flex flex-row items-center">
         <div className="flex w-full flex-col justify-evenly">
@@ -144,7 +120,7 @@ export default function DroppableDayArea({
               droppableId={day}
               renderClone={(provided, snapshot, rubric) => {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const todo = getFilteredAndSortedTodos()[rubric.source.index]!;
+                const todo = filteredAndSortedTodos()[rubric.source.index]!;
                 return (
                   <TodoCard
                     isDragging
@@ -163,7 +139,7 @@ export default function DroppableDayArea({
                 >
                   {isLoading
                     ? todoLoadingSkeleton
-                    : getFilteredAndSortedTodos().map((todo, index) => {
+                    : filteredAndSortedTodos().map((todo, index) => {
                         return (
                           <DraggableTodoCard
                             key={todo.id}
