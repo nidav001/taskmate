@@ -1,6 +1,7 @@
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { type NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -41,11 +42,17 @@ const AddTodo: NextPage = () => {
       },
     });
 
+  const session = useSession();
+
+  // !Duplicate code
   const collaboratorEmails = [
     ...new Set(
-      (trpc.todo.getCollaborators.useQuery().data ?? [])?.map(
-        (c) => c.sharedWithEmail
-      ) ?? []
+      (trpc.todo.getCollaborators.useQuery().data ?? [])
+        ?.map((c) => [c.sharedWithEmail, c.sharedFromEmail])
+        .flat()
+        .filter(
+          (email) => email !== session.data?.user?.email && email !== null
+        ) ?? []
     ),
   ];
 

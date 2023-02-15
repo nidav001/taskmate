@@ -54,6 +54,7 @@ export const todoRouter = router({
           index: input.index,
           shared: input.shared,
           sharedWithEmail: input.sharedWithEmail,
+          sharedFromEmail: input.shared ? ctx.session.user.email : null,
         },
       });
     }),
@@ -164,18 +165,18 @@ export const todoRouter = router({
     }),
   getSharedTodos: protectedProcedure
     .input(
-      z.object({ sharedWithEmail: z.string(), authorId: z.string().optional() })
+      z.object({ sharedEmail: z.string(), authorId: z.string().optional() })
     )
     .query(({ ctx, input }) => {
       return ctx.prisma.todo.findMany({
         where: {
           OR: [
             {
-              sharedWithEmail: input.sharedWithEmail,
-              authorId: ctx.session?.user?.id,
+              sharedWithEmail: input.sharedEmail,
+              sharedFromEmail: ctx.session?.user?.email ?? "",
             },
             {
-              authorId: input.authorId,
+              sharedFromEmail: input.sharedEmail,
               sharedWithEmail: ctx.session?.user?.email ?? "",
             },
           ],
@@ -225,39 +226,33 @@ export const todoRouter = router({
         },
       });
     }),
-  getCollaborators: protectedProcedure
-    .output(
-      z
-        .object({
-          sharedWithEmail: z.string().nullable(),
-        })
-        .array()
-    )
-    .query(({ ctx }) => {
-      return ctx.prisma.todo.findMany({
-        where: {
-          OR: [
-            {
-              authorId: ctx.session?.user?.id,
+  getCollaborators: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.todo.findMany({
+      where: {
+        OR: [
+          {
+            sharedFromEmail: ctx.session?.user?.email,
+          },
+          {
+            sharedWithEmail: ctx.session?.user?.email,
+          },
+        ],
+        AND: [
+          {
+            NOT: {
+              sharedWithEmail: null || "",
+              sharedFromEmail: null || "",
             },
-            {
-              sharedWithEmail: ctx.session?.user?.email ?? "",
-            },
-          ],
-          AND: [
-            {
-              NOT: {
-                sharedWithEmail: null || "",
-              },
-              shared: true,
-            },
-          ],
-        },
-        select: {
-          sharedWithEmail: true,
-        },
-      });
-    }),
+            shared: true,
+          },
+        ],
+      },
+      select: {
+        sharedWithEmail: true,
+        sharedFromEmail: true,
+      },
+    });
+  }),
 });
 
 function validatedShared(shared: boolean, sharedWithEmail: string | undefined) {

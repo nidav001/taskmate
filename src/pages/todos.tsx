@@ -3,6 +3,7 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
+import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CustomHead from "../components/shared/customHead";
@@ -27,6 +28,8 @@ const Todos: NextPage = () => {
   // Own Todos
   const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
 
+  const session = useSession();
+
   const openTodosFromDb = useMemo(
     () => openTodosQuery?.data ?? [],
     [openTodosQuery?.data]
@@ -35,7 +38,7 @@ const Todos: NextPage = () => {
   const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
 
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
-    sharedWithEmail: selectedCollaborator,
+    sharedEmail: selectedCollaborator,
   });
 
   const sharedTodosFromDb = useMemo(
@@ -48,11 +51,15 @@ const Todos: NextPage = () => {
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const { regularTodos, sharedTodos, setTodos } = useTodoStore();
 
+  // !Duplicate code
   const collaboratorEmails = [
     ...new Set(
-      (trpc.todo.getCollaborators.useQuery().data ?? [])?.map(
-        (c) => c.sharedWithEmail
-      ) ?? []
+      (trpc.todo.getCollaborators.useQuery().data ?? [])
+        ?.map((c) => [c.sharedWithEmail, c.sharedFromEmail])
+        .flat()
+        .filter(
+          (email) => email !== session.data?.user?.email && email !== null
+        ) ?? []
     ),
   ];
 

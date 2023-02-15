@@ -27,6 +27,7 @@ model Todo {
   finalized Boolean @default(false)
   shared Boolean @default(false)
   sharedWithEmail String?
+  sharedFromEmail String?
 }
 
 // Necessary for Next auth
