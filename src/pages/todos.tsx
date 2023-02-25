@@ -130,6 +130,8 @@ const Todos: NextPage = () => {
     />
   );
 
+  const viewIsShared = view === View.Shared;
+
   return (
     <>
       <CustomHead title="Todos" />
@@ -150,7 +152,7 @@ const Todos: NextPage = () => {
                 <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
               </button>
               <h1 className={classNames(gradientTextStyle, "text-2xl")}>
-                {view === View.Shared ? "Geteilte Todos" : "Deine Todos"}
+                {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
               </h1>
               <button
                 type="button"
@@ -159,6 +161,7 @@ const Todos: NextPage = () => {
                   zoomIn,
                   "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
                 )}
+                disabled={viewIsShared}
               >
                 <ArrowRightIcon className={classNames(basicIcon)} />
               </button>

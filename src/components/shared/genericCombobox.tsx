@@ -1,4 +1,4 @@
-import { Listbox, Transition } from "@headlessui/react";
+import { Combobox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { Fragment } from "react";
@@ -25,7 +25,7 @@ export default function GenericCombobox<T extends string>({
   formValueType,
 }: GenericComboboxProps<T>) {
   return (
-    <Listbox
+    <Combobox
       as="div"
       className={classNames(
         "max-w-sm",
@@ -38,7 +38,7 @@ export default function GenericCombobox<T extends string>({
         if (setValue && formValueType) setValue(formValueType, val);
       }}
     >
-      <Listbox.Button
+      <Combobox.Button
         className={classNames(
           inputStyle,
           "relative h-14 w-full cursor-default pr-10 text-left"
@@ -52,11 +52,11 @@ export default function GenericCombobox<T extends string>({
             aria-hidden="true"
           />
         </span>
-      </Listbox.Button>
+      </Combobox.Button>
       <Transition as={Fragment} {...dropdown}>
-        <Listbox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-3 dark:bg-slate-700">
+        <Combobox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-3 dark:bg-slate-700">
           {comboboxOptions.map((key) => (
-            <Listbox.Option
+            <Combobox.Option
               className={({ active }) =>
                 `relative w-full cursor-default select-none py-2 px-4 dark:text-white ${
                   active
@@ -68,10 +68,10 @@ export default function GenericCombobox<T extends string>({
               value={key}
             >
               {key}
-            </Listbox.Option>
+            </Combobox.Option>
           ))}
-        </Listbox.Options>
+        </Combobox.Options>
       </Transition>
-    </Listbox>
+    </Combobox>
   );
 }
