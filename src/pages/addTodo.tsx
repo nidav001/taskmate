@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
+import ComboboxNew from "../components/shared/combobox";
 import CustomHead from "../components/shared/customHead";
 import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -142,7 +143,7 @@ const AddTodo: NextPage = () => {
                 />
               </label>
 
-              <GenericCombobox
+              {/* <GenericCombobox
                 show={watch("shared")}
                 sharedView={false}
                 selected={selectedCollaborator}
@@ -150,7 +151,8 @@ const AddTodo: NextPage = () => {
                 setValue={setValue}
                 formValueType="sharedWithEmail"
                 comboboxOptions={collaboratorEmails}
-              />
+              /> */}
+              <ComboboxNew comboboxOptions={collaboratorEmails} />
               <div className="flex w-full justify-center">
                 <button
                   className={classNames("w-3/4", buttonStyle)}

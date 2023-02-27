@@ -1,7 +1,7 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { inputStyle } from "../../styles/basicStyles";
 import { dropdown } from "../../styles/transitionClasses";
 
@@ -24,6 +24,7 @@ export default function GenericCombobox<T extends string>({
   sharedView,
   formValueType,
 }: GenericComboboxProps<T>) {
+  const [query, setQuery] = useState("");
   return (
     <Combobox
       as="div"
