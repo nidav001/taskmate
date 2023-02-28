@@ -6,7 +6,7 @@ import { type CtxOrReq } from "next-auth/client/_utils";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
-import ComboboxNew from "../components/shared/combobox";
+import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
@@ -166,17 +166,15 @@ const Todos: NextPage = () => {
                 <ArrowRightIcon className={classNames(basicIcon)} />
               </button>
             </div>
-
-            {/* <GenericCombobox
-              sharedView={isSharedView}
-              show={isSharedView}
-              selected={selectedCollaborator}
-              setSelected={setSelectedCollaborator}
-              comboboxOptions={collaboratorEmails}
-            /> */}
-
             <SearchBar sharedView={isSharedView} />
-            <ComboboxNew comboboxOptions={collaboratorEmails} />
+            {isSharedView ? (
+              <CollaboratorCombobox
+                comboboxOptions={collaboratorEmails}
+                selected={selectedCollaborator}
+                setSelected={setSelectedCollaborator}
+              />
+            ) : null}
+
             <Toolbar />
 
             <Transition show={!isSharedView} {...slideIn}>

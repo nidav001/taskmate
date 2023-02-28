@@ -7,11 +7,11 @@ import { inputStyle } from "../../styles/basicStyles";
 type ComboboxProps = {
   selected: string;
   setSelected: (selectedValue: string) => void;
-  addCollaborator: (email: string) => void;
+  addCollaborator?: (email: string) => void;
   comboboxOptions: string[];
 };
 
-export default function ComboboxNew({
+export default function CollaboratorCombobox({
   selected,
   setSelected,
   addCollaborator,
@@ -30,13 +30,67 @@ export default function ComboboxNew({
         );
 
   function handleNewCollaboratorAdded() {
-    addCollaborator(query);
+    if (addCollaborator && isQueryValidEmail()) addCollaborator(query);
   }
 
   function onKeyboardHandler(e: KeyboardEvent) {
     if (e && e.key === "Enter" && filteredOptions.length === 0) {
       handleNewCollaboratorAdded();
     }
+  }
+
+  const RegularOptions = filteredOptions.map((option) => (
+    <Combobox.Option
+      key={option}
+      className={({ active }) =>
+        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+          active ? "bg-teal-600 text-white" : "text-gray-900"
+        }`
+      }
+      value={option}
+    >
+      {({ selected, active }) => (
+        <>
+          <span
+            className={`block truncate ${
+              selected ? "font-medium" : "font-normal"
+            }`}
+          >
+            {option}
+          </span>
+          {selected ? (
+            <span
+              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                active ? "text-white" : "text-teal-600"
+              }`}
+            >
+              <CheckIcon className="h-5 w-5" aria-hidden="true" />
+            </span>
+          ) : null}
+        </>
+      )}
+    </Combobox.Option>
+  ));
+
+  const NothingFound = (
+    <div className="w-full py-2 px-4 text-left text-black">Nicht gefunden.</div>
+  );
+
+  const AddCollaboratorButton = (
+    <button
+      onClick={() => handleNewCollaboratorAdded()}
+      className="w-full bg-teal-600 py-2 px-4 text-left text-white"
+    >
+      {isQueryValidEmail()
+        ? query + " hinzufügen"
+        : query + " ist keine gültige E-Mail"}
+    </button>
+  );
+
+  function isQueryValidEmail() {
+    // Regular expression to validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(query);
   }
 
   return (
@@ -49,6 +103,7 @@ export default function ComboboxNew({
       <div className="relative">
         <Combobox.Input
           onKeyDown={(e) => onKeyboardHandler(e)}
+          onBlur={() => handleNewCollaboratorAdded()}
           className={classNames(inputStyle, "w-full")}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -67,48 +122,11 @@ export default function ComboboxNew({
         afterLeave={() => setQuery("")}
       >
         <Combobox.Options className="mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-          {filteredOptions.length === 0 && query !== "" ? (
-            <button
-              onClick={() => handleNewCollaboratorAdded()}
-              className="w-full bg-teal-600 py-2 px-4 text-left text-white"
-              type="button"
-            >
-              {query} hinzufügen
-            </button>
-          ) : (
-            filteredOptions.map((option) => (
-              <Combobox.Option
-                key={option}
-                className={({ active }) =>
-                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                    active ? "bg-teal-600 text-white" : "text-gray-900"
-                  }`
-                }
-                value={option}
-              >
-                {({ selected, active }) => (
-                  <>
-                    <span
-                      className={`block truncate ${
-                        selected ? "font-medium" : "font-normal"
-                      }`}
-                    >
-                      {option}
-                    </span>
-                    {selected ? (
-                      <span
-                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                          active ? "text-white" : "text-teal-600"
-                        }`}
-                      >
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                      </span>
-                    ) : null}
-                  </>
-                )}
-              </Combobox.Option>
-            ))
-          )}
+          {filteredOptions.length === 0 && query !== ""
+            ? addCollaborator
+              ? AddCollaboratorButton
+              : NothingFound
+            : RegularOptions}
         </Combobox.Options>
       </Transition>
     </Combobox>

@@ -3,10 +3,10 @@ import classNames from "classnames";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
-import ComboboxNew from "../components/shared/combobox";
+import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import GenericCombobox from "../components/shared/genericCombobox";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -27,14 +27,36 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
+  const session = useSession();
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const [selectedDay, setSelectedDay] = useState<Day>(getTodaysDateName());
   const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
+
   const { search, setSearch } = useSearchStore();
   const [showAlert, setShowAlert] = useState(false);
   const { setMostRecentTodoId } = useMostRecentTodoIdStore();
   useAlertEffect(showAlert, setShowAlert);
 
+  const [collaboratorEmails, setCollaboratorEmails] = useState<string[]>([]);
+  const collaborators = trpc.todo.getCollaborators.useQuery();
+  const collaboratorsData = collaborators.data;
+
+  const getEmails = useCallback(() => {
+    const emails = collaboratorsData?.flatMap((c) => [
+      c.sharedWithEmail,
+      c.sharedFromEmail,
+    ]);
+
+    const filteredEmails = emails?.filter(
+      (email) => email !== session.data?.user?.email && email
+    );
+
+    return Array.from(new Set(filteredEmails));
+  }, [collaboratorsData, session.data?.user?.email]);
+
+  useEffect(() => {
+    setCollaboratorEmails(getEmails());
+  }, [getEmails]);
   const { register, handleSubmit, setValue, watch, reset } =
     useForm<FormValues>({
       defaultValues: {
@@ -42,20 +64,6 @@ const AddTodo: NextPage = () => {
         sharedWithEmail: undefined,
       },
     });
-
-  const session = useSession();
-
-  // !Duplicate code
-  const collaboratorEmails = [
-    ...new Set(
-      (trpc.todo.getCollaborators.useQuery().data ?? [])
-        ?.map((c) => [c.sharedWithEmail, c.sharedFromEmail])
-        .flat()
-        .filter(
-          (email) => email !== session.data?.user?.email && email !== null
-        ) ?? []
-    ),
-  ];
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
@@ -93,6 +101,12 @@ const AddTodo: NextPage = () => {
       ).length,
     });
   };
+
+  function addCollaborator(email: string) {
+    setSelectedCollaborator(email);
+    setValue("sharedWithEmail", email);
+    setCollaboratorEmails([...collaboratorEmails, email]);
+  }
 
   return (
     <>
@@ -142,17 +156,14 @@ const AddTodo: NextPage = () => {
                   {...register("shared", { required: false })}
                 />
               </label>
-
-              {/* <GenericCombobox
-                show={watch("shared")}
-                sharedView={false}
-                selected={selectedCollaborator}
-                setSelected={setSelectedCollaborator}
-                setValue={setValue}
-                formValueType="sharedWithEmail"
-                comboboxOptions={collaboratorEmails}
-              /> */}
-              <ComboboxNew comboboxOptions={collaboratorEmails} />
+              {watch("shared") ? (
+                <CollaboratorCombobox
+                  comboboxOptions={collaboratorEmails}
+                  selected={selectedCollaborator}
+                  setSelected={setSelectedCollaborator}
+                  addCollaborator={addCollaborator}
+                />
+              ) : null}
               <div className="flex w-full justify-center">
                 <button
                   className={classNames("w-3/4", buttonStyle)}
