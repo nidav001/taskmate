@@ -29,6 +29,12 @@ export default function CollaboratorCombobox({
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
 
+  function isQueryValidEmail() {
+    // Regular expression to validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(query);
+  }
+
   function handleNewCollaboratorAdded() {
     if (addCollaborator && isQueryValidEmail()) addCollaborator(query);
   }
@@ -80,18 +86,13 @@ export default function CollaboratorCombobox({
     <button
       onClick={() => handleNewCollaboratorAdded()}
       className="w-full bg-teal-600 py-2 px-4 text-left text-white"
+      type="button"
     >
       {isQueryValidEmail()
-        ? query + " hinzufügen"
-        : query + " ist keine gültige E-Mail"}
+        ? `${query} hinzufügen`
+        : `${query} ist keine gültige E-Mail`}
     </button>
   );
-
-  function isQueryValidEmail() {
-    // Regular expression to validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(query);
-  }
 
   return (
     <Combobox
