@@ -125,7 +125,7 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-2 pt-5">
+          <div className="flex flex-col items-center gap-4 pt-5">
             <div className="flex w-full items-center justify-evenly">
               <button
                 type="button"

@@ -1,23 +1,36 @@
 import create from "zustand";
 import { devtools, persist } from "zustand/middleware";
+import { View } from "../types/enums";
 
-interface DarkModeState {
-  dark: boolean;
-  setDark: () => void;
+interface ViewState {
+  view: View;
+  currentCollaborator: string;
+  setCurrentCollaborator: (email: string) => void;
+  setView: (newView: View) => void;
 }
 
-const useDarkModeStore = create<DarkModeState>()(
+const useViewStore = create<ViewState>()(
   devtools(
     persist(
       (set) => ({
-        dark: false,
-        setDark: () => set((state) => ({ dark: !state.dark })),
+        view: View.Regular,
+        setView: (newView) => {
+          set(() => {
+            return { view: newView };
+          });
+        },
+        currentCollaborator: "",
+        setCurrentCollaborator: (email) => {
+          set(() => {
+            return { currentCollaborator: email };
+          });
+        },
       }),
       {
-        name: "darkmode-storage-v1",
+        name: "view-storage-v1",
       }
     )
   )
 );
 
-export default useDarkModeStore;
+export default useViewStore;

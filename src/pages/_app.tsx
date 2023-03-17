@@ -1,13 +1,13 @@
-import { Poppins } from "@next/font/google";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
+import { Poppins } from "next/font/google";
 import { useEffect } from "react";
 import smoothscroll from "smoothscroll-polyfill";
 import "../styles/globals.css";
 import { trpc } from "../utils/trpc";
 
-const poppins = Poppins({ weight: "400" });
+const poppins = Poppins({ weight: "400", subsets: ["latin"] });
 const App: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },

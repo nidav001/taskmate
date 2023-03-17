@@ -3,6 +3,8 @@ import {
   HomeIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
+import classNames from "classnames";
+import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { basicIcon } from "../../../styles/basicStyles";
 import DarkModeSwitch from "../../admin/darkModeSwitch";
@@ -13,6 +15,8 @@ type NavigationMenuProps = {
   closeMenu?: () => void;
 };
 
+const poppins = Poppins({ weight: "400", subsets: ["latin"] });
+
 export default function NavigationMenu({
   logoShown,
   closeMenu,
@@ -22,14 +26,19 @@ export default function NavigationMenu({
 
   const iconStyle = `${basicIcon} text-sky-600`;
 
-  const itemWrapperStyle = "flex items-center gap-1 ";
+  const itemWrapperStyle = "flex items-center gap-1";
 
   function getMenuItem(href: string, icon: JSX.Element, title: string) {
     return (
       <Link onClick={closeMenu} href={href} className={menuItemStyle}>
         <div className={itemWrapperStyle}>
           <p>{icon}</p>
-          <p className="text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
+          <p
+            className={classNames(
+              "text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
+              poppins.className
+            )}
+          >
             {title}
           </p>
         </div>

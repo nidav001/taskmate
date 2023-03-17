@@ -13,7 +13,7 @@ export default function Logo({ logoShown }: LogoProps) {
       aria-label="home"
       className={classNames(
         logoShown,
-        "py-3 pl-1 text-2xl font-bold tracking-tight text-black dark:text-white"
+        "py-3 pl-1 text-2xl tracking-tight text-black dark:text-white"
       )}
     >
       <span className={gradientTextStyle}>T3</span>

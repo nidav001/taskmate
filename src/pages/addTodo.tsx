@@ -91,7 +91,9 @@ const AddTodo: NextPage = () => {
           <TopNaviagtion />
           <div className="flex justify-center pt-5">
             <form
-              className="items-left flex flex-col justify-center gap-2"
+              className={classNames(
+                "items-left flex flex-col justify-center gap-5"
+              )}
               onSubmit={handleSubmit(onSubmit)}
             >
               <input
@@ -119,12 +121,12 @@ const AddTodo: NextPage = () => {
 
               <label
                 htmlFor="shared "
-                className="flex flex-row-reverse items-center justify-end gap-2"
+                className="flex flex-row-reverse items-center justify-end gap-2 dark:text-white"
               >
-                <p>Geteiltes Todo</p>
+                Geteiltes Todo
                 <input
                   id="shared"
-                  className={inputStyle}
+                  className={classNames(inputStyle)}
                   type="checkbox"
                   defaultChecked={false}
                   {...register("shared", { required: false })}

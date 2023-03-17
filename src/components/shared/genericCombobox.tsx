@@ -42,7 +42,7 @@ export default function GenericCombobox<T extends string>({
       <Combobox.Button
         className={classNames(
           inputStyle,
-          "relative h-14 w-full cursor-default pr-10 text-left"
+          "relative h-14 w-full cursor-pointer pr-10 text-left"
         )}
         placeholder="Select an option"
       >

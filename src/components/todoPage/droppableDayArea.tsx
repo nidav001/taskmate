@@ -2,11 +2,13 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Disclosure, Transition } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
+import classNames from "classnames";
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
 import useViewStore from "../../hooks/viewStore";
+import { basicFontFamilyBold } from "../../styles/basicStyles";
 import { panel } from "../../styles/transitionClasses";
 import { Day } from "../../types/enums";
 import { sortTodos } from "../../utils/todoUtils";
@@ -81,8 +83,15 @@ export default function DroppableDayArea({
       onClick={() => setDisclosureOpen(!disclosureOpen)}
     >
       <div className="flex flex-row items-center">
-        <div className="flex w-full flex-col justify-evenly">
-          <h1 className="text-xl font-bold dark:text-white">{day}</h1>
+        <div className={classNames("flex w-full flex-col justify-evenly")}>
+          <h1
+            className={classNames(
+              "text-xl dark:text-white",
+              basicFontFamilyBold.className
+            )}
+          >
+            {day}
+          </h1>
           <div className="text-slate-400">{currentDate()}</div>
         </div>
         <div className="flex flex-col">

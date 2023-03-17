@@ -1,3 +1,11 @@
+import classNames from "classnames";
+import { Poppins } from "next/font/google";
+
+export const basicFontFamilyBold = Poppins({
+  weight: "600",
+  subsets: ["latin"],
+});
+
 export const zoomIn =
   "transform transition hover:scale-110 duration-100 focus:outline-none hover:bg-opacity-80 active:bg-opacity-60";
 
@@ -11,5 +19,7 @@ export const basicIcon = "w-8 h-8";
 export const inputStyle =
   "rounded-full border border-gray-300 bg-gray-50 p-4 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500";
 
-export const gradientTextStyle =
-  "bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text font-bold text-transparent";
+export const gradientTextStyle = classNames(
+  "bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent",
+  basicFontFamilyBold.className
+);

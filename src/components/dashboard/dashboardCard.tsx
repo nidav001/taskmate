@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import Link from "next/link";
+import { basicFontFamilyBold } from "../../styles/basicStyles";
 
 type DashboardCardProps = {
   title: string;
@@ -38,7 +39,14 @@ export default function DashboardCard({
         loadingSkeleton
       ) : (
         <>
-          <h3 className="text-2xl font-bold dark:text-white">{title}</h3>
+          <h3
+            className={classNames(
+              basicFontFamilyBold.className,
+              "text-2xl dark:text-white"
+            )}
+          >
+            {title}
+          </h3>
           <div className="text-lg dark:text-slate-400">{content}</div>
         </>
       )}
