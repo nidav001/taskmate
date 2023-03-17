@@ -1,29 +1,44 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { Fragment, useState } from "react";
+import { useSession } from "next-auth/react";
+import { Fragment, useEffect, useState } from "react";
+import useViewStore from "../../hooks/viewStore";
 import { inputStyle } from "../../styles/basicStyles";
+import { getCollaboratorEmails } from "../../utils/todoUtils";
+import { trpc } from "../../utils/trpc";
 
 type ComboboxProps = {
-  selected: string;
-  setSelected: (selectedValue: string) => void;
-  addCollaborator?: (email: string) => void;
-  comboboxOptions: string[];
+  setValueInForm?: (fieldName: string, value: string) => void;
+  canAddEmail?: boolean;
 };
 
 export default function CollaboratorCombobox({
-  selected,
-  setSelected,
-  addCollaborator,
-  comboboxOptions,
+  setValueInForm,
+  canAddEmail,
 }: ComboboxProps) {
   const [query, setQuery] = useState("");
+  const { currentCollaborator, setCurrentCollaborator } = useViewStore();
+  const session = useSession();
+  const collaboratorEmailsFromDb = getCollaboratorEmails(
+    trpc,
+    session.data?.user?.email ?? ""
+  );
 
-  const filteredOptions =
+  const [collaboratorEmails, setCollaboratorEmails] = useState<string[]>(
+    collaboratorEmailsFromDb
+  );
+
+  useEffect(() => {
+    // setCurrentCollaborator("");
+    // setCollaboratorEmails(collaboratorEmailsFromDb);
+  }, []);
+
+  const filteredEmails =
     query === ""
-      ? comboboxOptions
-      : comboboxOptions.filter((option) =>
-          option
+      ? collaboratorEmails
+      : collaboratorEmails.filter((email) =>
+          email
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
@@ -36,24 +51,29 @@ export default function CollaboratorCombobox({
   }
 
   function handleNewCollaboratorAdded() {
-    if (addCollaborator && isQueryValidEmail()) addCollaborator(query);
+    if (canAddEmail && isQueryValidEmail()) {
+      if (setValueInForm) setValueInForm("sharedWithEmail", query);
+
+      setCurrentCollaborator(query);
+      setCollaboratorEmails([...collaboratorEmails, query]);
+    }
   }
 
   function onKeyboardHandler(e: KeyboardEvent) {
-    if (e && e.key === "Enter" && filteredOptions.length === 0) {
+    if (e && e.key === "Enter" && filteredEmails.length === 0) {
       handleNewCollaboratorAdded();
     }
   }
 
-  const RegularOptions = filteredOptions.map((option) => (
+  const RegularOptions = filteredEmails.map((email) => (
     <Combobox.Option
-      key={option}
+      key={email}
       className={({ active }) =>
         `relative cursor-default select-none py-2 pl-10 pr-4 ${
           active ? "bg-teal-600 text-white" : "text-gray-900"
         }`
       }
-      value={option}
+      value={email}
     >
       {({ selected, active }) => (
         <>
@@ -62,7 +82,7 @@ export default function CollaboratorCombobox({
               selected ? "font-medium" : "font-normal"
             }`}
           >
-            {option}
+            {email}
           </span>
           {selected ? (
             <span
@@ -98,8 +118,8 @@ export default function CollaboratorCombobox({
     <Combobox
       as="div"
       className="relative w-full max-w-sm"
-      value={selected}
-      onChange={setSelected}
+      value={currentCollaborator}
+      onChange={setCurrentCollaborator}
     >
       <div className="relative">
         <Combobox.Input
@@ -123,8 +143,8 @@ export default function CollaboratorCombobox({
         afterLeave={() => setQuery("")}
       >
         <Combobox.Options className="mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-          {filteredOptions.length === 0 && query !== ""
-            ? addCollaborator
+          {filteredEmails.length === 0 && query !== ""
+            ? canAddEmail
               ? AddCollaboratorButton
               : NothingFound
             : RegularOptions}

@@ -79,3 +79,12 @@ export function removeTodosFromTodoOrder(
 
   persistTodoOrderInDb(columns, updateTodoPosition);
 }
+
+export const getCollaboratorEmails = (trpc: any, currentUserEmail: string) => [
+  ...new Set<string>(
+    (trpc.todo.getCollaborators.useQuery().data ?? [])
+      ?.map((c) => [c.sharedWithEmail, c.sharedFromEmail])
+      .flat()
+      .filter((email) => email !== currentUserEmail && email !== null) ?? []
+  ),
+];

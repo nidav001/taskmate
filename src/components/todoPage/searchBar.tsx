@@ -3,19 +3,10 @@ import classNames from "classnames";
 import useSearchStore from "../../hooks/searchStore";
 import { inputStyle } from "../../styles/basicStyles";
 
-type SearchBarProps = {
-  sharedView: boolean;
-};
-
-export default function SearchBar({ sharedView }: SearchBarProps) {
+export default function SearchBar() {
   const { search, setSearch } = useSearchStore();
   return (
-    <div
-      className={classNames(
-        "relative max-w-sm",
-        sharedView ? "w-1/2" : "w-full"
-      )}
-    >
+    <div className={classNames("relative w-full max-w-sm")}>
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
         <MagnifyingGlassIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
       </div>

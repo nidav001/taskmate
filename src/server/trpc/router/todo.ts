@@ -190,17 +190,17 @@ export const todoRouter = router({
       });
     }),
   // unused
-  shareTodo: protectedProcedure
+  shareTodos: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        ids: z.string().array(),
         sharedWithEmail: z.string(),
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.update({
+      return ctx.prisma.todo.updateMany({
         where: {
-          id: input.id,
+          id: { in: input.ids },
         },
         data: {
           shared: true,
@@ -209,16 +209,16 @@ export const todoRouter = router({
       });
     }),
   // unused
-  unshareTodo: protectedProcedure
+  unshareTodos: protectedProcedure
     .input(
       z.object({
-        id: z.string(),
+        ids: z.string().array(),
       })
     )
     .mutation(({ ctx, input }) => {
-      return ctx.prisma.todo.update({
+      return ctx.prisma.todo.updateMany({
         where: {
-          id: input.id,
+          id: { in: input.ids },
         },
         data: {
           shared: false,

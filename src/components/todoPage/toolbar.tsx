@@ -1,4 +1,4 @@
-import { CheckIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, PlusIcon, ShareIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
@@ -14,6 +14,8 @@ import {
 } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
 import { trpc } from "../../utils/trpc";
+import CollaboratorCombobox from "../shared/collaboratorComcobox";
+import GenericModal from "../shared/genericModal";
 import Snackbar from "../shared/snackbar";
 
 const funnyMessages = [
@@ -40,10 +42,14 @@ export default function Toolbar() {
     ? [sharedColumns, sharedTodos]
     : [regularColumns, regularTodos];
 
-  const [showAlert, setShowAlert] = useState(false);
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
+  const [showFinalizeAlert, setShowFinalizeAlert] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
-  useAlertEffect(showAlert, setShowAlert);
+  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
+  const shareTodos = trpc.todo.shareTodos.useMutation();
+  const unshareTodos = trpc.todo.unshareTodos.useMutation();
+
+  useAlertEffect(showFinalizeAlert, setShowFinalizeAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onMutate: (data) => {
@@ -64,7 +70,7 @@ export default function Toolbar() {
       });
 
       refreshLocalTodos(data.ids, setTodos, todos);
-      setShowAlert(true);
+      setShowFinalizeAlert(true);
     },
   });
 
@@ -76,6 +82,25 @@ export default function Toolbar() {
         ids: doneTodoIds,
       });
     }
+  }
+
+  function handleShare() {
+    // const todoIdsToShare = getCheckedTodoIds(todos);
+    // if (todoIdsToShare.length > 0) {
+    //   shareTodos.mutate({
+    //     ids: todoIdsToShare,
+    //     sharedWithEmail: currentCollaborator,
+    //   });
+    // }
+  }
+
+  function handleUnShare() {
+    // const todoIdsToUnshare = getCheckedTodoIds(todos);
+    // if (todoIdsToUnshare.length > 0) {
+    //   unshareTodos.mutate({
+    //     ids: todoIdsToUnshare,
+    //   });
+    // }
   }
 
   return (
@@ -91,10 +116,28 @@ export default function Toolbar() {
       >
         <CheckIcon className={basicIcon} />
       </button>
+
+      <button
+        type="button"
+        title="Teilen"
+        onClick={() => setShowShareModal(true)}
+        className={buttonStyle}
+      >
+        {viewIsShared ? "UNSHARE" : <ShareIcon className="w-8 w-8" />}
+      </button>
       <Snackbar
-        showAlert={showAlert}
+        showAlert={showFinalizeAlert}
         message="Erledigt."
         randomMessages={funnyMessages}
+      />
+      <GenericModal
+        isOpen={showShareModal}
+        buttonAccept="Teilen"
+        buttonDecline="Abbrechen"
+        setIsOpen={setShowShareModal}
+        title="Teilen mit..."
+        onAccept={viewIsShared ? handleUnShare : handleShare}
+        content={<CollaboratorCombobox canAddEmail />}
       />
     </div>
   );

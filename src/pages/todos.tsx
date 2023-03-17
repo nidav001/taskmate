@@ -10,6 +10,7 @@ import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import Snackbar from "../components/shared/snackbar";
 import SearchBar from "../components/todoPage/searchBar";
 import TodoViewBase from "../components/todoPage/todoViewBase";
 import Toolbar from "../components/todoPage/toolbar";
@@ -27,18 +28,13 @@ import { trpc } from "../utils/trpc";
 const Todos: NextPage = () => {
   // Own Todos
   const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
-
+  const { view, setView, currentCollaborator } = useViewStore();
+  const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
+  const { regularTodos, sharedTodos, setTodos } = useTodoStore();
   const session = useSession();
-
-  const openTodosFromDb = useMemo(
-    () => openTodosQuery?.data ?? [],
-    [openTodosQuery?.data]
-  );
-
-  const [selectedCollaborator, setSelectedCollaborator] = useState<string>("");
-
+  const { search } = useSearchStore();
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
-    sharedEmail: selectedCollaborator,
+    sharedEmail: currentCollaborator,
   });
 
   const sharedTodosFromDb = useMemo(
@@ -46,28 +42,16 @@ const Todos: NextPage = () => {
     [sharedTodosQuery?.data]
   );
 
+  const openTodosFromDb = useMemo(
+    () => openTodosQuery?.data ?? [],
+    [openTodosQuery?.data]
+  );
+
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
-  const { regularTodos, sharedTodos, setTodos } = useTodoStore();
+  const [showAlert, setShowAlert] = useState(false);
 
-  // !Duplicate code
-  const collaboratorEmails = [
-    ...new Set(
-      (trpc.todo.getCollaborators.useQuery().data ?? [])
-        ?.map((c) => [c.sharedWithEmail, c.sharedFromEmail])
-        .flat()
-        .filter(
-          (email) => email !== session.data?.user?.email && email !== null
-        ) ?? []
-    ),
-  ];
-
-  const { view, setView } = useViewStore();
   const isSharedView = view === View.Shared;
-
-  // General
-  const { search } = useSearchStore();
 
   function validateColumnTodoOrder(shared: boolean) {
     const todos = shared ? sharedTodosFromDb : openTodosFromDb;
@@ -110,7 +94,7 @@ const Todos: NextPage = () => {
     <TodoViewBase
       onDragEnd={(res) => onDragEnd(res, false)}
       search={search}
-      selectedCollaborator={selectedCollaborator}
+      selectedCollaborator={currentCollaborator}
       isSharedTodosView={isSharedView}
       isLoading={openTodosQuery.isLoading}
       todos={regularTodos}
@@ -122,7 +106,7 @@ const Todos: NextPage = () => {
     <TodoViewBase
       onDragEnd={(res) => onDragEnd(res, true)}
       search={search}
-      selectedCollaborator={selectedCollaborator}
+      selectedCollaborator={currentCollaborator}
       isSharedTodosView={isSharedView}
       isLoading={sharedTodosQuery.isLoading}
       todos={sharedTodos}
@@ -166,14 +150,8 @@ const Todos: NextPage = () => {
                 <ArrowRightIcon className={classNames(basicIcon)} />
               </button>
             </div>
-            <SearchBar sharedView={isSharedView} />
-            {isSharedView ? (
-              <CollaboratorCombobox
-                comboboxOptions={collaboratorEmails}
-                selected={selectedCollaborator}
-                setSelected={setSelectedCollaborator}
-              />
-            ) : null}
+            <SearchBar />
+            {isSharedView ? <CollaboratorCombobox /> : null}
 
             <Toolbar />
 
@@ -183,6 +161,10 @@ const Todos: NextPage = () => {
             <Transition show={isSharedView} {...slideInSharedView}>
               {isSharedView ? SharedTodoView : null}
             </Transition>
+            <Snackbar
+              message={`Todo geteilt mit ${currentCollaborator}. Sieh's dir an ➡️`}
+              showAlert={showAlert}
+            />
           </div>
         </main>
       </div>
