@@ -4,6 +4,7 @@ import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
 import useTodoStore from "../../hooks/todoStore";
 import useViewStore from "../../hooks/viewStore";
+import { SnackbarCheckIcon, SnackbarXIcon } from "../../resources/icons";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { View } from "../../types/enums";
 import {
@@ -25,7 +26,6 @@ const funnyMessages = [
   "Weiter so 😘",
   "Hammer 🤩",
   "Gut gemacht 😍",
-  "Liebe dich 🥰",
   "Nicht so schnell, der Server kommt nicht hinterher 🥵",
   "Beeindruckend 😳",
   "Das nächste Todo wartet schon 🫡",
@@ -43,6 +43,8 @@ export default function Toolbar() {
     : [regularColumns, regularTodos];
 
   const [showFinalizeAlert, setShowFinalizeAlert] = useState(false);
+  const [showNoTodosSelectedAlert, setShowNoTodosSelectedAlert] =
+    useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
@@ -50,6 +52,7 @@ export default function Toolbar() {
   const unshareTodos = trpc.todo.unshareTodos.useMutation();
 
   useAlertEffect(showFinalizeAlert, setShowFinalizeAlert);
+  useAlertEffect(showNoTodosSelectedAlert, setShowNoTodosSelectedAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onMutate: (data) => {
@@ -68,9 +71,7 @@ export default function Toolbar() {
           index: -1,
         });
       });
-
       refreshLocalTodos(data.ids, setTodos, todos);
-      setShowFinalizeAlert(true);
     },
   });
 
@@ -78,9 +79,12 @@ export default function Toolbar() {
     const doneTodoIds = getCheckedTodoIds(todos);
 
     if (doneTodoIds.length > 0) {
+      setShowFinalizeAlert(true);
       finalizeTodos.mutate({
         ids: doneTodoIds,
       });
+    } else {
+      setShowNoTodosSelectedAlert(true);
     }
   }
 
@@ -103,6 +107,16 @@ export default function Toolbar() {
     // }
   }
 
+  function handleShareButtonClicked() {
+    const checkedTodoIds = getCheckedTodoIds(todos);
+
+    if (checkedTodoIds.length > 0) {
+      setShowShareModal(true);
+    } else {
+      setShowNoTodosSelectedAlert(true);
+    }
+  }
+
   return (
     <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
       <Link href="/addTodo" className={buttonStyle}>
@@ -120,7 +134,7 @@ export default function Toolbar() {
       <button
         type="button"
         title="Teilen"
-        onClick={() => setShowShareModal(true)}
+        onClick={() => handleShareButtonClicked()}
         className={buttonStyle}
       >
         {viewIsShared ? "UNSHARE" : <ShareIcon className="w-8 w-8" />}
@@ -129,15 +143,27 @@ export default function Toolbar() {
         showAlert={showFinalizeAlert}
         message="Erledigt."
         randomMessages={funnyMessages}
+        icon={<SnackbarCheckIcon />}
+      />
+      <Snackbar
+        showAlert={showNoTodosSelectedAlert}
+        message="Keine Todos ausgewählt."
+        icon={<SnackbarXIcon />}
       />
       <GenericModal
         isOpen={showShareModal}
-        buttonAccept="Teilen"
-        buttonDecline="Abbrechen"
+        buttonAccept={viewIsShared ? "Ja" : "Teilen"}
+        buttonDecline={viewIsShared ? "Nein" : "Abbrechen"}
         setIsOpen={setShowShareModal}
-        title="Teilen mit..."
+        title={viewIsShared ? "Teilen aufheben" : "Teilen mit..."}
         onAccept={viewIsShared ? handleUnShare : handleShare}
-        content={<CollaboratorCombobox canAddEmail />}
+        content={
+          viewIsShared ? (
+            "Teilen wirklich aufheben?"
+          ) : (
+            <CollaboratorCombobox canAddEmail />
+          )
+        }
       />
     </div>
   );

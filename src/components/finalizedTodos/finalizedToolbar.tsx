@@ -1,6 +1,7 @@
 import { ArrowUturnLeftIcon, TrashIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
+import { SnackbarCheckIcon } from "../../resources/icons";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { getCheckedTodoIds, refreshLocalTodos } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
@@ -77,6 +78,7 @@ export default function FinalizedToolbar({ refetch }: FinalizedToolbarProps) {
         showAlert={showAlert}
         message="Wiederhergestellt."
         randomMessages={funnyMessages}
+        icon={<SnackbarCheckIcon />}
       />
       <GenericModal
         title="Alle Todos löschen"

@@ -1,5 +1,4 @@
 import { type NextPage } from "next";
-import DarkModeSwitch from "../components/admin/darkModeSwitch";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
@@ -13,9 +12,7 @@ const Settings: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
-            <DarkModeSwitch />
-          </div>
+          <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5"></div>
         </main>
       </div>
     </>

@@ -16,6 +16,7 @@ import useColumnStore from "../hooks/columnStore";
 import useMostRecentTodoIdStore from "../hooks/mostRecentTodoStore";
 import useSearchStore from "../hooks/searchStore";
 import getServerSideProps from "../lib/serverProps";
+import { SnackbarCheckIcon } from "../resources/icons";
 import { buttonStyle, inputStyle } from "../styles/basicStyles";
 import { Day } from "../types/enums";
 import { useAlertEffect } from "../utils/toolbarUtils";
@@ -146,6 +147,7 @@ const AddTodo: NextPage = () => {
             <Snackbar
               message="Hinzugefügt. Hier klicken um zu deinen Todos zu gelangen ➡️"
               showAlert={showAlert}
+              icon={<SnackbarCheckIcon />}
             />
           </Link>
         </main>

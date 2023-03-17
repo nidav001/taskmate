@@ -19,6 +19,7 @@ import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
 import useViewStore from "../hooks/viewStore";
 import serverProps from "../lib/serverProps";
+import { SnackbarCheckIcon } from "../resources/icons";
 import { basicIcon, gradientTextStyle, zoomIn } from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
 import { View } from "../types/enums";
@@ -33,6 +34,7 @@ const Todos: NextPage = () => {
   const { regularTodos, sharedTodos, setTodos } = useTodoStore();
   const session = useSession();
   const { search } = useSearchStore();
+
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
     sharedEmail: currentCollaborator,
   });
@@ -164,6 +166,7 @@ const Todos: NextPage = () => {
             <Snackbar
               message={`Todo geteilt mit ${currentCollaborator}. Sieh's dir an ➡️`}
               showAlert={showAlert}
+              icon={<SnackbarCheckIcon />}
             />
           </div>
         </main>

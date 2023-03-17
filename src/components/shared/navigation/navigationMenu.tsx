@@ -1,11 +1,11 @@
 import {
   CheckCircleIcon,
-  Cog6ToothIcon,
   HomeIcon,
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { basicIcon } from "../../../styles/basicStyles";
+import DarkModeSwitch from "../../admin/darkModeSwitch";
 import Logo from "./logo";
 
 type NavigationMenuProps = {
@@ -51,11 +51,9 @@ export default function NavigationMenu({
         <PlusCircleIcon className={iconStyle} />,
         "Hinzufügen"
       )}
-      {getMenuItem(
-        "/settings",
-        <Cog6ToothIcon className={iconStyle} />,
-        "Einstellungen"
-      )}
+      <div className={menuItemStyle}>
+        <DarkModeSwitch />
+      </div>
     </div>
   );
 }
