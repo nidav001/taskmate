@@ -3,7 +3,6 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
@@ -18,7 +17,12 @@ import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
 import useViewStore from "../hooks/viewStore";
 import serverProps from "../lib/serverProps";
-import { basicIcon, gradientTextStyle, zoomIn } from "../styles/basicStyles";
+import {
+  basicIcon,
+  buttonStyle,
+  gradientTextStyle,
+  zoomIn,
+} from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
 import { View } from "../types/enums";
 import { handleDragEnd } from "../utils/dragAndDrop";
@@ -30,7 +34,6 @@ const Todos: NextPage = () => {
   const { view, setView, currentCollaborator } = useViewStore();
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const { regularTodos, sharedTodos, setTodos } = useTodoStore();
-  const session = useSession();
   const { search } = useSearchStore();
 
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
@@ -121,19 +124,25 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-4 pt-5">
+          <div className="flex flex-col items-center gap-4 gap-10 pt-10">
             <div className="flex w-full items-center justify-evenly">
               <button
                 type="button"
                 onClick={() => setView(View.Regular)}
                 className={classNames(
                   zoomIn,
+                  buttonStyle,
                   "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
                 )}
               >
                 <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
               </button>
-              <h1 className={classNames(gradientTextStyle, "text-2xl")}>
+              <h1
+                className={classNames(
+                  gradientTextStyle,
+                  "flex h-20 items-center text-4xl lg:text-6xl"
+                )}
+              >
                 {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
               </h1>
               <button
@@ -141,6 +150,7 @@ const Todos: NextPage = () => {
                 onClick={() => setView(View.Shared)}
                 className={classNames(
                   zoomIn,
+                  buttonStyle,
                   "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
                 )}
                 disabled={viewIsShared}

@@ -1,10 +1,16 @@
 import { Combobox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import useViewStore from "../../hooks/viewStore";
-import { inputStyle } from "../../styles/basicStyles";
+import {
+  comboboxOptionActive,
+  comboboxOptionBase,
+  comboboxOptionsStyle,
+  inputStyle,
+} from "../../styles/basicStyles";
+import { dropdown } from "../../styles/transitionClasses";
 import { getCollaboratorEmails } from "../../utils/todoUtils";
 import { trpc } from "../../utils/trpc";
 
@@ -18,21 +24,37 @@ export default function CollaboratorCombobox({
   canAddEmail,
 }: ComboboxProps) {
   const [query, setQuery] = useState("");
-  const { currentCollaborator, setCurrentCollaborator } = useViewStore();
+  const {
+    currentCollaborator,
+    setCurrentCollaborator,
+    collaboratorEmails,
+    setCollaboratorEmails,
+  } = useViewStore();
+
   const session = useSession();
-  const collaboratorEmailsFromDb = getCollaboratorEmails(
-    trpc,
-    session.data?.user?.email ?? ""
+
+  const emailQuery = trpc.todo.getCollaborators.useQuery();
+
+  const emailQueryData = useMemo(
+    () => emailQuery.data ?? [],
+    [emailQuery.data]
   );
 
-  const [collaboratorEmails, setCollaboratorEmails] = useState<string[]>(
-    collaboratorEmailsFromDb
+  const collaboratorEmailsFromDb = useMemo(
+    () =>
+      getCollaboratorEmails(emailQueryData, session.data?.user?.email ?? ""),
+    [emailQueryData]
   );
 
   useEffect(() => {
-    // setCurrentCollaborator("");
-    // setCollaboratorEmails(collaboratorEmailsFromDb);
+    setCollaboratorEmails(collaboratorEmailsFromDb);
   }, []);
+
+  useEffect(() => {
+    if (collaboratorEmailsFromDb.length > 0) {
+      setCollaboratorEmails(collaboratorEmailsFromDb);
+    }
+  }, [currentCollaborator]);
 
   const filteredEmails =
     query === ""
@@ -66,17 +88,14 @@ export default function CollaboratorCombobox({
   }
 
   const RegularOptions = filteredEmails.map((email) => (
-    <Combobox.Option
-      key={email}
-      className={({ active }) =>
-        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-          active ? "bg-teal-600 text-white" : "text-gray-900"
-        }`
-      }
-      value={email}
-    >
-      {({ selected, active }) => (
-        <>
+    <Transition key={email} as={Fragment} {...dropdown}>
+      <Combobox.Option
+        className={({ active }) =>
+          classNames(comboboxOptionBase, active ? comboboxOptionActive : "")
+        }
+        value={email}
+      >
+        {({ selected }) => (
           <span
             className={`block truncate ${
               selected ? "font-medium" : "font-normal"
@@ -84,18 +103,9 @@ export default function CollaboratorCombobox({
           >
             {email}
           </span>
-          {selected ? (
-            <span
-              className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                active ? "text-white" : "text-teal-600"
-              }`}
-            >
-              <CheckIcon className="h-5 w-5" aria-hidden="true" />
-            </span>
-          ) : null}
-        </>
-      )}
-    </Combobox.Option>
+        )}
+      </Combobox.Option>
+    </Transition>
   ));
 
   const NothingFound = (
@@ -114,8 +124,21 @@ export default function CollaboratorCombobox({
     </button>
   );
 
+  function getOptions() {
+    if (filteredEmails.length === 0) {
+      if (query !== "") {
+        if (canAddEmail) {
+          return AddCollaboratorButton;
+        }
+      }
+      return NothingFound;
+    }
+    return RegularOptions;
+  }
+
   return (
     <Combobox
+      disabled={collaboratorEmails.length === 0 && !canAddEmail}
       as="div"
       className="relative w-full max-w-sm"
       value={currentCollaborator}
@@ -142,12 +165,8 @@ export default function CollaboratorCombobox({
         leaveTo="opacity-0"
         afterLeave={() => setQuery("")}
       >
-        <Combobox.Options className="mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-          {filteredEmails.length === 0 && query !== ""
-            ? canAddEmail
-              ? AddCollaboratorButton
-              : NothingFound
-            : RegularOptions}
+        <Combobox.Options className={comboboxOptionsStyle}>
+          {getOptions()}
         </Combobox.Options>
       </Transition>
     </Combobox>

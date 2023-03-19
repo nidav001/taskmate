@@ -6,6 +6,8 @@ interface ViewState {
   view: View;
   currentCollaborator: string;
   setCurrentCollaborator: (email: string) => void;
+  collaboratorEmails: string[];
+  setCollaboratorEmails: (emails: string[]) => void;
   setView: (newView: View) => void;
 }
 
@@ -23,6 +25,12 @@ const useViewStore = create<ViewState>()(
         setCurrentCollaborator: (email) => {
           set(() => {
             return { currentCollaborator: email };
+          });
+        },
+        collaboratorEmails: [],
+        setCollaboratorEmails: (emails) => {
+          set(() => {
+            return { collaboratorEmails: emails };
           });
         },
       }),

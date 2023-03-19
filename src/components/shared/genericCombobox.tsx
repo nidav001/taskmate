@@ -1,8 +1,13 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { Fragment, useState } from "react";
-import { inputStyle } from "../../styles/basicStyles";
+import { Fragment } from "react";
+import {
+  comboboxOptionActive,
+  comboboxOptionBase,
+  comboboxOptionsStyle,
+  inputStyle,
+} from "../../styles/basicStyles";
 import { dropdown } from "../../styles/transitionClasses";
 
 type GenericComboboxProps<T> = {
@@ -24,7 +29,6 @@ export default function GenericCombobox<T extends string>({
   sharedView,
   formValueType,
 }: GenericComboboxProps<T>) {
-  const [query, setQuery] = useState("");
   return (
     <Combobox
       as="div"
@@ -55,15 +59,14 @@ export default function GenericCombobox<T extends string>({
         </span>
       </Combobox.Button>
       <Transition as={Fragment} {...dropdown}>
-        <Combobox.Options className="mt-1 flex w-full flex-col items-start rounded-lg bg-gray-100 py-3 dark:bg-slate-700">
+        <Combobox.Options className={comboboxOptionsStyle}>
           {comboboxOptions.map((key) => (
             <Combobox.Option
               className={({ active }) =>
-                `relative w-full cursor-default select-none py-2 px-4 dark:text-white ${
-                  active
-                    ? "bg-blue-100 text-blue-900 dark:bg-blue-500 dark:text-blue-100"
-                    : ""
-                }`
+                classNames(
+                  comboboxOptionBase,
+                  active ? comboboxOptionActive : ""
+                )
               }
               key={key}
               value={key}

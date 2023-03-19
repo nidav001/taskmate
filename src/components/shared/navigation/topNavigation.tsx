@@ -98,7 +98,7 @@ export default function TopNaviagtion() {
               }
               className="absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700"
             >
-              <NavigationMenu closeMenu={close} logoShown={LogoPosition.Menu} />
+              <NavigationMenu closeMenu={close} logoStyle={LogoPosition.Menu} />
             </Menu.Items>
           </Transition>
         </>
@@ -109,7 +109,7 @@ export default function TopNaviagtion() {
   return (
     <div className="min-w-screen sticky top-0 z-10 flex h-20 items-center justify-between gap-2 border-b bg-gray-100 px-4 dark:border-slate-900 dark:bg-slate-700 md:justify-end">
       {MainMenuButton}
-      <Logo logoShown={LogoPosition.Top} />
+      <Logo logoStyle={LogoPosition.Top} />
       {ProfileMenuButton}
     </div>
   );

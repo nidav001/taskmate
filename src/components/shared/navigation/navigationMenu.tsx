@@ -4,21 +4,19 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import classNames from "classnames";
-import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { basicIcon } from "../../../styles/basicStyles";
+import { type LogoPosition } from "../../../types/enums";
 import DarkModeSwitch from "../../admin/darkModeSwitch";
 import Logo from "./logo";
 
 type NavigationMenuProps = {
-  logoShown: string;
+  logoStyle: LogoPosition;
   closeMenu?: () => void;
 };
 
-const poppins = Poppins({ weight: "400", subsets: ["latin"] });
-
 export default function NavigationMenu({
-  logoShown,
+  logoStyle,
   closeMenu,
 }: NavigationMenuProps) {
   const menuItemStyle =
@@ -35,8 +33,7 @@ export default function NavigationMenu({
           <p>{icon}</p>
           <p
             className={classNames(
-              "text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white",
-              poppins.className
+              "text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
             )}
           >
             {title}
@@ -48,7 +45,15 @@ export default function NavigationMenu({
 
   return (
     <div className="absolute sticky top-0 z-10 w-2/3 sm:w-full">
-      <Logo logoShown={logoShown} />
+      <div
+        className={classNames(
+          logoStyle,
+          "flex h-20 items-center justify-center"
+        )}
+      >
+        <Logo logoStyle={logoStyle} />
+      </div>
+
       {getMenuItem("/", <HomeIcon className={iconStyle} />, "Dashboard")}
       {getMenuItem(
         "/todos",

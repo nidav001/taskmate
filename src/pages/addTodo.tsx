@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
@@ -17,7 +17,11 @@ import useMostRecentTodoIdStore from "../hooks/mostRecentTodoStore";
 import useSearchStore from "../hooks/searchStore";
 import getServerSideProps from "../lib/serverProps";
 import { SnackbarCheckIcon } from "../resources/icons";
-import { buttonStyle, inputStyle } from "../styles/basicStyles";
+import {
+  buttonStyle,
+  gradientTextStyle,
+  inputStyle,
+} from "../styles/basicStyles";
 import { Day } from "../types/enums";
 import { useAlertEffect } from "../utils/toolbarUtils";
 import { trpc } from "../utils/trpc";
@@ -34,8 +38,27 @@ const AddTodo: NextPage = () => {
 
   const { search, setSearch } = useSearchStore();
   const [showAlert, setShowAlert] = useState(false);
+  const [todoPlaceholder, setTodoPlaceholder] = useState("");
   const { setMostRecentTodoId } = useMostRecentTodoIdStore();
   useAlertEffect(showAlert, setShowAlert);
+
+  function getRandomPlaceholder() {
+    const placeholders = [
+      "Was gibt's zu tun?",
+      "Was ist zu erledigen?",
+      "Todo...",
+      "Wäsche waschen...",
+      "Einkaufen gehen...",
+      "Zahnarzt...",
+    ];
+    return (
+      placeholders[Math.floor(Math.random() * placeholders.length)] ?? "Todo..."
+    );
+  }
+
+  useEffect(() => {
+    setTodoPlaceholder(getRandomPlaceholder());
+  }, []);
 
   const { register, handleSubmit, setValue, watch, reset } =
     useForm<FormValues>({
@@ -87,63 +110,76 @@ const AddTodo: NextPage = () => {
       <CustomHead title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-auto w-full bg-white dark:bg-slate-800">
+        <main className="h-screen w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex justify-center pt-5">
-            <form
-              className={classNames(
-                "items-left flex flex-col justify-center gap-5"
-              )}
-              onSubmit={handleSubmit(onSubmit)}
-            >
-              <input
-                id="content"
-                className={inputStyle}
-                type="text"
-                placeholder="Todo..."
-                defaultValue={search}
-                {...register("content", { required: true })}
-              />
-              <input
-                className="hidden"
-                type="text"
-                {...register("day", { required: true })}
-              />
-              <GenericCombobox
-                show
-                sharedView={false}
-                selected={selectedDay}
-                setSelected={setSelectedDay}
-                setValue={setValue}
-                formValueType="day"
-                comboboxOptions={Object.keys(Day) as Array<keyof typeof Day>}
-              />
-
-              <label
-                htmlFor="shared "
-                className="flex flex-row-reverse items-center justify-end gap-2 dark:text-white"
+          <div className="flex flex-col gap-10 pt-10">
+            <div className="flex w-full justify-center">
+              <h1
+                className={classNames(
+                  "flex h-20 items-center text-4xl lg:text-6xl",
+                  gradientTextStyle
+                )}
               >
-                Geteiltes Todo
+                Todo hinzufügen
+              </h1>
+            </div>
+
+            <div className="flex items-center justify-center">
+              <form
+                className={classNames(
+                  "items-left flex flex-col justify-center gap-5"
+                )}
+                onSubmit={handleSubmit(onSubmit)}
+              >
                 <input
-                  id="shared"
-                  className={classNames(inputStyle)}
-                  type="checkbox"
-                  defaultChecked={false}
-                  {...register("shared", { required: false })}
+                  id="content"
+                  className={inputStyle}
+                  type="text"
+                  placeholder={todoPlaceholder}
+                  defaultValue={search}
+                  {...register("content", { required: true })}
                 />
-              </label>
-              {watch("shared") ? (
-                <CollaboratorCombobox setValueInForm={setValue} canAddEmail />
-              ) : null}
-              <div className="flex w-full justify-center">
-                <button
-                  className={classNames("w-3/4", buttonStyle)}
-                  type="submit"
+                <input
+                  className="hidden"
+                  type="text"
+                  {...register("day", { required: true })}
+                />
+                <GenericCombobox
+                  show
+                  sharedView={false}
+                  selected={selectedDay}
+                  setSelected={setSelectedDay}
+                  setValue={setValue}
+                  formValueType="day"
+                  comboboxOptions={Object.keys(Day) as Array<keyof typeof Day>}
+                />
+
+                <label
+                  htmlFor="shared "
+                  className="flex flex-row-reverse items-center justify-end gap-2 dark:text-white"
                 >
-                  Hinzufügen
-                </button>
-              </div>
-            </form>
+                  Geteiltes Todo
+                  <input
+                    id="shared"
+                    className={classNames(inputStyle)}
+                    type="checkbox"
+                    defaultChecked={false}
+                    {...register("shared", { required: false })}
+                  />
+                </label>
+                {watch("shared") ? (
+                  <CollaboratorCombobox setValueInForm={setValue} canAddEmail />
+                ) : null}
+                <div className="flex w-full justify-center">
+                  <button
+                    className={classNames("h-12 w-full", buttonStyle)}
+                    type="submit"
+                  >
+                    Hinzufügen
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
           <Link href="/todos">
             <Snackbar

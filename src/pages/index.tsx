@@ -36,37 +36,44 @@ const Dashboard: NextPage = () => {
 
   return (
     <>
-      <CustomHead title="T3Todo" />
+      <CustomHead title="Todo Dashboard" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex justify-center pt-5">
-            <h1 className={classNames(gradientTextStyle, "text-2xl")}>
-              {getGreeting()}
-            </h1>
-          </div>
-          <div className="flex flex-wrap justify-evenly gap-2 px-5 pt-5">
-            <DashboardCard
-              content={todosFromDb.data?.length}
-              title="Todos"
-              href="/todos"
-              isLoading={todosFromDb.isLoading}
-              smallWidth={isLayoutSmall}
+          <div className="flex flex-col gap-10 pt-10">
+            <div className="flex justify-center">
+              <h1
+                className={classNames(
+                  gradientTextStyle,
+                  "flex h-20 items-center text-4xl lg:text-6xl"
+                )}
+              >
+                {getGreeting()}
+              </h1>
+            </div>
+            <div className="flex flex-wrap justify-evenly gap-2 px-5">
+              <DashboardCard
+                content={todosFromDb.data?.length}
+                title="Todos"
+                href="/todos"
+                isLoading={todosFromDb.isLoading}
+                smallWidth={isLayoutSmall}
+              />
+              <DashboardCard
+                content={finalizedTodosFromDb.data?.length}
+                title="Finalisiert"
+                href="/todos/finalized"
+                isLoading={finalizedTodosFromDb.isLoading}
+                smallWidth={isLayoutSmall}
+              />
+            </div>
+            <TodaysTodos todos={todosFromDb.data ?? []} />
+            <FloatingButton
+              isLayoutSmall={isLayoutSmall}
+              setIsLayoutSmall={setIsLayoutSmall}
             />
-            <DashboardCard
-              content={finalizedTodosFromDb.data?.length}
-              title="Finalisiert"
-              href="/todos/finalized"
-              isLoading={finalizedTodosFromDb.isLoading}
-              smallWidth={isLayoutSmall}
-            />
           </div>
-          <TodaysTodos todos={todosFromDb.data ?? []} />
-          <FloatingButton
-            isLayoutSmall={isLayoutSmall}
-            setIsLayoutSmall={setIsLayoutSmall}
-          />
         </main>
       </div>
     </>

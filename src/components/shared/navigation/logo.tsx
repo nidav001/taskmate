@@ -3,10 +3,10 @@ import Link from "next/link";
 import { gradientTextStyle } from "../../../styles/basicStyles";
 
 type LogoProps = {
-  logoShown: string;
+  logoStyle: string;
 };
 
-export default function Logo({ logoShown }: LogoProps) {
+export default function Logo({ logoStyle: logoShown }: LogoProps) {
   return (
     <Link
       href="/"
