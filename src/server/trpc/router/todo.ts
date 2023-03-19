@@ -86,6 +86,7 @@ export const todoRouter = router({
         data: {
           finalized: true,
           checked: false,
+          index: -1,
         },
       });
     }),
@@ -203,8 +204,10 @@ export const todoRouter = router({
           id: { in: input.ids },
         },
         data: {
+          checked: false,
           shared: true,
           sharedWithEmail: input.sharedWithEmail,
+          sharedFromEmail: ctx.session?.user?.email ?? "",
         },
       });
     }),

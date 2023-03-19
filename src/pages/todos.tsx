@@ -4,13 +4,12 @@ import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
-import Snackbar from "../components/shared/snackbar";
 import SearchBar from "../components/todoPage/searchBar";
 import TodoViewBase from "../components/todoPage/todoViewBase";
 import Toolbar from "../components/todoPage/toolbar";
@@ -19,7 +18,6 @@ import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
 import useViewStore from "../hooks/viewStore";
 import serverProps from "../lib/serverProps";
-import { SnackbarCheckIcon } from "../resources/icons";
 import { basicIcon, gradientTextStyle, zoomIn } from "../styles/basicStyles";
 import { slideIn, slideInSharedView } from "../styles/transitionClasses";
 import { View } from "../types/enums";
@@ -50,8 +48,6 @@ const Todos: NextPage = () => {
   );
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
-  const [showAlert, setShowAlert] = useState(false);
 
   const isSharedView = view === View.Shared;
 
@@ -163,11 +159,6 @@ const Todos: NextPage = () => {
             <Transition show={isSharedView} {...slideInSharedView}>
               {isSharedView ? SharedTodoView : null}
             </Transition>
-            <Snackbar
-              message={`Todo geteilt mit ${currentCollaborator}. Sieh's dir an ➡️`}
-              showAlert={showAlert}
-              icon={<SnackbarCheckIcon />}
-            />
           </div>
         </main>
       </div>

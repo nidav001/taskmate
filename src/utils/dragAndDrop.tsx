@@ -48,7 +48,7 @@ export function handleDragEnd(
       source.index,
       destination.index
     );
-
+    console.log(newTodoOrder);
     setTodoOrder(shared, start.id, newTodoOrder);
   } else {
     // Reorder in different column

@@ -157,14 +157,13 @@ export default function TodoCard({
               onBlurTextArea(e.target.value);
             }
           }}
+          defaultValue={todo.content}
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
             todo.checked && !todo.finalized ? "line-through" : "",
             "max-w-[200px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
-        >
-          {todo.content}
-        </textarea>
+        />
         <EllipsisVerticalIcon className="h-8 w-8" />
       </div>
     </div>

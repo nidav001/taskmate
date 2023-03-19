@@ -1,4 +1,5 @@
 import { CheckIcon, PlusIcon, ShareIcon } from "@heroicons/react/20/solid";
+import { Todo } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
@@ -36,42 +37,85 @@ const funnyMessages = [
 export default function Toolbar() {
   const { regularTodos, sharedTodos, setTodos } = useTodoStore();
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
-  const { view } = useViewStore();
+  const { view, currentCollaborator } = useViewStore();
   const viewIsShared = view === View.Shared;
   const [columns, todos] = viewIsShared
     ? [sharedColumns, sharedTodos]
     : [regularColumns, regularTodos];
 
   const [showFinalizeAlert, setShowFinalizeAlert] = useState(false);
+  const [showShareAlert, setShowShareAlert] = useState(false);
   const [showNoTodosSelectedAlert, setShowNoTodosSelectedAlert] =
     useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-  const shareTodos = trpc.todo.shareTodos.useMutation();
-  const unshareTodos = trpc.todo.unshareTodos.useMutation();
+
+  function updateSharedTodos(todosToShare: Todo[], sharedWithEmail: string) {
+    const updatedTodosToShare = todos.map((todo) => {
+      return {
+        ...todo,
+        checked: false,
+        shared: true,
+        sharedWithEmail,
+      };
+    });
+
+    const newSharedTodos = sharedTodos.concat(updatedTodosToShare);
+
+    setTodos(true, newSharedTodos);
+  }
+
+  function updateRegularTodos(todoToUnshare: Todo[]) {
+    const updatedTodosToUnshare = todoToUnshare.map((todo) => {
+      return {
+        ...todo,
+        checked: false,
+        shared: false,
+        sharedWithEmail: null,
+      };
+    });
+
+    const newRegularTodos = regularTodos.concat(updatedTodosToUnshare);
+
+    setTodos(false, newRegularTodos);
+  }
+
+  function removeTodosLocally() {
+    const todosToRemove = getCheckedTodos(todos);
+    removeTodosFromTodoOrder(
+      columns,
+      todosToRemove,
+      viewIsShared,
+      setTodoOrder,
+      updateTodoPosition
+    );
+  }
+
+  const shareTodos = trpc.todo.shareTodos.useMutation({
+    onMutate: (data) => {
+      removeTodosLocally();
+      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
+      updateSharedTodos(getCheckedTodos(todos), data.sharedWithEmail);
+    },
+  });
+
+  const unshareTodos = trpc.todo.unshareTodos.useMutation({
+    onMutate: (data) => {
+      removeTodosLocally();
+      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
+      updateRegularTodos(getCheckedTodos(todos));
+    },
+  });
 
   useAlertEffect(showFinalizeAlert, setShowFinalizeAlert);
+  useAlertEffect(showShareAlert, setShowShareAlert);
   useAlertEffect(showNoTodosSelectedAlert, setShowNoTodosSelectedAlert);
 
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
     onMutate: (data) => {
-      const todosToRemoveFromTodoOrder = getCheckedTodos(todos, data.ids);
-      todosToRemoveFromTodoOrder.forEach((todo) => {
-        removeTodosFromTodoOrder(
-          columns,
-          todosToRemoveFromTodoOrder,
-          viewIsShared,
-          setTodoOrder,
-          updateTodoPosition
-        );
-        updateTodoPosition.mutate({
-          id: todo.id,
-          day: todo.day,
-          index: -1,
-        });
-      });
-      refreshLocalTodos(data.ids, setTodos, todos);
+      removeTodosLocally();
+      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
     },
   });
 
@@ -89,22 +133,26 @@ export default function Toolbar() {
   }
 
   function handleShare() {
-    // const todoIdsToShare = getCheckedTodoIds(todos);
-    // if (todoIdsToShare.length > 0) {
-    //   shareTodos.mutate({
-    //     ids: todoIdsToShare,
-    //     sharedWithEmail: currentCollaborator,
-    //   });
-    // }
+    const todoIdsToShare = getCheckedTodoIds(todos);
+    if (todoIdsToShare.length > 0) {
+      setShowShareAlert(true);
+
+      shareTodos.mutate({
+        ids: todoIdsToShare,
+        sharedWithEmail: currentCollaborator,
+      });
+    }
   }
 
   function handleUnShare() {
-    // const todoIdsToUnshare = getCheckedTodoIds(todos);
-    // if (todoIdsToUnshare.length > 0) {
-    //   unshareTodos.mutate({
-    //     ids: todoIdsToUnshare,
-    //   });
-    // }
+    const todoIdsToUnshare = getCheckedTodoIds(todos);
+    setShowShareAlert(true);
+
+    if (todoIdsToUnshare.length > 0) {
+      unshareTodos.mutate({
+        ids: todoIdsToUnshare,
+      });
+    }
   }
 
   function handleShareButtonClicked() {
@@ -149,6 +197,15 @@ export default function Toolbar() {
         showAlert={showNoTodosSelectedAlert}
         message="Keine Todos ausgewählt."
         icon={<SnackbarXIcon />}
+      />
+      <Snackbar
+        message={
+          viewIsShared
+            ? "Todo zu deinen Todos hinzugefügt"
+            : `Todo geteilt mit ${currentCollaborator}. Sieh's dir an ➡️`
+        }
+        showAlert={showShareAlert}
+        icon={<SnackbarCheckIcon />}
       />
       <GenericModal
         isOpen={showShareModal}

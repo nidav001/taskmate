@@ -16,17 +16,22 @@ export function getCheckedTodoIds(todos: Todo[]) {
   );
 }
 
-export function getCheckedTodos(todos: Todo[], ids: string[]) {
+export function getCheckedTodos(todos: Todo[]) {
+  return todos?.filter((todo) => todo.checked === true) ?? [];
+}
+
+export function getTodosFromIds(todos: Todo[], ids: string[]) {
   return todos?.filter((todo) => ids.includes(todo.id)) ?? [];
 }
 
 export function refreshLocalTodos(
   ids: string[],
   setTodos: (shared: boolean, todos: Todo[]) => void,
-  todos: Todo[]
+  todos: Todo[],
+  shared: boolean
 ) {
   const newTodos = todos.filter((todo) => !ids.includes(todo.id));
-  setTodos(false, newTodos);
+  setTodos(shared, newTodos);
 }
 
 export function persistTodoOrderInDb(columns: Column[], updateTodo: any) {

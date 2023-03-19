@@ -10,7 +10,7 @@ import useColumnStore from "../../hooks/columnStore";
 import useViewStore from "../../hooks/viewStore";
 import { basicFontFamilyBold } from "../../styles/basicStyles";
 import { panel } from "../../styles/transitionClasses";
-import { Day } from "../../types/enums";
+import { Day, View } from "../../types/enums";
 import { sortTodos } from "../../utils/todoUtils";
 import TodoCard from "../shared/todoCard";
 import DraggableTodoCard from "./draggableTodoCard";
@@ -42,7 +42,8 @@ export default function DroppableDayArea({
   date,
 }: DroppableDayAreaProps) {
   const { regularColumns, sharedColumns } = useColumnStore();
-  const columns = useViewStore().view ? sharedColumns : regularColumns;
+  const columns =
+    useViewStore().view === View.Shared ? sharedColumns : regularColumns;
 
   const shouldDisclosureBeOpen =
     date.startOf("day") >= DateTime.now().startOf("day");
