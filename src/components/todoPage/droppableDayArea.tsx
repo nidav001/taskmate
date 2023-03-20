@@ -45,8 +45,11 @@ export default function DroppableDayArea({
   const columns =
     useViewStore().view === View.Shared ? sharedColumns : regularColumns;
 
-  const shouldDisclosureBeOpen =
-    date.startOf("day") >= DateTime.now().startOf("day");
+  function shouldDisclosureBeOpen() {
+    if (day === Day.Allgemein) return false;
+    return date.startOf("day") >= DateTime.now().startOf("day");
+  }
+
   const [disclosureOpen, setDisclosureOpen] = useState(shouldDisclosureBeOpen);
 
   const todoOrder = columns.find((col) => col.id === day)?.todoOrder ?? [];
@@ -117,36 +120,36 @@ export default function DroppableDayArea({
   );
 
   return (
-    <Disclosure>
-      <div className="w-80">
-        {DayAreaHeader}
-        <Transition
-          className={!disclosureOpen ? "overflow-hidden" : ""}
-          show={disclosureOpen}
-          {...panel}
+    <Droppable
+      droppableId={day}
+      renderClone={(provided, snapshot, rubric) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const todo = filteredAndSortedTodos()[rubric.source.index]!;
+        return (
+          <TodoCard
+            isDragging
+            provided={provided}
+            todo={todo}
+            restore={false}
+          />
+        );
+      }}
+    >
+      {(provided) => (
+        <div
+          className="flex w-80 flex-col bg-red-200 py-4"
+          ref={provided.innerRef}
+          {...provided.droppableProps}
         >
-          <Disclosure.Panel static>
-            <Droppable
-              droppableId={day}
-              renderClone={(provided, snapshot, rubric) => {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                const todo = filteredAndSortedTodos()[rubric.source.index]!;
-                return (
-                  <TodoCard
-                    isDragging
-                    provided={provided}
-                    todo={todo}
-                    restore={false}
-                  />
-                );
-              }}
-            >
-              {(provided) => (
-                <div
-                  className="flex w-80 flex-col py-4"
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                >
+          <Disclosure>
+            <div className="w-80">
+              {DayAreaHeader}
+              <Transition
+                className={!disclosureOpen ? "overflow-hidden" : ""}
+                show={disclosureOpen}
+                {...panel}
+              >
+                <Disclosure.Panel static>
                   {isLoading
                     ? todoLoadingSkeleton
                     : filteredAndSortedTodos().map((todo, index) => {
@@ -160,12 +163,12 @@ export default function DroppableDayArea({
                         );
                       })}
                   {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </Disclosure.Panel>
-        </Transition>
-      </div>
-    </Disclosure>
+                </Disclosure.Panel>
+              </Transition>
+            </div>
+          </Disclosure>
+        </div>
+      )}
+    </Droppable>
   );
 }
