@@ -1,16 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export function useAlertEffect(
-  showAlert: boolean,
-  setShowAlert: (value: boolean) => void
-) {
+export function useAlertEffect(initialValue = false) {
+  const [value, setValue] = useState(initialValue);
   useEffect(() => {
-    if (!showAlert) return;
+    if (!value) return;
 
     setTimeout(() => {
-      setShowAlert(false);
+      setValue(false);
     }, 3000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlert]);
-  return showAlert;
+  }, [value]);
+
+  const inputProps = {
+    value,
+    setValue,
+  };
+
+  return inputProps;
 }

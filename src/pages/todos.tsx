@@ -124,6 +124,7 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
+
           <div className="flex flex-col items-center gap-4 gap-10 pt-10">
             <div className="flex w-full items-center justify-evenly">
               <button
@@ -132,7 +133,7 @@ const Todos: NextPage = () => {
                 className={classNames(
                   zoomIn,
                   buttonStyle,
-                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
+                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200"
                 )}
               >
                 <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
@@ -151,7 +152,7 @@ const Todos: NextPage = () => {
                 className={classNames(
                   zoomIn,
                   buttonStyle,
-                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200 active:bg-gray-300"
+                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200"
                 )}
                 disabled={viewIsShared}
               >

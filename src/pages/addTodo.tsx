@@ -1,7 +1,6 @@
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -32,7 +31,6 @@ function getTodaysDateName() {
 }
 
 const AddTodo: NextPage = () => {
-  const session = useSession();
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const [selectedDay, setSelectedDay] = useState<Day>(getTodaysDateName());
 
@@ -110,7 +108,7 @@ const AddTodo: NextPage = () => {
       <CustomHead title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
         <SideNavigation />
-        <main className="h-screen w-full bg-white dark:bg-slate-800">
+        <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-col gap-10 pt-10">
             <div className="flex w-full justify-center">
@@ -123,7 +121,6 @@ const AddTodo: NextPage = () => {
                 Todo hinzufügen
               </h1>
             </div>
-
             <div className="flex items-center justify-center">
               <form
                 className={classNames(

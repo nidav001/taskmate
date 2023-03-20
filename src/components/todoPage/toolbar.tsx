@@ -43,42 +43,40 @@ export default function Toolbar() {
     ? [sharedColumns, sharedTodos]
     : [regularColumns, regularTodos];
 
-  const [showFinalizeAlert, setShowFinalizeAlert] = useState(false);
-  const [showShareAlert, setShowShareAlert] = useState(false);
-  const [showNoTodosSelectedAlert, setShowNoTodosSelectedAlert] =
-    useState(false);
+  const { value: showFinalizeAlert, setValue: setShowFinalizeAlert } =
+    useAlertEffect();
+
+  const { value: showShareAlert, setValue: setShowShareAlert } =
+    useAlertEffect();
+
+  const {
+    value: showNoTodosSelectedAlert,
+    setValue: setShowNoTodosSelectedAlert,
+  } = useAlertEffect();
+
   const [showShareModal, setShowShareModal] = useState(false);
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  function updateSharedTodos(todosToShare: Todo[], sharedWithEmail: string) {
-    const updatedTodosToShare = todos.map((todo) => {
+  function updateTodos(
+    todosToShareOrUnshare: Todo[],
+    share: boolean,
+    sharedWithEmail: string
+  ) {
+    const updatedTodosToUnshare = todosToShareOrUnshare.map((todo) => {
       return {
         ...todo,
         checked: false,
-        shared: true,
-        sharedWithEmail,
+        shared: share,
+        sharedWithEmail: sharedWithEmail === "" ? null : sharedWithEmail,
       };
     });
 
-    const newSharedTodos = sharedTodos.concat(updatedTodosToShare);
+    const newTodos = (share ? sharedTodos : regularTodos).concat(
+      updatedTodosToUnshare
+    );
 
-    setTodos(true, newSharedTodos);
-  }
-
-  function updateRegularTodos(todoToUnshare: Todo[]) {
-    const updatedTodosToUnshare = todoToUnshare.map((todo) => {
-      return {
-        ...todo,
-        checked: false,
-        shared: false,
-        sharedWithEmail: null,
-      };
-    });
-
-    const newRegularTodos = regularTodos.concat(updatedTodosToUnshare);
-
-    setTodos(false, newRegularTodos);
+    setTodos(share, newTodos);
   }
 
   function removeTodosLocally() {
@@ -92,31 +90,29 @@ export default function Toolbar() {
     );
   }
 
+  function handleOnMutate(
+    ids: string[],
+    collaborator: string,
+    isFinalizing = false
+  ) {
+    removeTodosLocally();
+    refreshLocalTodos(ids, setTodos, todos, viewIsShared);
+
+    if (!isFinalizing) {
+      updateTodos(getCheckedTodos(todos), viewIsShared, collaborator);
+    }
+  }
+
   const shareTodos = trpc.todo.shareTodos.useMutation({
-    onMutate: (data) => {
-      removeTodosLocally();
-      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
-      updateSharedTodos(getCheckedTodos(todos), data.sharedWithEmail);
-    },
+    onMutate: (data) => handleOnMutate(data.ids, data.sharedWithEmail),
   });
 
   const unshareTodos = trpc.todo.unshareTodos.useMutation({
-    onMutate: (data) => {
-      removeTodosLocally();
-      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
-      updateRegularTodos(getCheckedTodos(todos));
-    },
+    onMutate: (data) => handleOnMutate(data.ids, ""),
   });
 
-  useAlertEffect(showFinalizeAlert, setShowFinalizeAlert);
-  useAlertEffect(showShareAlert, setShowShareAlert);
-  useAlertEffect(showNoTodosSelectedAlert, setShowNoTodosSelectedAlert);
-
   const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
-    onMutate: (data) => {
-      removeTodosLocally();
-      refreshLocalTodos(data.ids, setTodos, todos, viewIsShared);
-    },
+    onMutate: (data) => handleOnMutate(data.ids, "", true),
   });
 
   function handleOnClickFinalize() {
@@ -144,11 +140,10 @@ export default function Toolbar() {
     }
   }
 
-  function handleUnShare() {
+  function handleUnshare() {
     const todoIdsToUnshare = getCheckedTodoIds(todos);
-    setShowShareAlert(true);
-
     if (todoIdsToUnshare.length > 0) {
+      setShowShareAlert(true);
       unshareTodos.mutate({
         ids: todoIdsToUnshare,
       });
@@ -213,7 +208,7 @@ export default function Toolbar() {
         buttonDecline={viewIsShared ? "Nein" : "Abbrechen"}
         setIsOpen={setShowShareModal}
         title={viewIsShared ? "Teilen aufheben" : "Teilen mit..."}
-        onAccept={viewIsShared ? handleUnShare : handleShare}
+        onAccept={viewIsShared ? handleUnshare : handleShare}
         content={
           viewIsShared ? (
             "Teilen wirklich aufheben?"

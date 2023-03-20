@@ -16,7 +16,7 @@ export default function FloatingButton({
     <div className={classNames(floatingButtonDivStyle, buttonStyle)}>
       <button
         type="button"
-        className="h-10 w-10 p-2"
+        className="flex h-10 w-10 items-center justify-center p-2"
         onClick={() => setIsLayoutSmall(!isLayoutSmall)}
         aria-label="Change view"
       >

@@ -16,8 +16,8 @@ export default function Logo({ logoStyle: logoShown }: LogoProps) {
         "py-3 pl-1 text-2xl tracking-tight text-black dark:text-white"
       )}
     >
-      <span className={gradientTextStyle}>T3</span>
-      Todo
+      <span className={gradientTextStyle}>Task</span>
+      Mate
     </Link>
   );
 }
