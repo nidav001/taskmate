@@ -42,7 +42,7 @@ const Dashboard: NextPage = () => {
   }
 
   const DashboardCards = (
-    <div className="flex flex-wrap justify-center gap-2 px-5 lg:w-full lg:flex-col">
+    <div className="flex flex-wrap justify-center gap-2 px-5 lg:flex-col">
       <DashboardCard
         content={todosFromDb.data?.length}
         title="Todos"
@@ -82,7 +82,9 @@ const Dashboard: NextPage = () => {
               <div className="lg:flex lg:w-full lg:justify-center">
                 {DashboardCards}
               </div>
-              <TodaysTodos todos={todosFromDb.data ?? []} />
+              <div className="w-full">
+                <TodaysTodos todos={todosFromDb.data ?? []} />
+              </div>
             </div>
             <div className="lg:hidden">
               <FloatingButton
