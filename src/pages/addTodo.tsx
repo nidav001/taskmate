@@ -14,6 +14,7 @@ import Snackbar from "../components/shared/snackbar";
 import useColumnStore from "../hooks/columnStore";
 import useMostRecentTodoIdStore from "../hooks/mostRecentTodoStore";
 import useSearchStore from "../hooks/searchStore";
+import useViewStore from "../hooks/viewStore";
 import getServerSideProps from "../lib/serverProps";
 import { SnackbarCheckIcon } from "../resources/icons";
 import {
@@ -33,12 +34,12 @@ function getTodaysDateName() {
 const AddTodo: NextPage = () => {
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const [selectedDay, setSelectedDay] = useState<Day>(getTodaysDateName());
+  const { currentCollaborator } = useViewStore();
 
   const { search, setSearch } = useSearchStore();
-  const [showAlert, setShowAlert] = useState(false);
+  const { value: showAlert, setValue: setShowAlert } = useAlertEffect();
   const [todoPlaceholder, setTodoPlaceholder] = useState("");
   const { setMostRecentTodoId } = useMostRecentTodoIdStore();
-  useAlertEffect(showAlert, setShowAlert);
 
   function getRandomPlaceholder() {
     const placeholders = [
@@ -58,19 +59,18 @@ const AddTodo: NextPage = () => {
     setTodoPlaceholder(getRandomPlaceholder());
   }, []);
 
-  const { register, handleSubmit, setValue, watch, reset } =
-    useForm<FormValues>({
-      defaultValues: {
-        day: selectedDay,
-        sharedWithEmail: undefined,
-      },
-    });
+  const { register, handleSubmit, setValue, watch } = useForm<FormValues>({
+    defaultValues: {
+      day: selectedDay,
+      sharedWithEmail: undefined,
+    },
+  });
 
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
       // Optimistically reset the form. Better use onSuccess if form gets more complex
-      reset();
-      setValue("day", selectedDay);
+      console.log(data);
+      setValue("content", "");
 
       setTodoOrder(data.shared, data.day as Day, [
         ...((data.shared ? sharedColumns : regularColumns).find(

@@ -190,7 +190,6 @@ export const todoRouter = router({
         },
       });
     }),
-  // unused
   shareTodos: protectedProcedure
     .input(
       z.object({
@@ -211,7 +210,6 @@ export const todoRouter = router({
         },
       });
     }),
-  // unused
   unshareTodos: protectedProcedure
     .input(
       z.object({
@@ -242,10 +240,6 @@ export const todoRouter = router({
         ],
         AND: [
           {
-            NOT: {
-              sharedWithEmail: null || "",
-              sharedFromEmail: null || "",
-            },
             shared: true,
           },
         ],

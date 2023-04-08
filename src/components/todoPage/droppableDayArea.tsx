@@ -137,7 +137,7 @@ export default function DroppableDayArea({
     >
       {(provided) => (
         <div
-          className="flex w-80 flex-col bg-red-200 py-4"
+          className="flex w-80 flex-col py-4"
           ref={provided.innerRef}
           {...provided.droppableProps}
         >

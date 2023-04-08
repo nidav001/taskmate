@@ -47,10 +47,6 @@ export default function CollaboratorCombobox({
   );
 
   useEffect(() => {
-    setCollaboratorEmails(collaboratorEmailsFromDb);
-  }, []);
-
-  useEffect(() => {
     if (collaboratorEmailsFromDb.length > 0) {
       setCollaboratorEmails(collaboratorEmailsFromDb);
     }

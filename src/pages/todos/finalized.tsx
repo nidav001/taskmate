@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { type NextPage } from "next";
 import { useEffect, useMemo } from "react";
 import FinalizedToolbar from "../../components/finalizedTodos/finalizedToolbar";
@@ -7,6 +8,7 @@ import TopNaviagtion from "../../components/shared/navigation/topNavigation";
 import TodoCard from "../../components/shared/todoCard";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
 import getServerSideProps from "../../lib/serverProps";
+import { gradientTextStyle } from "../../styles/basicStyles";
 import { trpc } from "../../utils/trpc";
 
 const FinalizedTodos: NextPage = () => {
@@ -32,24 +34,33 @@ const FinalizedTodos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <h1 className="mt-5 text-center text-2xl font-bold dark:text-white">
-            {title}
-          </h1>
-          <div className="flex flex-row justify-center">
-            <FinalizedToolbar refetch={finalizedTodosQuery.refetch} />
-          </div>
+          <div className="flex flex-col items-center gap-4 gap-10 pt-10">
+            <h1
+              className={classNames(
+                gradientTextStyle,
+                "flex h-20 items-center text-4xl lg:text-6xl"
+              )}
+            >
+              {title}
+            </h1>
+            <div className="flex w-full flex-row justify-evenly">
+              <FinalizedToolbar refetch={finalizedTodosQuery.refetch} />
+            </div>
 
-          <div className="flex flex-wrap justify-evenly px-5 pt-5">
-            <div className="flex w-80 flex-col">
-              {finalizedTodos?.map((todo) => (
-                <TodoCard
-                  refetch={finalizedTodosQuery.refetch}
-                  restore
-                  isDragging={false}
-                  key={todo.id}
-                  todo={todo}
-                />
-              ))}
+            <div className="flex flex-wrap justify-evenly px-5 pt-5">
+              <div className="flex w-80 flex-col">
+                {finalizedTodos
+                  ? finalizedTodos?.map((todo) => (
+                      <TodoCard
+                        refetch={finalizedTodosQuery.refetch}
+                        restore
+                        isDragging={false}
+                        key={todo.id}
+                        todo={todo}
+                      />
+                    ))
+                  : null}
+              </div>
             </div>
           </div>
         </main>

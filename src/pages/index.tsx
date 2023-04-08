@@ -18,7 +18,7 @@ const Dashboard: NextPage = () => {
   const finalizedTodosFromDb = trpc.todo.getFinalizedTodos.useQuery();
   const user = trpc.user.getCurrentUser.useQuery();
 
-  function getGreeting() {
+  function getGreetingText() {
     const { hour } = DateTime.local();
 
     let greeting;
@@ -49,7 +49,7 @@ const Dashboard: NextPage = () => {
                   "flex h-20 items-center text-4xl lg:text-6xl"
                 )}
               >
-                {getGreeting()}
+                {getGreetingText()}
               </h1>
             </div>
             <div className="flex flex-wrap justify-evenly gap-2 px-5">

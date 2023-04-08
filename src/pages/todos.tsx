@@ -20,6 +20,7 @@ import serverProps from "../lib/serverProps";
 import {
   basicIcon,
   buttonStyle,
+  disabledButtonStyle,
   gradientTextStyle,
   zoomIn,
 } from "../styles/basicStyles";
@@ -117,6 +118,43 @@ const Todos: NextPage = () => {
 
   const viewIsShared = view === View.Shared;
 
+  const switchViewButton = (viewForButton: View) => {
+    return (
+      <button
+        type="button"
+        onClick={() => setView(viewForButton)}
+        className={classNames(
+          viewForButton === view
+            ? disabledButtonStyle
+            : classNames(buttonStyle, zoomIn)
+        )}
+        disabled={viewForButton === view}
+      >
+        {viewForButton === View.Shared ? (
+          <ArrowRightIcon className={classNames(basicIcon)} />
+        ) : (
+          <ArrowLeftIcon
+            className={classNames(
+              basicIcon,
+              viewForButton === view ? "" : zoomIn
+            )}
+          />
+        )}
+      </button>
+    );
+  };
+
+  const heading = (
+    <h1
+      className={classNames(
+        gradientTextStyle,
+        "flex h-20 items-center text-4xl lg:text-6xl"
+      )}
+    >
+      {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
+    </h1>
+  );
+
   return (
     <>
       <CustomHead title="Todos" />
@@ -124,46 +162,22 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-
           <div className="flex flex-col items-center gap-4 gap-10 pt-10">
-            <div className="flex w-full items-center justify-evenly">
-              <button
-                type="button"
-                onClick={() => setView(View.Regular)}
-                className={classNames(
-                  zoomIn,
-                  buttonStyle,
-                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200"
-                )}
-              >
-                <ArrowLeftIcon className={classNames(basicIcon, zoomIn)} />
-              </button>
-              <h1
-                className={classNames(
-                  gradientTextStyle,
-                  "flex h-20 items-center text-4xl lg:text-6xl"
-                )}
-              >
-                {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
-              </h1>
-              <button
-                type="button"
-                onClick={() => setView(View.Shared)}
-                className={classNames(
-                  zoomIn,
-                  buttonStyle,
-                  "rounded-full bg-gray-100 p-2 hover:bg-gray-200"
-                )}
-                disabled={viewIsShared}
-              >
-                <ArrowRightIcon className={classNames(basicIcon)} />
-              </button>
+            <div className="grid w-full grid-cols-6 items-center gap-2 px-5 lg:grid-cols-3">
+              <div className="flex justify-center">
+                {switchViewButton(View.Regular)}
+              </div>
+
+              <div className="col-span-4 lg:col-span-1">
+                <div className="flex justify-center">{heading}</div>
+              </div>
+              <div className="flex justify-center">
+                {switchViewButton(View.Shared)}
+              </div>
             </div>
+            <Toolbar />
             <SearchBar />
             {isSharedView ? <CollaboratorCombobox /> : null}
-
-            <Toolbar />
-
             <Transition show={!isSharedView} {...slideIn}>
               {!isSharedView ? TodoView : null}
             </Transition>
