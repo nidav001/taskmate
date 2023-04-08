@@ -111,7 +111,11 @@ export default function CollaboratorCombobox({
   const AddCollaboratorButton = (
     <button
       onClick={() => handleNewCollaboratorAdded()}
-      className="w-full bg-teal-600 py-2 px-4 text-left text-white"
+      className={classNames(
+        comboboxOptionBase,
+        comboboxOptionActive,
+        "flex justify-start"
+      )}
       type="button"
     >
       {isQueryValidEmail()

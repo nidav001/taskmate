@@ -41,6 +41,25 @@ const Dashboard: NextPage = () => {
     return greeting;
   }
 
+  const DashboardCards = (
+    <div className="flex flex-wrap justify-center gap-2 px-5 lg:w-full lg:flex-col">
+      <DashboardCard
+        content={todosFromDb.data?.length}
+        title="Todos"
+        href="/todos"
+        isLoading={todosFromDb.isLoading}
+        smallWidth={isLayoutSmall}
+      />
+      <DashboardCard
+        content={finalizedTodosFromDb.data?.length}
+        title="Finalisiert"
+        href="/todos/finalized"
+        isLoading={finalizedTodosFromDb.isLoading}
+        smallWidth={isLayoutSmall}
+      />
+    </div>
+  );
+
   return (
     <>
       <CustomHead title="Todo Dashboard" />
@@ -59,27 +78,18 @@ const Dashboard: NextPage = () => {
                 {user.isLoading ? loadingSkeleton : getGreetingText()}
               </h1>
             </div>
-            <div className="flex flex-wrap justify-evenly gap-2 px-5">
-              <DashboardCard
-                content={todosFromDb.data?.length}
-                title="Todos"
-                href="/todos"
-                isLoading={todosFromDb.isLoading}
-                smallWidth={isLayoutSmall}
-              />
-              <DashboardCard
-                content={finalizedTodosFromDb.data?.length}
-                title="Finalisiert"
-                href="/todos/finalized"
-                isLoading={finalizedTodosFromDb.isLoading}
-                smallWidth={isLayoutSmall}
+            <div className="lg:flex">
+              <div className="lg:flex lg:w-full lg:justify-center">
+                {DashboardCards}
+              </div>
+              <TodaysTodos todos={todosFromDb.data ?? []} />
+            </div>
+            <div className="lg:hidden">
+              <FloatingButton
+                isLayoutSmall={isLayoutSmall}
+                setIsLayoutSmall={setIsLayoutSmall}
               />
             </div>
-            <TodaysTodos todos={todosFromDb.data ?? []} />
-            <FloatingButton
-              isLayoutSmall={isLayoutSmall}
-              setIsLayoutSmall={setIsLayoutSmall}
-            />
           </div>
         </main>
       </div>
