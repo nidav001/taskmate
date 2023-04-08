@@ -114,7 +114,7 @@ const AddTodo: NextPage = () => {
             <div className="flex w-full justify-center">
               <h1
                 className={classNames(
-                  "flex h-20 items-center text-4xl lg:text-6xl",
+                  "flex h-20 items-center text-3xl lg:text-6xl",
                   gradientTextStyle
                 )}
               >

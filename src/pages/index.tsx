@@ -18,6 +18,13 @@ const Dashboard: NextPage = () => {
   const finalizedTodosFromDb = trpc.todo.getFinalizedTodos.useQuery();
   const user = trpc.user.getCurrentUser.useQuery();
 
+  const loadingSkeleton = (
+    <div role="status" className="max-w-sm animate-pulse">
+      <div className="mb-4 h-10 w-80 rounded-full bg-gray-400" />
+      <span className="sr-only">Loading...</span>
+    </div>
+  );
+
   function getGreetingText() {
     const { hour } = DateTime.local();
 
@@ -46,10 +53,10 @@ const Dashboard: NextPage = () => {
               <h1
                 className={classNames(
                   gradientTextStyle,
-                  "flex h-20 items-center text-4xl lg:text-6xl"
+                  "flex h-20 items-center text-3xl lg:text-6xl"
                 )}
               >
-                {getGreetingText()}
+                {user.isLoading ? loadingSkeleton : getGreetingText()}
               </h1>
             </div>
             <div className="flex flex-wrap justify-evenly gap-2 px-5">

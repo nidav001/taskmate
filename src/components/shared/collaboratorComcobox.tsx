@@ -1,5 +1,5 @@
 import { Combobox, Transition } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { ChevronUpDownIcon, UsersIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { useSession } from "next-auth/react";
 import { Fragment, useEffect, useMemo, useState } from "react";
@@ -133,38 +133,43 @@ export default function CollaboratorCombobox({
   }
 
   return (
-    <Combobox
-      disabled={collaboratorEmails.length === 0 && !canAddEmail}
-      as="div"
-      className="relative w-full max-w-sm"
-      value={currentCollaborator}
-      onChange={setCurrentCollaborator}
-    >
-      <div className="relative">
-        <Combobox.Input
-          onKeyDown={(e) => onKeyboardHandler(e)}
-          onBlur={() => handleNewCollaboratorAdded()}
-          className={classNames(inputStyle, "w-full")}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronUpDownIcon
-            className="h-5 w-5 text-gray-400"
-            aria-hidden="true"
-          />
-        </Combobox.Button>
-      </div>
-      <Transition
-        as={Fragment}
-        leave="transition ease-in duration-100"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-        afterLeave={() => setQuery("")}
+    <div className={classNames("relative w-full")}>
+      <Combobox
+        disabled={collaboratorEmails.length === 0 && !canAddEmail}
+        as="div"
+        className="block w-full"
+        value={currentCollaborator}
+        onChange={setCurrentCollaborator}
       >
-        <Combobox.Options className={comboboxOptionsStyle}>
-          {getOptions()}
-        </Combobox.Options>
-      </Transition>
-    </Combobox>
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            <UsersIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+          </div>
+          <Combobox.Input
+            onKeyDown={(e) => onKeyboardHandler(e)}
+            onBlur={() => handleNewCollaboratorAdded()}
+            className={classNames(inputStyle, "w-full pl-10")}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+            <ChevronUpDownIcon
+              className="h-5 w-5 text-gray-400"
+              aria-hidden="true"
+            />
+          </Combobox.Button>
+        </div>
+        <Transition
+          as={Fragment}
+          leave="transition ease-in duration-100"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+          afterLeave={() => setQuery("")}
+        >
+          <Combobox.Options className={comboboxOptionsStyle}>
+            {getOptions()}
+          </Combobox.Options>
+        </Transition>
+      </Combobox>
+    </div>
   );
 }

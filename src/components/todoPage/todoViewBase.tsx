@@ -38,21 +38,23 @@ const TodoViewBase: React.FC<TodoViewBaseProps> = ({
   return (
     <div
       className={classNames(
-        "flex flex-row flex-wrap items-start justify-center gap-3",
+        "grid w-full items-start justify-center gap-x-6 lg:grid-cols-2 2xl:grid-cols-4",
         showSharedTodos && selectedCollaborator === "" ? "hidden" : ""
       )}
     >
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         {(Object.keys(Day) as Array<keyof typeof Day>).map((day, index) => (
-          <DroppableDayArea
-            date={datesOfWeek[index - 1] ?? DateTime.now()}
-            refetch={refetch}
-            searchValue={search}
-            todos={todos.filter((todo) => todo.day === day)}
-            key={day}
-            day={day as Day}
-            isLoading={isLoading}
-          />
+          <div className="">
+            <DroppableDayArea
+              date={datesOfWeek[index - 1] ?? DateTime.now()}
+              refetch={refetch}
+              searchValue={search}
+              todos={todos.filter((todo) => todo.day === day)}
+              key={day}
+              day={day as Day}
+              isLoading={isLoading}
+            />
+          </div>
         ))}
       </DragDropContext>
     </div>

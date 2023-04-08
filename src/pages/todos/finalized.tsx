@@ -38,7 +38,7 @@ const FinalizedTodos: NextPage = () => {
             <h1
               className={classNames(
                 gradientTextStyle,
-                "flex h-20 items-center text-4xl lg:text-6xl"
+                "flex h-20 items-center text-3xl lg:text-6xl"
               )}
             >
               {title}

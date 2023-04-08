@@ -161,7 +161,7 @@ export default function Toolbar() {
   }
 
   return (
-    <div className="flex w-full justify-evenly px-3 md:w-3/4 lg:w-1/2">
+    <div className="flex w-full justify-between px-3 py-2 md:w-3/4 lg:w-1/2">
       <Link href="/addTodo" className={buttonStyle}>
         <PlusIcon className={basicIcon} />
       </Link>

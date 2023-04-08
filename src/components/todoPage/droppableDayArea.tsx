@@ -54,11 +54,11 @@ export default function DroppableDayArea({
 
   const todoOrder = columns.find((col) => col.id === day)?.todoOrder ?? [];
 
-  const filteredAndSortedTodos = () => {
-    const filteredTodos = todos?.filter((todo) =>
-      todo.content.toLowerCase().includes(searchValue.toLowerCase())
-    );
+  const filteredTodos = todos?.filter((todo) =>
+    todo.content.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
+  const filteredAndSortedTodos = () => {
     return sortTodos(filteredTodos, todoOrder);
   };
 
@@ -98,13 +98,13 @@ export default function DroppableDayArea({
           </h1>
           <div className="text-slate-400">{currentDate()}</div>
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           <div
             className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
               isLoading ? "animate-pulse bg-gray-400" : ""
             }`}
           >
-            {isLoading ? null : todos.length}
+            {isLoading ? null : filteredTodos.length}
           </div>
           <div>
             <FontAwesomeIcon

@@ -148,7 +148,7 @@ const Todos: NextPage = () => {
     <h1
       className={classNames(
         gradientTextStyle,
-        "flex h-20 items-center text-4xl lg:text-6xl"
+        "flex h-20 items-center text-3xl lg:text-6xl"
       )}
     >
       {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
@@ -162,13 +162,13 @@ const Todos: NextPage = () => {
         <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-4 gap-10 pt-10">
-            <div className="grid w-full grid-cols-6 items-center gap-2 px-5 lg:grid-cols-3">
+          <div className="flex flex-col items-center gap-4 pt-10">
+            <div className="grid w-full grid-cols-10 items-center gap-2 px-5 2xl:grid-cols-4">
               <div className="flex justify-center">
                 {switchViewButton(View.Regular)}
               </div>
 
-              <div className="col-span-4 lg:col-span-1">
+              <div className="col-span-8 2xl:col-span-2">
                 <div className="flex justify-center">{heading}</div>
               </div>
               <div className="flex justify-center">
@@ -176,8 +176,11 @@ const Todos: NextPage = () => {
               </div>
             </div>
             <Toolbar />
-            <SearchBar />
-            {isSharedView ? <CollaboratorCombobox /> : null}
+            <div className="items-top flex max-w-md flex-col justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
+              <SearchBar />
+
+              {isSharedView ? <CollaboratorCombobox /> : null}
+            </div>
             <Transition show={!isSharedView} {...slideIn}>
               {!isSharedView ? TodoView : null}
             </Transition>
