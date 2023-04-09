@@ -63,22 +63,10 @@ export default function TodoCard({
         refetch();
       }
     },
-
-    onMutate: () => {
-      // Change local todos
-      const newTodos = (todo.shared ? sharedTodos : regularTodos).map(
-        (mappedTodo) => {
-          if (todo.id === mappedTodo.id) {
-            return { ...mappedTodo, content: todo.content };
-          }
-          return mappedTodo;
-        }
-      );
-      setTodos(todo.shared, newTodos);
-    },
   });
 
   function onBlurTextArea(newContent: string) {
+    // Change local todos
     if (newContent === todo.content) return;
 
     // If empty --> delete
