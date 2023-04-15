@@ -1,12 +1,13 @@
 ## TaskMate
 
 - Easily organize tasks by day and non-day specific tasks
-- Drag and drop tasks to different days for flexible scheduling
-- Create, edit, and delete tasks with ease
+- Drag and drop tasks to different days
+- Create, edit, and delete tasks
 - Collaborate on tasks with other users and complete them together
 - Two-step check off process for added clarity and organization
 - Restore finalized tasks if needed
-- Switch to Dark mode for improved visibility in low light environments
+- Dark Mode
+- Responsive layout
 
 ## Tech Stack
 
