@@ -8,6 +8,19 @@
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
+  async headers() {
+    return [
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "s-maxage=1, stale-while-revalidate=59",
+          },
+        ],
+      },
+    ];
+  },
   swcMinify: true,
   i18n: {
     locales: ["de"],
