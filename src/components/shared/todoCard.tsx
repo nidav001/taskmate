@@ -154,15 +154,17 @@ export default function TodoCard({
         ref={shouldUseRef() ? recentlyAddedTodo : null}
         className="group flex items-center justify-between"
       >
-        <input
-          disabled={!refetch}
-          type="checkbox"
-          checked={todo.checked}
-          onChange={() =>
-            setChecked.mutate({ id: todo.id, checked: !todo.checked })
-          }
-          className="h-6 w-6 rounded-full"
-        />
+        <div className="pr-1">
+          <input
+            disabled={!refetch}
+            type="checkbox"
+            checked={todo.checked}
+            onChange={() =>
+              setChecked.mutate({ id: todo.id, checked: !todo.checked })
+            }
+            className="h-6 w-6 rounded-full"
+          />
+        </div>
         <textarea
           disabled={!refetch}
           onBlur={(e) => {
@@ -174,7 +176,7 @@ export default function TodoCard({
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
             todo.checked && !todo.finalized ? "line-through" : "",
-            "max-w-[200px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
+            "max-w-[220px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
           )}
         />
         <EllipsisVerticalIcon className="h-8 w-8" />
