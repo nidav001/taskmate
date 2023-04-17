@@ -51,7 +51,11 @@ export default function CustomHead({ title }: HeadComponentProps) {
     <Head>
       <title>{title}</title>
       <link rel="icon" href="/favicon.ico" />
-      <meta name="description" content="T3Todo App" />
+      <meta name="description" content="TaskMate" />
+      <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"
+      />
     </Head>
   );
 }
