@@ -224,6 +224,7 @@ export const todoRouter = router({
         data: {
           shared: false,
           sharedWithEmail: "",
+          authorId: ctx.session?.user?.id ?? "",
         },
       });
     }),

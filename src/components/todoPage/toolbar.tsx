@@ -1,5 +1,4 @@
 import { CheckIcon, PlusIcon, ShareIcon } from "@heroicons/react/20/solid";
-import { Todo } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
 import useColumnStore from "../../hooks/columnStore";
@@ -11,7 +10,6 @@ import { View } from "../../types/enums";
 import {
   getCheckedTodoIds,
   getCheckedTodos,
-  refreshLocalTodos,
   removeTodosFromTodoOrder,
 } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
@@ -58,28 +56,25 @@ export default function Toolbar() {
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
 
-  function updateTodos(
-    todosToShareOrUnshare: Todo[],
-    share: boolean,
-    sharedWithEmail: string
-  ) {
-    const updatedTodosToUnshare = todosToShareOrUnshare.map((todo) => {
+  function refreshTodosInOtherView(sharedWithEmail: string) {
+    const todoIsBeingUnShared = sharedWithEmail !== "";
+    const updatedTodos = getCheckedTodos(todos).map((todo) => {
       return {
         ...todo,
         checked: false,
-        shared: share,
-        sharedWithEmail: sharedWithEmail === "" ? null : sharedWithEmail,
+        shared: !todo.shared,
+        sharedWithEmail: todoIsBeingUnShared ? null : sharedWithEmail,
       };
     });
 
-    const newTodos = (share ? sharedTodos : regularTodos).concat(
-      updatedTodosToUnshare
+    const newTodos = (!viewIsShared ? sharedTodos : regularTodos).concat(
+      updatedTodos
     );
 
-    setTodos(share, newTodos);
+    setTodos(!viewIsShared, newTodos);
   }
 
-  function removeTodosLocally() {
+  function updateTodoOrder() {
     const todosToRemove = getCheckedTodos(todos);
     removeTodosFromTodoOrder(
       columns,
@@ -90,17 +85,19 @@ export default function Toolbar() {
     );
   }
 
+  function removeTodosFromCurrentView(ids: string[]) {
+    const newTodos = todos.filter((todo) => !ids.includes(todo.id));
+    setTodos(viewIsShared, newTodos);
+  }
+
   function handleOnMutate(
     ids: string[],
     collaborator: string,
     isFinalizing = false
   ) {
-    removeTodosLocally();
-    refreshLocalTodos(ids, setTodos, todos, viewIsShared);
-
-    if (!isFinalizing) {
-      updateTodos(getCheckedTodos(todos), viewIsShared, collaborator);
-    }
+    updateTodoOrder();
+    removeTodosFromCurrentView(ids);
+    if (!isFinalizing) refreshTodosInOtherView(collaborator);
   }
 
   const shareTodos = trpc.todo.shareTodos.useMutation({
