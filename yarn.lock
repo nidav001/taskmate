@@ -168,11 +168,6 @@
   dependencies:
     glob "7.1.7"
 
-"@next/font@^13.2.4":
-  version "13.2.4"
-  resolved "https://registry.npmjs.org/@next/font/-/font-13.2.4.tgz"
-  integrity sha512-lMAnuOYjv5g22WhD00u0DQ9u2rTMJH0S64PKE4Sy8Y2q+FJTYs6ZHT2z3VRoI8+AOWSLK4FirpnygcjOienQ9A==
-
 "@next/swc-android-arm-eabi@13.2.4":
   version "13.2.4"
   resolved "https://registry.yarnpkg.com/@next/swc-android-arm-eabi/-/swc-android-arm-eabi-13.2.4.tgz#758d0403771e549f9cee71cbabc0cb16a6c947c0"
@@ -2075,9 +2070,9 @@ json-stable-stringify-without-jsonify@^1.0.1:
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
 json5@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/json5/-/json5-1.0.1.tgz"
-  integrity sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.2.tgz#63d98d60f21b313b77c4d6da18bfa69d80e1d593"
+  integrity sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==
   dependencies:
     minimist "^1.2.0"
 
