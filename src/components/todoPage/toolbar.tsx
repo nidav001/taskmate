@@ -30,6 +30,7 @@ const funnyMessages = [
   "Das nächste Todo wartet schon 🫡",
   "Du coole Socke 😎",
   "Ganz stark 💪",
+  "Liebe dich 😘"
 ];
 
 export default function Toolbar() {
