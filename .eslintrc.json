@@ -1,0 +1,42 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb",
+    "airbnb-typescript"
+  ],
+  "rules": {
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "linebreak-style": "off",
+    "@typescript-eslint/quotes": "off",
+    "react/react-in-jsx-scope": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    "import/prefer-default-export": "off",
+    "@function-paren-newline": "off",
+    "operator-linebreak": "off",
+    "import-extemsions": "off",
+    // "react/function-component-definition": [
+    //   2,
+    //   {
+    //     "namedComponents": "arrow-function",
+    //     "unnamedComponents": "arrow-function"
+    //   }
+    // ],
+    "react/function-component-definition": "off",
+    "arrow-body-style": "off",
+    "react/jsx-props-no-spreading": "off",
+    "implicit-arrow-linebreak": "off",
+    "require-default-props": "off",
+    "react/jsx-curly-newline": "off",
+    "object-curly-newline": "off",
+    "react/prop-types": "off",
+    "react/require-default-props": "off",
+    "function-paren-newline": "off",
+    "@typescript-eslint/indent": "off"
+  }
+}
