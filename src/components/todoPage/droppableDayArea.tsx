@@ -137,7 +137,7 @@ export default function DroppableDayArea({
     >
       {(provided) => (
         <div
-          className="flex w-80 flex-col py-4"
+          className="flex w-80 flex-col py-2"
           ref={provided.innerRef}
           {...provided.droppableProps}
         >
@@ -145,7 +145,10 @@ export default function DroppableDayArea({
             <div className="w-80">
               {DayAreaHeader}
               <Transition
-                className={!disclosureOpen ? "overflow-hidden" : ""}
+                className={classNames(
+                  !disclosureOpen ? "overflow-hidden" : "",
+                  filteredAndSortedTodos().length > 0 ? "mt-1" : ""
+                )}
                 show={disclosureOpen}
                 {...panel}
               >
