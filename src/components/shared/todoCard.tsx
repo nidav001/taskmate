@@ -30,6 +30,10 @@ export default function TodoCard({
 
   const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
 
+  const [currentTodoContent, setCurrentTodoContent] = useState<string>(
+    todo.content
+  );
+
   const setChecked = trpc.todo.setChecked.useMutation({
     onMutate: () => {
       if (restore) {
@@ -63,24 +67,13 @@ export default function TodoCard({
         refetch();
       }
     },
-
-    // onMutate: () => {
-    //   // Change local todos
-    //   const newTodos = (todo.shared ? sharedTodos : regularTodos).map(
-    //     (mappedTodo) => {
-    //       if (todo.id === mappedTodo.id) {
-    //         return { ...mappedTodo, content: todo.content };
-    //       }
-    //       return mappedTodo;
-    //     }
-    //   );
-    //   setTodos(todo.shared, newTodos);
-    // },
   });
 
-  function onBlurTextArea(newContent: string) {
-    // Change local todos
+  function onChangeTextArea(newContent: string) {
     if (newContent === todo.content) return;
+
+    // Change local todo
+    setCurrentTodoContent(newContent);
 
     // If empty --> delete
     if (newContent === "") {
@@ -167,12 +160,12 @@ export default function TodoCard({
         </div>
         <textarea
           disabled={!refetch}
-          onBlur={(e) => {
-            if (onBlurTextArea) {
-              onBlurTextArea(e.target.value);
+          onChange={(e) => {
+            if (onChangeTextArea) {
+              onChangeTextArea(e.target.value);
             }
           }}
-          defaultValue={todo.content}
+          defaultValue={currentTodoContent}
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
             todo.checked && !todo.finalized ? "line-through" : "",
