@@ -12,6 +12,14 @@
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
   integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
 
+"@babel/runtime-corejs2@^7.6.3":
+  version "7.23.1"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs2/-/runtime-corejs2-7.23.1.tgz#f3a25c24d455be4e0309a56e56f0d2ef1a91c567"
+  integrity sha512-eY39r8IIgbcDfILJqsflwMImjccvK3QdgBRKo5v6lDPd5SiAsyfl3SJuAYWJ5hgbz7kfQmZ9ueirnhq0e9176Q==
+  dependencies:
+    core-js "^2.6.12"
+    regenerator-runtime "^0.14.0"
+
 "@babel/runtime@^7.15.4", "@babel/runtime@^7.20.13", "@babel/runtime@^7.20.7", "@babel/runtime@^7.9.2":
   version "7.23.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.1.tgz#72741dc4d413338a91dcb044a86f3c0bc402646d"
@@ -1079,6 +1087,11 @@ copy-anything@^3.0.2:
   integrity sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==
   dependencies:
     is-what "^4.1.8"
+
+core-js@^2.6.12:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
+  integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
 cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
@@ -2864,16 +2877,16 @@ randombytes@^2.1.0:
   dependencies:
     safe-buffer "^5.1.0"
 
-react-beautiful-dnd@13.1.1:
-  version "13.1.1"
-  resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-13.1.1.tgz#b0f3087a5840920abf8bb2325f1ffa46d8c4d0a2"
-  integrity sha512-0Lvs4tq2VcrEjEgDXHjT98r+63drkKEgqyxdA7qD3mvKwga6a5SscbdLPO2IExotU1jW8L0Ksdl0Cj2AF67nPQ==
+react-beautiful-dnd@12.0.0-beta.10:
+  version "12.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/react-beautiful-dnd/-/react-beautiful-dnd-12.0.0-beta.10.tgz#c0a27d54026b241613ce8183307bcb09317fe09e"
+  integrity sha512-SluIPLxWbjL5XQ3MHMFU5vz7sfiDb2q0XZlUQWXxbGTPlPYN/mYND+rFta7eQ0URiUZNDHeneJ1Ip6Dmoez8Jw==
   dependencies:
-    "@babel/runtime" "^7.9.2"
+    "@babel/runtime-corejs2" "^7.6.3"
     css-box-model "^1.2.0"
     memoize-one "^5.1.1"
     raf-schd "^4.0.2"
-    react-redux "^7.2.0"
+    react-redux "^7.1.1"
     redux "^4.0.4"
     use-memo-one "^1.1.1"
 
@@ -2907,7 +2920,7 @@ react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-redux@^7.2.0:
+react-redux@^7.1.1:
   version "7.2.9"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.9.tgz#09488fbb9416a4efe3735b7235055442b042481d"
   integrity sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==
