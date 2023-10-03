@@ -1,5 +1,5 @@
 import { type Todo } from "@prisma/client";
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { type Column } from "../types/column";
 import { Day } from "../types/enums";
@@ -31,7 +31,7 @@ const useColumnStore = create<ColumnState>()(
         setTodoOrder: (
           shared: boolean,
           columnId: Day,
-          newTodoOrder: Todo[]
+          newTodoOrder: Todo[],
         ) => {
           set((state) => {
             const columns = shared ? state.sharedColumns : state.regularColumns;
@@ -69,9 +69,9 @@ const useColumnStore = create<ColumnState>()(
 
       {
         name: "todo-order-storage-v1",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useColumnStore;

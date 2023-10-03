@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface SearchState {
@@ -16,9 +16,9 @@ const useSearchStore = create<SearchState>()(
 
       {
         name: "search-storage",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useSearchStore;

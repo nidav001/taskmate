@@ -4,7 +4,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { DateTime } from "luxon";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Droppable } from "react-beautiful-dnd";
 import useColumnStore from "../../hooks/columnStore";
 import useViewStore from "../../hooks/viewStore";
@@ -33,7 +33,7 @@ const todoLoadingSkeleton = (
   </div>
 );
 
-export default function DroppableDayArea({
+function DroppableDayArea({
   day,
   todos,
   searchValue,
@@ -55,7 +55,7 @@ export default function DroppableDayArea({
   const todoOrder = columns.find((col) => col.id === day)?.todoOrder ?? [];
 
   const filteredTodos = todos?.filter((todo) =>
-    todo.content.toLowerCase().includes(searchValue.toLowerCase())
+    todo.content.toLowerCase().includes(searchValue.toLowerCase()),
   );
 
   const filteredAndSortedTodos = () => {
@@ -91,7 +91,7 @@ export default function DroppableDayArea({
           <h1
             className={classNames(
               "text-xl dark:text-white",
-              basicFontFamilyBold.className
+              basicFontFamilyBold.className,
             )}
           >
             {day}
@@ -147,7 +147,7 @@ export default function DroppableDayArea({
               <Transition
                 className={classNames(
                   !disclosureOpen ? "overflow-hidden" : "",
-                  filteredAndSortedTodos().length > 0 ? "mt-1" : ""
+                  filteredAndSortedTodos().length > 0 ? "mt-1" : "",
                 )}
                 show={disclosureOpen}
                 {...panel}
@@ -175,3 +175,5 @@ export default function DroppableDayArea({
     </Droppable>
   );
 }
+
+export default React.memo(DroppableDayArea);

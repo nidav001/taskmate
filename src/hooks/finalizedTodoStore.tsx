@@ -1,5 +1,5 @@
 import { type Todo } from "@prisma/client";
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface TodoState {
@@ -23,9 +23,9 @@ const useFinalizedTodoStore = create<TodoState>()(
 
       {
         name: "todo-storage",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useFinalizedTodoStore;

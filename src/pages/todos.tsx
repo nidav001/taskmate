@@ -3,8 +3,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import { useEffect, useMemo } from "react";
-import { resetServerContext, type DropResult } from "react-beautiful-dnd";
+import React, { useEffect, useMemo } from "react";
+import { DropResult, resetServerContext } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -43,12 +43,12 @@ const Todos: NextPage = () => {
 
   const sharedTodosFromDb = useMemo(
     () => sharedTodosQuery?.data ?? [],
-    [sharedTodosQuery?.data]
+    [sharedTodosQuery?.data],
   );
 
   const openTodosFromDb = useMemo(
     () => openTodosQuery?.data ?? [],
-    [openTodosQuery?.data]
+    [openTodosQuery?.data],
   );
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
@@ -79,18 +79,28 @@ const Todos: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sharedTodosFromDb]);
 
-  function onDragEnd(result: DropResult, shared: boolean) {
-    return handleDragEnd(
-      result,
-      shared,
-      shared ? sharedColumns : regularColumns,
-      shared ? sharedTodos : regularTodos,
-      setTodoOrder,
-      shared ? sharedTodos : regularTodos,
-      setTodos,
-      updateTodoPosition
-    );
-  }
+  const onDragEnd = useMemo(() => {
+    return (result: DropResult, shared: boolean) => {
+      handleDragEnd(
+        result,
+        shared,
+        shared ? sharedColumns : regularColumns,
+        shared ? sharedTodos : regularTodos,
+        setTodoOrder,
+        shared ? sharedTodos : regularTodos,
+        setTodos,
+        updateTodoPosition,
+      );
+    };
+  }, [
+    sharedColumns,
+    sharedTodos,
+    regularColumns,
+    regularTodos,
+    setTodoOrder,
+    setTodos,
+    updateTodoPosition,
+  ]);
 
   const TodoView = (
     <TodoViewBase
@@ -126,7 +136,7 @@ const Todos: NextPage = () => {
         className={classNames(
           viewForButton === view
             ? disabledButtonStyle
-            : classNames(buttonStyle, zoomIn)
+            : classNames(buttonStyle, zoomIn),
         )}
         disabled={viewForButton === view}
       >
@@ -136,7 +146,7 @@ const Todos: NextPage = () => {
           <ArrowLeftIcon
             className={classNames(
               basicIcon,
-              viewForButton === view ? "" : zoomIn
+              viewForButton === view ? "" : zoomIn,
             )}
           />
         )}
@@ -148,20 +158,24 @@ const Todos: NextPage = () => {
     <h1
       className={classNames(
         gradientTextStyle,
-        "flex h-20 items-center text-3xl lg:text-6xl"
+        "flex h-20 items-center text-3xl lg:text-6xl",
       )}
     >
       {viewIsShared ? "Geteilte Todos" : "Deine Todos"}
     </h1>
   );
 
+  const MemoizedSideNavigation = React.memo(SideNavigation);
+  const MemoizedTopNavigation = React.memo(TopNaviagtion);
+  const MemoizedToolbar = React.memo(Toolbar);
+
   return (
     <>
       <CustomHead title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
-        <SideNavigation />
+        <MemoizedSideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
-          <TopNaviagtion />
+          <MemoizedTopNavigation />
           <div className="flex flex-col items-center gap-4 pt-10">
             <div className="grid w-full grid-cols-10 items-center gap-2 px-5 2xl:grid-cols-4">
               <div className="flex justify-center">
@@ -175,7 +189,7 @@ const Todos: NextPage = () => {
                 {switchViewButton(View.Shared)}
               </div>
             </div>
-            <Toolbar />
+            <MemoizedToolbar />
             <div className="items-top flex max-w-md flex-col justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
               <SearchBar />
 

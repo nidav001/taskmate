@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface MostRecentTodoIdState {
@@ -30,9 +30,9 @@ const useMostRecentTodoIdStore = create<MostRecentTodoIdState>()(
 
       {
         name: "mostRecentTodo-storage",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useMostRecentTodoIdStore;

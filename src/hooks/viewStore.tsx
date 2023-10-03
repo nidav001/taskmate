@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { View } from "../types/enums";
 
@@ -36,9 +36,9 @@ const useViewStore = create<ViewState>()(
       }),
       {
         name: "view-storage-v1",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useViewStore;

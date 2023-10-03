@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface DarkModeState {
@@ -15,9 +15,9 @@ const useDarkModeStore = create<DarkModeState>()(
       }),
       {
         name: "darkmode-storage-v1",
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 
 export default useDarkModeStore;

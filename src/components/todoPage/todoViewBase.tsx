@@ -1,13 +1,14 @@
 import { type Todo } from "@prisma/client";
 import classNames from "classnames";
 import { DateTime } from "luxon";
+import React from "react";
 import { DragDropContext, type DropResult } from "react-beautiful-dnd";
 import { Day } from "../../types/enums";
 import DroppableDayArea from "./droppableDayArea";
 
 const startOfWeek = DateTime.now().startOf("week");
 const datesOfWeek = Array.from({ length: 7 }, (_, i) =>
-  startOfWeek.plus({ days: i })
+  startOfWeek.plus({ days: i }),
 );
 
 interface TodoViewBaseProps {
@@ -39,7 +40,7 @@ const TodoViewBase: React.FC<TodoViewBaseProps> = ({
     <div
       className={classNames(
         "grid w-full items-start justify-center gap-x-6 lg:grid-cols-2 2xl:grid-cols-4",
-        showSharedTodos && selectedCollaborator === "" ? "hidden" : ""
+        showSharedTodos && selectedCollaborator === "" ? "hidden" : "",
       )}
     >
       <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
