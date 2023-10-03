@@ -3,8 +3,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
-import React, { useEffect, useMemo } from "react";
-import { DropResult, resetServerContext } from "react-beautiful-dnd";
+import React, { useEffect, useMemo, useState } from "react";
+import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import SideNavigation from "../components/shared/navigation/sideNavigation";
@@ -22,20 +22,32 @@ import {
   buttonStyle,
   disabledButtonStyle,
   gradientTextStyle,
-  zoomIn,
 } from "../styles/basicStyles";
-import { slideIn, slideInSharedView } from "../styles/transitionClasses";
+import {
+  slideIn,
+  slideInSharedView,
+  snackbar,
+} from "../styles/transitionClasses";
 import { View } from "../types/enums";
 import { handleDragEnd } from "../utils/dragAndDrop";
+import {
+  getCheckedTodoIds,
+  getCheckedTodos,
+  removeTodosFromTodoOrder,
+} from "../utils/todoUtils";
+import { useAlertEffect } from "../utils/toolbarUtils";
 import { trpc } from "../utils/trpc";
 
 const Todos: NextPage = () => {
-  // Own Todos
   const openTodosQuery = trpc.todo.getOpenTodos.useQuery();
   const { view, setView, currentCollaborator } = useViewStore();
   const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
   const { regularTodos, sharedTodos, setTodos } = useTodoStore();
   const { search } = useSearchStore();
+  const viewIsShared = view === View.Shared;
+  const [columns, currentTodos] = viewIsShared
+    ? [sharedColumns, sharedTodos]
+    : [regularColumns, regularTodos];
 
   const sharedTodosQuery = trpc.todo.getSharedTodos.useQuery({
     sharedEmail: currentCollaborator,
@@ -52,8 +64,6 @@ const Todos: NextPage = () => {
   );
 
   const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
-  const isSharedView = view === View.Shared;
 
   function validateColumnTodoOrder(shared: boolean) {
     const todos = shared ? sharedTodosFromDb : openTodosFromDb;
@@ -107,7 +117,7 @@ const Todos: NextPage = () => {
       onDragEnd={(res) => onDragEnd(res, false)}
       search={search}
       selectedCollaborator={currentCollaborator}
-      isSharedTodosView={isSharedView}
+      isSharedTodosView={viewIsShared}
       isLoading={openTodosQuery.isLoading}
       todos={regularTodos}
       refetch={openTodosQuery.refetch}
@@ -119,36 +129,28 @@ const Todos: NextPage = () => {
       onDragEnd={(res) => onDragEnd(res, true)}
       search={search}
       selectedCollaborator={currentCollaborator}
-      isSharedTodosView={isSharedView}
+      isSharedTodosView={viewIsShared}
       isLoading={sharedTodosQuery.isLoading}
       todos={sharedTodos}
       refetch={sharedTodosQuery.refetch}
     />
   );
 
-  const viewIsShared = view === View.Shared;
-
   const switchViewButton = (viewForButton: View) => {
     return (
       <button
         type="button"
+        aria-label={`Switch view to ${viewForButton.toString()} todos`}
         onClick={() => setView(viewForButton)}
         className={classNames(
-          viewForButton === view
-            ? disabledButtonStyle
-            : classNames(buttonStyle, zoomIn),
+          viewForButton === view ? disabledButtonStyle : buttonStyle,
         )}
         disabled={viewForButton === view}
       >
         {viewForButton === View.Shared ? (
           <ArrowRightIcon className={classNames(basicIcon)} />
         ) : (
-          <ArrowLeftIcon
-            className={classNames(
-              basicIcon,
-              viewForButton === view ? "" : zoomIn,
-            )}
-          />
+          <ArrowLeftIcon className={classNames(basicIcon)} />
         )}
       </button>
     );
@@ -167,7 +169,82 @@ const Todos: NextPage = () => {
 
   const MemoizedSideNavigation = React.memo(SideNavigation);
   const MemoizedTopNavigation = React.memo(TopNaviagtion);
-  const MemoizedToolbar = React.memo(Toolbar);
+
+  const {
+    value: showNoTodosSelectedAlert,
+    setValue: setShowNoTodosSelectedAlert,
+  } = useAlertEffect();
+
+  const { value: showFinalizeAlert, setValue: setShowFinalizeAlert } =
+    useAlertEffect();
+
+  const [showFinalizeTodoButton, setShowFinalizeTodoButton] = useState(
+    getCheckedTodoIds(currentTodos).length > 0,
+  );
+
+  function updateTodoOrder() {
+    const todosToRemove = getCheckedTodos(currentTodos);
+    removeTodosFromTodoOrder(
+      columns,
+      todosToRemove,
+      viewIsShared,
+      setTodoOrder,
+      updateTodoPosition,
+    );
+  }
+  function refreshTodosInOtherView(sharedWithEmail: string) {
+    const todoIsBeingUnShared = sharedWithEmail !== "";
+    const updatedTodos = getCheckedTodos(currentTodos).map((todo) => {
+      return {
+        ...todo,
+        checked: false,
+        shared: !todo.shared,
+        sharedWithEmail: todoIsBeingUnShared ? null : sharedWithEmail,
+      };
+    });
+
+    const newTodos = (!viewIsShared ? sharedTodos : regularTodos).concat(
+      updatedTodos,
+    );
+
+    setTodos(!viewIsShared, newTodos);
+  }
+
+  function removeTodosFromCurrentView(ids: string[]) {
+    const newTodos = currentTodos.filter((todo) => !ids.includes(todo.id));
+    setTodos(viewIsShared, newTodos);
+  }
+
+  function handleOnMutate(
+    ids: string[],
+    collaborator: string,
+    isFinalizing = false,
+  ) {
+    updateTodoOrder();
+    removeTodosFromCurrentView(ids);
+    if (!isFinalizing) refreshTodosInOtherView(collaborator);
+  }
+
+  useEffect(() => {
+    setShowFinalizeTodoButton(getCheckedTodoIds(currentTodos).length > 0);
+  }, [currentTodos]);
+
+  const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
+    onMutate: (data) => handleOnMutate(data.ids, "", true),
+  });
+
+  function handleOnClickFinalize() {
+    const doneTodoIds = getCheckedTodoIds(currentTodos);
+
+    if (doneTodoIds.length > 0) {
+      setShowFinalizeAlert(true);
+      finalizeTodos.mutate({
+        ids: doneTodoIds,
+      });
+    } else {
+      setShowNoTodosSelectedAlert(true);
+    }
+  }
 
   return (
     <>
@@ -179,29 +256,55 @@ const Todos: NextPage = () => {
           <div className="flex flex-col items-center gap-4 pt-10">
             <div className="grid w-full grid-cols-10 items-center gap-2 px-5 2xl:grid-cols-4">
               <div className="flex justify-center">
-                {switchViewButton(View.Regular)}
+                {viewIsShared && switchViewButton(View.Regular)}
               </div>
 
               <div className="col-span-8 2xl:col-span-2">
                 <div className="flex justify-center">{heading}</div>
               </div>
               <div className="flex justify-center">
-                {switchViewButton(View.Shared)}
+                {!viewIsShared && switchViewButton(View.Shared)}
               </div>
             </div>
-            <MemoizedToolbar />
+            <Toolbar
+              handleOnMutate={handleOnMutate}
+              handleOnClickFinalize={() => handleOnClickFinalize()}
+              showFinalizeAlert={showFinalizeAlert}
+              setShowNoTodosSelectedAlert={setShowNoTodosSelectedAlert}
+              showNoTodosSelectedAlert={showNoTodosSelectedAlert}
+            />
             <div className="items-top flex max-w-md flex-col justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
               <SearchBar />
 
-              {isSharedView ? <CollaboratorCombobox /> : null}
+              {viewIsShared ? <CollaboratorCombobox /> : null}
             </div>
-            <Transition show={!isSharedView} {...slideIn}>
-              {!isSharedView ? TodoView : null}
+            <Transition show={!viewIsShared} {...slideIn}>
+              {!viewIsShared ? TodoView : null}
             </Transition>
-            <Transition show={isSharedView} {...slideInSharedView}>
-              {isSharedView ? SharedTodoView : null}
+            <Transition show={viewIsShared} {...slideInSharedView}>
+              {viewIsShared ? SharedTodoView : null}
             </Transition>
           </div>
+          <Transition
+            as="div"
+            className="fixed bottom-2 left-0 right-0 z-50 mx-5 flex justify-center"
+            show={showFinalizeTodoButton}
+            {...snackbar}
+          >
+            <button
+              onClick={() => handleOnClickFinalize()}
+              type="button"
+              className={classNames(
+                buttonStyle,
+                "opacity-1 w-full py-6 sm:hidden",
+                {
+                  "opacity-0": !showFinalizeTodoButton,
+                },
+              )}
+            >
+              Todos sind fertig
+            </button>
+          </Transition>
         </main>
       </div>
     </>

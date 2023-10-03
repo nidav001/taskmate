@@ -100,7 +100,7 @@ function DroppableDayArea({
         </div>
         <div className="flex flex-col items-center">
           <div
-            className={`flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 text-sm font-bold text-black dark:bg-white ${
+            className={`text-md flex h-6 w-6 items-center justify-evenly rounded-full bg-gray-200 font-bold text-slate-900 dark:bg-white ${
               isLoading ? "animate-pulse bg-gray-400" : ""
             }`}
           >

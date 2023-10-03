@@ -74,7 +74,7 @@ const AddTodo: NextPage = () => {
 
       setTodoOrder(data.shared, data.day as Day, [
         ...((data.shared ? sharedColumns : regularColumns).find(
-          (col) => col.id === data.day
+          (col) => col.id === data.day,
         )?.todoOrder ?? []),
         data as Todo,
       ]);
@@ -97,7 +97,7 @@ const AddTodo: NextPage = () => {
       ...data,
       index: (
         (data.shared ? sharedColumns : regularColumns).find(
-          (col) => col.id === data.day
+          (col) => col.id === data.day,
         )?.todoOrder ?? []
       ).length,
     });
@@ -115,7 +115,7 @@ const AddTodo: NextPage = () => {
               <h1
                 className={classNames(
                   "flex h-20 items-center text-3xl lg:text-6xl",
-                  gradientTextStyle
+                  gradientTextStyle,
                 )}
               >
                 Todo hinzufügen
@@ -124,7 +124,7 @@ const AddTodo: NextPage = () => {
             <div className="flex items-center justify-center">
               <form
                 className={classNames(
-                  "items-left flex flex-col justify-center gap-5"
+                  "items-left flex flex-col justify-center gap-5",
                 )}
                 onSubmit={handleSubmit(onSubmit)}
               >
@@ -178,7 +178,7 @@ const AddTodo: NextPage = () => {
               </form>
             </div>
           </div>
-          <Link href="/todos">
+          <Link href="/todos" aria-label="switch to added todo">
             <Snackbar
               message="Hinzugefügt. Hier klicken um zu deinen Todos zu gelangen ➡️"
               showAlert={showAlert}

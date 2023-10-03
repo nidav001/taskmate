@@ -37,13 +37,13 @@ export default function CollaboratorCombobox({
 
   const emailQueryData = useMemo(
     () => emailQuery.data ?? [],
-    [emailQuery.data]
+    [emailQuery.data],
   );
 
   const collaboratorEmailsFromDb = useMemo(
     () =>
       getCollaboratorEmails(emailQueryData, session.data?.user?.email ?? ""),
-    [emailQueryData]
+    [emailQueryData],
   );
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function CollaboratorCombobox({
           email
             .toLowerCase()
             .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
+            .includes(query.toLowerCase().replace(/\s+/g, "")),
         );
 
   function isQueryValidEmail() {
@@ -105,7 +105,9 @@ export default function CollaboratorCombobox({
   ));
 
   const NothingFound = (
-    <div className="w-full py-2 px-4 text-left text-black">Nicht gefunden.</div>
+    <div className="w-full px-4 py-2 text-left text-slate-900">
+      Nicht gefunden.
+    </div>
   );
 
   const AddCollaboratorButton = (
@@ -114,7 +116,7 @@ export default function CollaboratorCombobox({
       className={classNames(
         comboboxOptionBase,
         comboboxOptionActive,
-        "flex justify-start"
+        "flex justify-start",
       )}
       type="button"
     >

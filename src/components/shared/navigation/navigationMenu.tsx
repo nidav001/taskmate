@@ -33,7 +33,7 @@ export default function NavigationMenu({
           <p>{icon}</p>
           <p
             className={classNames(
-              "text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+              "text-md font-medium text-gray-700 transition-colors duration-200 ease-in-out hover:text-gray-900 dark:text-white dark:group-hover:text-gray-300",
             )}
           >
             {title}
@@ -48,7 +48,7 @@ export default function NavigationMenu({
       <div
         className={classNames(
           logoStyle,
-          "flex h-20 items-center justify-center"
+          "flex h-20 items-center justify-center",
         )}
       >
         <Logo logoStyle={logoStyle} />
@@ -58,12 +58,12 @@ export default function NavigationMenu({
       {getMenuItem(
         "/todos",
         <CheckCircleIcon className={iconStyle} />,
-        "Todos"
+        "Todos",
       )}
       {getMenuItem(
         "/addTodo",
         <PlusCircleIcon className={iconStyle} />,
-        "Hinzufügen"
+        "Hinzufügen",
       )}
       <div className={menuItemStyle}>
         <DarkModeSwitch />

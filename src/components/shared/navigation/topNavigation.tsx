@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
-import { zoomIn } from "../../../styles/basicStyles";
 import { profileMenu, sideMenu } from "../../../styles/transitionClasses";
 import { LogoPosition } from "../../../types/enums";
 import Logo from "./logo";
@@ -28,7 +27,7 @@ export default function TopNaviagtion() {
     <Menu>
       <div>
         <Menu.Button
-          className={`${zoomIn} flex h-9 w-9 items-center justify-center rounded-full text-sm outline-none ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent`}
+          className="text-md flex h-9 w-9 items-center justify-center rounded-full outline-none ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent"
           aria-label="profile"
         >
           <Image
@@ -41,7 +40,7 @@ export default function TopNaviagtion() {
         </Menu.Button>
       </div>
       <Transition as={Fragment} {...profileMenu}>
-        <Menu.Items className="absolute right-3 top-14 right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute right-3 top-14 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           {menuItems.map((item) => (
             <Menu.Item key={item.name}>
               {({ active }) => (
@@ -50,7 +49,7 @@ export default function TopNaviagtion() {
                   legacyBehavior={false}
                   className={classNames(
                     active ? "bg-gray-100" : "",
-                    "block px-4 py-2 text-sm text-gray-700"
+                    "text-md block px-4 py-2 text-gray-700",
                   )}
                 >
                   <span className="flex flex-row items-center gap-2">
@@ -73,7 +72,7 @@ export default function TopNaviagtion() {
           <Menu.Button
             as="button"
             aria-label="menu"
-            className={`group  flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-full ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent ${zoomIn}`}
+            className="group  flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-full ring-1 ring-sky-600 ring-offset-1 ring-offset-transparent"
           >
             <div
               className={`${genericHamburgerLine} ${
@@ -93,7 +92,8 @@ export default function TopNaviagtion() {
             <Menu.Items
               style={
                 typeof window !== "undefined"
-                  ? { height: screen.height - 80 }
+                  ? // eslint-disable-next-line no-restricted-globals
+                    { height: screen.height - 80 }
                   : {}
               }
               className="absolute left-0 top-20 w-full bg-white py-1 pl-6 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-slate-700"

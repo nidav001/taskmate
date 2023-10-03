@@ -32,7 +32,7 @@ export default function Snackbar({
 
   return (
     <Transition
-      className="fixed bottom-3 z-10 flex w-full justify-center md:right-3 md:justify-end"
+      className="z-60 fixed bottom-3 flex w-full justify-center md:right-3 md:justify-end"
       show={showAlert}
       {...snackbar}
     >
@@ -42,7 +42,7 @@ export default function Snackbar({
         role="alert"
       >
         {icon}
-        <div className="ml-3 text-sm font-normal">{messageToDisplay}</div>
+        <div className="text-md ml-3 font-normal">{messageToDisplay}</div>
       </div>
     </Transition>
   );

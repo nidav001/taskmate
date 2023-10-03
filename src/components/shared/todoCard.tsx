@@ -31,7 +31,7 @@ export default function TodoCard({
   const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
 
   const [currentTodoContent, setCurrentTodoContent] = useState<string>(
-    todo.content
+    todo.content,
   );
 
   const setChecked = trpc.todo.setChecked.useMutation({
@@ -52,7 +52,7 @@ export default function TodoCard({
               return { ...mappedTodo, checked: !mappedTodo.checked };
             }
             return mappedTodo;
-          }
+          },
         );
         setTodos(todo.shared, newTodos);
       }
@@ -79,7 +79,7 @@ export default function TodoCard({
     if (newContent === "") {
       setTodos(
         false,
-        regularTodos.filter((mappedTodo) => mappedTodo.id !== todo.id)
+        regularTodos.filter((mappedTodo) => mappedTodo.id !== todo.id),
       );
       deleteTodo.mutate({ id: todo.id });
       return;
@@ -139,7 +139,7 @@ export default function TodoCard({
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
       ref={provided?.innerRef}
-      className={`group mb-1 flex flex-col rounded-xl bg-gray-300 px-4 py-1 text-black hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
+      className={`group mb-1 flex flex-col rounded-xl bg-gray-300 px-4 py-1 text-slate-900 hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
         getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : ""
       }${showAnimation ? "animate-pulse" : ""}`}
     >
@@ -149,6 +149,7 @@ export default function TodoCard({
       >
         <div className="pr-1">
           <input
+            aria-label="check todo"
             disabled={!refetch}
             type="checkbox"
             checked={todo.checked}
@@ -159,6 +160,7 @@ export default function TodoCard({
           />
         </div>
         <textarea
+          aria-label="todo content"
           disabled={!refetch}
           onChange={(e) => {
             if (onChangeTextArea) {
@@ -169,7 +171,7 @@ export default function TodoCard({
           className={classNames(
             getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
             todo.checked && !todo.finalized ? "line-through" : "",
-            "max-w-[220px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:group-hover:bg-slate-600"
+            "max-w-[220px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:text-black dark:group-hover:bg-slate-600",
           )}
         />
         <EllipsisVerticalIcon className="h-8 w-8" />

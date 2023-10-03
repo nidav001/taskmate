@@ -3,7 +3,7 @@ import { Fragment } from "react";
 
 const GenericModal: React.FC<{
   title: string;
-  content: string;
+  content: string | Element;
   isOpen: boolean;
   buttonAccept: string;
   buttonDecline: string;
@@ -56,13 +56,13 @@ const GenericModal: React.FC<{
                   {title}
                 </Dialog.Title>
                 <div className="mt-2">
-                  <p className="text-sm text-gray-500" />
+                  <p className="text-md text-gray-500" />
                 </div>
                 {content}
                 <div className="mt-4 flex justify-evenly">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className="text-md inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     onClick={() => {
                       onAccept();
                       setIsOpen(false);
@@ -72,7 +72,7 @@ const GenericModal: React.FC<{
                   </button>
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    className="text-md inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     onClick={() => setIsOpen(false)}
                   >
                     {buttonDecline}

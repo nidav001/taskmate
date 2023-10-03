@@ -1,17 +1,12 @@
 import { CheckIcon, PlusIcon, ShareIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { useState } from "react";
-import useColumnStore from "../../hooks/columnStore";
 import useTodoStore from "../../hooks/todoStore";
 import useViewStore from "../../hooks/viewStore";
 import { SnackbarCheckIcon, SnackbarXIcon } from "../../resources/icons";
 import { basicIcon, buttonStyle } from "../../styles/basicStyles";
 import { View } from "../../types/enums";
-import {
-  getCheckedTodoIds,
-  getCheckedTodos,
-  removeTodosFromTodoOrder,
-} from "../../utils/todoUtils";
+import { getCheckedTodoIds } from "../../utils/todoUtils";
 import { useAlertEffect } from "../../utils/toolbarUtils";
 import { trpc } from "../../utils/trpc";
 import CollaboratorCombobox from "../shared/collaboratorComcobox";
@@ -30,76 +25,37 @@ const funnyMessages = [
   "Das nächste Todo wartet schon 🫡",
   "Du coole Socke 😎",
   "Ganz stark 💪",
-  "Liebe dich 😘"
+  "Liebe dich 😘",
 ];
 
-export default function Toolbar() {
-  const { regularTodos, sharedTodos, setTodos } = useTodoStore();
-  const { regularColumns, sharedColumns, setTodoOrder } = useColumnStore();
+type ToolbarProps = {
+  showFinalizeAlert: boolean;
+  handleOnClickFinalize: () => void;
+  setShowNoTodosSelectedAlert: (show: boolean) => void;
+  showNoTodosSelectedAlert: boolean;
+  handleOnMutate: (
+    ids: string[],
+    collaborator: string,
+    isFinalizing?: boolean,
+  ) => void;
+};
+
+export default function Toolbar({
+  handleOnMutate,
+  showFinalizeAlert,
+  handleOnClickFinalize,
+  setShowNoTodosSelectedAlert,
+  showNoTodosSelectedAlert,
+}: ToolbarProps) {
+  const { regularTodos, sharedTodos } = useTodoStore();
   const { view, currentCollaborator } = useViewStore();
   const viewIsShared = view === View.Shared;
-  const [columns, todos] = viewIsShared
-    ? [sharedColumns, sharedTodos]
-    : [regularColumns, regularTodos];
-
-  const { value: showFinalizeAlert, setValue: setShowFinalizeAlert } =
-    useAlertEffect();
+  const [todos] = viewIsShared ? [sharedTodos] : [regularTodos];
 
   const { value: showShareAlert, setValue: setShowShareAlert } =
     useAlertEffect();
 
-  const {
-    value: showNoTodosSelectedAlert,
-    setValue: setShowNoTodosSelectedAlert,
-  } = useAlertEffect();
-
   const [showShareModal, setShowShareModal] = useState(false);
-
-  const updateTodoPosition = trpc.todo.updateTodoPosition.useMutation();
-
-  function refreshTodosInOtherView(sharedWithEmail: string) {
-    const todoIsBeingUnShared = sharedWithEmail !== "";
-    const updatedTodos = getCheckedTodos(todos).map((todo) => {
-      return {
-        ...todo,
-        checked: false,
-        shared: !todo.shared,
-        sharedWithEmail: todoIsBeingUnShared ? null : sharedWithEmail,
-      };
-    });
-
-    const newTodos = (!viewIsShared ? sharedTodos : regularTodos).concat(
-      updatedTodos
-    );
-
-    setTodos(!viewIsShared, newTodos);
-  }
-
-  function updateTodoOrder() {
-    const todosToRemove = getCheckedTodos(todos);
-    removeTodosFromTodoOrder(
-      columns,
-      todosToRemove,
-      viewIsShared,
-      setTodoOrder,
-      updateTodoPosition
-    );
-  }
-
-  function removeTodosFromCurrentView(ids: string[]) {
-    const newTodos = todos.filter((todo) => !ids.includes(todo.id));
-    setTodos(viewIsShared, newTodos);
-  }
-
-  function handleOnMutate(
-    ids: string[],
-    collaborator: string,
-    isFinalizing = false
-  ) {
-    updateTodoOrder();
-    removeTodosFromCurrentView(ids);
-    if (!isFinalizing) refreshTodosInOtherView(collaborator);
-  }
 
   const shareTodos = trpc.todo.shareTodos.useMutation({
     onMutate: (data) => handleOnMutate(data.ids, data.sharedWithEmail),
@@ -108,23 +64,6 @@ export default function Toolbar() {
   const unshareTodos = trpc.todo.unshareTodos.useMutation({
     onMutate: (data) => handleOnMutate(data.ids, ""),
   });
-
-  const finalizeTodos = trpc.todo.finalizeTodos.useMutation({
-    onMutate: (data) => handleOnMutate(data.ids, "", true),
-  });
-
-  function handleOnClickFinalize() {
-    const doneTodoIds = getCheckedTodoIds(todos);
-
-    if (doneTodoIds.length > 0) {
-      setShowFinalizeAlert(true);
-      finalizeTodos.mutate({
-        ids: doneTodoIds,
-      });
-    } else {
-      setShowNoTodosSelectedAlert(true);
-    }
-  }
 
   function handleShare() {
     const todoIdsToShare = getCheckedTodoIds(todos);
@@ -160,7 +99,7 @@ export default function Toolbar() {
 
   return (
     <div className="flex w-full justify-between px-3 py-2 md:w-3/4 lg:w-1/2">
-      <Link href="/addTodo" className={buttonStyle}>
+      <Link href="/addTodo" className={buttonStyle} aria-label="Add todo">
         <PlusIcon className={basicIcon} />
       </Link>
       <button

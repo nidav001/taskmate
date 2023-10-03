@@ -31,7 +31,7 @@ export default function DashboardCard({
     <Link
       className={classNames(
         smallWidth ? "min-w-min max-w-[200px]" : "min-w-[320px] max-w-md",
-        "backface-visibility-hidden  flex flex-1 transform flex-col gap-3 rounded-xl bg-gray-400 bg-opacity-20 p-4 text-sm font-medium transition hover:scale-105 hover:bg-gray-600 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40"
+        "backface-visibility-hidden  text-md flex flex-1 transform flex-col gap-3 rounded-xl bg-gray-400 bg-opacity-20 p-4 font-medium transition hover:scale-105 hover:bg-gray-600 hover:bg-opacity-30 focus:outline-none active:bg-opacity-40",
       )}
       href={href}
     >
@@ -42,7 +42,7 @@ export default function DashboardCard({
           <h3
             className={classNames(
               basicFontFamilyBold.className,
-              "text-2xl dark:text-white"
+              "text-2xl dark:text-white",
             )}
           >
             {title}
