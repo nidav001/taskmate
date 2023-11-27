@@ -6,7 +6,6 @@ import DashboardCard from "../components/dashboard/dashboardCard";
 import FloatingButton from "../components/dashboard/floatingButton";
 import TodaysTodos from "../components/dashboard/todaysTodos";
 import CustomHead from "../components/shared/customHead";
-import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import getServerSideProps from "../lib/serverProps";
 import { gradientTextStyle } from "../styles/basicStyles";
@@ -64,7 +63,6 @@ const Dashboard: NextPage = () => {
     <>
       <CustomHead title="Todo Dashboard" />
       <div className="flex h-full min-h-screen flex-row">
-        <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-col gap-10 pt-10">
@@ -72,7 +70,7 @@ const Dashboard: NextPage = () => {
               <h1
                 className={classNames(
                   gradientTextStyle,
-                  "flex h-20 items-center text-3xl lg:text-6xl"
+                  "flex h-20 items-center text-3xl lg:text-6xl",
                 )}
               >
                 {user.isLoading ? loadingSkeleton : getGreetingText()}

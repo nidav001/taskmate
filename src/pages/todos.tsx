@@ -7,11 +7,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
-import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import SearchBar from "../components/todoPage/searchBar";
 import TodoViewBase from "../components/todoPage/todoViewBase";
-import Toolbar from "../components/todoPage/toolbar";
 import useColumnStore from "../hooks/columnStore";
 import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
@@ -167,7 +165,6 @@ const Todos: NextPage = () => {
     </h1>
   );
 
-  const MemoizedSideNavigation = React.memo(SideNavigation);
   const MemoizedTopNavigation = React.memo(TopNaviagtion);
 
   const {
@@ -250,7 +247,6 @@ const Todos: NextPage = () => {
     <>
       <CustomHead title="Todos" />
       <div className="flex h-full min-h-screen flex-row">
-        <MemoizedSideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <MemoizedTopNavigation />
           <div className="flex flex-col items-center gap-4 pt-10">
@@ -266,45 +262,41 @@ const Todos: NextPage = () => {
                 {!viewIsShared && switchViewButton(View.Shared)}
               </div>
             </div>
-            <Toolbar
+            {/* <Toolbar
               handleOnMutate={handleOnMutate}
               handleOnClickFinalize={() => handleOnClickFinalize()}
               showFinalizeAlert={showFinalizeAlert}
               setShowNoTodosSelectedAlert={setShowNoTodosSelectedAlert}
               showNoTodosSelectedAlert={showNoTodosSelectedAlert}
-            />
+            /> */}
             <div className="items-top flex max-w-md flex-col justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
               <SearchBar />
 
               {viewIsShared ? <CollaboratorCombobox /> : null}
             </div>
-            <Transition show={!viewIsShared} {...slideIn}>
-              {!viewIsShared ? TodoView : null}
-            </Transition>
-            <Transition show={viewIsShared} {...slideInSharedView}>
-              {viewIsShared ? SharedTodoView : null}
+            <div>
+              <Transition show={!viewIsShared} {...slideIn}>
+                {!viewIsShared ? TodoView : null}
+              </Transition>
+              <Transition show={viewIsShared} {...slideInSharedView}>
+                {viewIsShared ? SharedTodoView : null}
+              </Transition>
+            </div>
+            <Transition
+              as="div"
+              className="fixed bottom-2 left-0 right-0 z-50 mx-5 flex justify-center md:bottom-4"
+              show={showFinalizeTodoButton}
+              {...snackbar}
+            >
+              <button
+                onClick={() => handleOnClickFinalize()}
+                type="button"
+                className={classNames(buttonStyle, "px-24 py-6")}
+              >
+                Todos sind fertig
+              </button>
             </Transition>
           </div>
-          <Transition
-            as="div"
-            className="fixed bottom-2 left-0 right-0 z-50 mx-5 flex justify-center"
-            show={showFinalizeTodoButton}
-            {...snackbar}
-          >
-            <button
-              onClick={() => handleOnClickFinalize()}
-              type="button"
-              className={classNames(
-                buttonStyle,
-                "opacity-1 w-full py-6 sm:hidden",
-                {
-                  "opacity-0": !showFinalizeTodoButton,
-                },
-              )}
-            >
-              Todos sind fertig
-            </button>
-          </Transition>
         </main>
       </div>
     </>

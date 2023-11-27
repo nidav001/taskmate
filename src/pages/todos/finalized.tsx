@@ -3,7 +3,6 @@ import { type NextPage } from "next";
 import { useEffect, useMemo } from "react";
 import FinalizedToolbar from "../../components/finalizedTodos/finalizedToolbar";
 import CustomHead from "../../components/shared/customHead";
-import SideNavigation from "../../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../../components/shared/navigation/topNavigation";
 import TodoCard from "../../components/shared/todoCard";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
@@ -15,7 +14,7 @@ const FinalizedTodos: NextPage = () => {
   const finalizedTodosQuery = trpc.todo.getFinalizedTodos.useQuery();
   const finalizedTodosFromDb = useMemo(
     () => finalizedTodosQuery?.data ?? [],
-    [finalizedTodosQuery?.data]
+    [finalizedTodosQuery?.data],
   );
 
   const { finalizedTodos, setFinalizedTodos } = useFinalizedTodoStore();
@@ -31,14 +30,13 @@ const FinalizedTodos: NextPage = () => {
     <>
       <CustomHead title={title} />
       <div className="flex h-full min-h-screen flex-row">
-        <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
-          <div className="flex flex-col items-center gap-4 gap-10 pt-10">
+          <div className="flex flex-col items-center gap-10 gap-4 pt-10">
             <h1
               className={classNames(
                 gradientTextStyle,
-                "flex h-20 items-center text-3xl lg:text-6xl"
+                "flex h-20 items-center text-3xl lg:text-6xl",
               )}
             >
               {title}

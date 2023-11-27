@@ -2,7 +2,6 @@ import { type NextPage } from "next";
 import { useEffect } from "react";
 import FinalizedToolbar from "../../components/finalizedTodos/finalizedToolbar";
 import CustomHead from "../../components/shared/customHead";
-import SideNavigation from "../../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../../components/shared/navigation/topNavigation";
 import TodoCard from "../../components/shared/todoCard";
 import useFinalizedTodoStore from "../../hooks/finalizedTodoStore";
@@ -14,7 +13,7 @@ const GeneralTodos: NextPage = () => {
   const finalizedTodosQuery = trpc.todo.getFinalizedTodos.useQuery();
   const finalizedTodosFromDb = useMemo(
     () => finalizedTodosQuery?.data ?? [],
-    [finalizedTodosQuery?.data]
+    [finalizedTodosQuery?.data],
   );
 
   const { finalizedTodos: todos, setFinalizedTodos: setTodos } =
@@ -29,7 +28,6 @@ const GeneralTodos: NextPage = () => {
     <>
       <CustomHead title={title} />
       <div className="flex h-full min-h-screen flex-row">
-        <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <h1 className="mt-5 text-center text-2xl font-bold dark:text-white">

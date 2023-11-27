@@ -39,7 +39,7 @@ const TodoViewBase: React.FC<TodoViewBaseProps> = ({
   return (
     <div
       className={classNames(
-        "grid w-full items-start justify-center gap-x-6 lg:grid-cols-2 2xl:grid-cols-4",
+        "grid w-full items-start justify-center gap-x-6 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4",
         showSharedTodos && selectedCollaborator === "" ? "hidden" : "",
       )}
     >

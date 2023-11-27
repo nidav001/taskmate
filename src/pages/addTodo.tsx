@@ -8,7 +8,6 @@ import { v4 as uuidv4 } from "uuid";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import GenericCombobox from "../components/shared/genericCombobox";
-import SideNavigation from "../components/shared/navigation/sideNavigation";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
 import Snackbar from "../components/shared/snackbar";
 import useColumnStore from "../hooks/columnStore";
@@ -69,7 +68,6 @@ const AddTodo: NextPage = () => {
   const addTodo = trpc.todo.addTodo.useMutation({
     onMutate(data) {
       // Optimistically reset the form. Better use onSuccess if form gets more complex
-      console.log(data);
       setValue("content", "");
 
       setTodoOrder(data.shared, data.day as Day, [
@@ -107,7 +105,6 @@ const AddTodo: NextPage = () => {
     <>
       <CustomHead title="Todo hinzufügen" />
       <div className="flex h-full min-h-screen flex-row">
-        <SideNavigation />
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <TopNaviagtion />
           <div className="flex flex-col gap-10 pt-10">

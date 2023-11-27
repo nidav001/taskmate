@@ -118,7 +118,7 @@ export default function Toolbar({
         className={buttonStyle}
       >
         {/* {viewIsShared ? "UNSHARE" : <ShareIcon className="w-8 w-8" />} */}
-        <ShareIcon className="w-8 w-8" />
+        <ShareIcon className="w-8" />
       </button>
       <Snackbar
         showAlert={showFinalizeAlert}
