@@ -139,8 +139,8 @@ export default function TodoCard({
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
       ref={provided?.innerRef}
-      className={`group mb-1 flex flex-col rounded-xl bg-gray-300 px-4 py-1 text-slate-900 hover:bg-gray-400 dark:bg-slate-500 dark:hover:bg-slate-600 ${
-        getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : ""
+      className={`group mb-1 flex flex-col rounded-xl bg-gray-300 px-4 py-1 text-slate-900 hover:bg-gray-400 dark:bg-slate-600 dark:hover:bg-slate-600 ${
+        getIsDragging() ? "bg-sky-200 dark:bg-slate-400" : ""
       }${showAnimation ? "animate-pulse" : ""}`}
     >
       <div
@@ -169,12 +169,12 @@ export default function TodoCard({
           }}
           defaultValue={currentTodoContent}
           className={classNames(
-            getIsDragging() ? "bg-sky-200 dark:bg-slate-300" : "",
+            getIsDragging() ? "bg-sky-200 dark:bg-slate-400" : "",
             todo.checked && !todo.finalized ? "line-through" : "",
-            "max-w-[220px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-500 dark:text-black dark:group-hover:bg-slate-600",
+            "max-w-[220px] resize-none border-0 bg-gray-300 text-base font-medium focus:ring-0 group-hover:bg-gray-400 dark:bg-slate-600 dark:text-neutral-100 dark:group-hover:bg-slate-600",
           )}
         />
-        <EllipsisVerticalIcon className="h-8 w-8" />
+        <EllipsisVerticalIcon className="h-8 w-8 dark:text-neutral-100" />
       </div>
     </div>
   );

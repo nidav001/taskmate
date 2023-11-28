@@ -6,7 +6,7 @@ export default function Logo() {
   return (
     <Link
       href="/"
-      aria-label="home"
+      aria-label="TaskMate"
       className={classNames(
         "py-3 pl-1 text-2xl tracking-tight text-slate-900 dark:text-white",
       )}

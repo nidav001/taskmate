@@ -42,7 +42,7 @@ export default function DashboardCard({
           <h3
             className={classNames(
               basicFontFamilyBold.className,
-              "text-2xl dark:text-white",
+              "text-2xl dark:text-neutral-100",
             )}
           >
             {title}
