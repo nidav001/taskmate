@@ -1,8 +1,13 @@
 import { Transition } from "@headlessui/react";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  PlusIcon,
+} from "@heroicons/react/20/solid";
 import classNames from "classnames";
 import { type NextPage } from "next";
 import { type CtxOrReq } from "next-auth/client/_utils";
+import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
 import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
@@ -250,7 +255,7 @@ const Todos: NextPage = () => {
         <main className="h-auto w-full bg-white dark:bg-slate-800">
           <MemoizedTopNavigation />
           <div className="flex flex-col items-center gap-4 pt-10">
-            <div className="grid w-full grid-cols-10 items-center gap-2 px-5 2xl:grid-cols-4">
+            {/* <div className="grid w-full grid-cols-10 items-center gap-2 px-5 2xl:grid-cols-4">
               <div className="flex justify-center">
                 {viewIsShared && switchViewButton(View.Regular)}
               </div>
@@ -261,6 +266,9 @@ const Todos: NextPage = () => {
               <div className="flex justify-center">
                 {!viewIsShared && switchViewButton(View.Shared)}
               </div>
+            </div> */}
+            <div className="col-span-8 2xl:col-span-2">
+              <div className="flex justify-center">{heading}</div>
             </div>
             {/* <Toolbar
               handleOnMutate={handleOnMutate}
@@ -269,10 +277,16 @@ const Todos: NextPage = () => {
               setShowNoTodosSelectedAlert={setShowNoTodosSelectedAlert}
               showNoTodosSelectedAlert={showNoTodosSelectedAlert}
             /> */}
-            <div className="items-top flex max-w-md flex-col justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
+            <div className="items-top flex max-w-md flex-row items-center justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
+              <Link
+                href="/addTodo"
+                className={classNames(buttonStyle)}
+                aria-label="Add todo"
+              >
+                <PlusIcon className={basicIcon} />
+              </Link>
               <SearchBar />
-
-              {viewIsShared ? <CollaboratorCombobox /> : null}
+              {viewIsShared && <CollaboratorCombobox />}
             </div>
             <div>
               <Transition show={!viewIsShared} {...slideIn}>

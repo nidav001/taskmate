@@ -149,7 +149,7 @@ const AddTodo: NextPage = () => {
                 />
 
                 <label
-                  htmlFor="shared "
+                  htmlFor="shared"
                   className="flex flex-row-reverse items-center justify-end gap-2 dark:text-white"
                 >
                   Geteiltes Todo

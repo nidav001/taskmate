@@ -150,6 +150,7 @@ export default function TodoCard({
         <div className="pr-1">
           <input
             aria-label="check todo"
+            name="check todo"
             disabled={!refetch}
             type="checkbox"
             checked={todo.checked}
@@ -161,6 +162,7 @@ export default function TodoCard({
         </div>
         <textarea
           aria-label="todo content"
+          name="todo content"
           disabled={!refetch}
           onChange={(e) => {
             if (onChangeTextArea) {
