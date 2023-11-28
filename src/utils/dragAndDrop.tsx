@@ -20,7 +20,7 @@ export function handleDragEnd(
   setTodoOrder: (isRegular: boolean, columnId: Day, todos: Todo[]) => void,
   localTodos: Todo[],
   setLocalTodos: (shared: boolean, todos: Todo[]) => void,
-  updateTodoPosition: () => void
+  updateTodoPosition: () => void,
 ) {
   const { destination, source, draggableId } = result;
 
@@ -46,9 +46,8 @@ export function handleDragEnd(
     const newTodoOrder = reorder(
       start.todoOrder,
       source.index,
-      destination.index
+      destination.index,
     );
-    console.log(newTodoOrder);
     setTodoOrder(shared, start.id, newTodoOrder);
   } else {
     // Reorder in different column
@@ -71,7 +70,7 @@ export function handleDragEnd(
       {
         ...draggedItem,
         day: newFinish.id,
-      }
+      },
     );
     setLocalTodos(shared, newTodos);
 
