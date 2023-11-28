@@ -67,14 +67,14 @@ const Dashboard: NextPage = () => {
           <TopNaviagtion />
           <div className="flex flex-col gap-10 pt-10">
             <div className="flex justify-center">
-              <h1
+              <h2
                 className={classNames(
                   gradientTextStyle,
                   "flex h-20 items-center text-3xl lg:text-6xl",
                 )}
               >
                 {user.isLoading ? loadingSkeleton : getGreetingText()}
-              </h1>
+              </h2>
             </div>
             <div className="lg:flex">
               <div className="lg:flex lg:w-full lg:justify-center">

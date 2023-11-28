@@ -96,7 +96,7 @@ function DroppableDayArea({
           >
             {day}
           </h1>
-          <div className="text-slate-400">{currentDate()}</div>
+          <div className="text-slate-600">{currentDate()}</div>
         </div>
         <div className="flex flex-col items-center">
           <div
@@ -147,7 +147,7 @@ function DroppableDayArea({
               <Transition
                 className={classNames(
                   !disclosureOpen ? "overflow-hidden" : "",
-                  filteredAndSortedTodos().length > 0 ? "mt-1" : "",
+                  "mt-1",
                 )}
                 show={disclosureOpen}
                 {...panel}

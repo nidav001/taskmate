@@ -11,8 +11,10 @@ export default function Logo() {
         "py-3 pl-1 text-2xl tracking-tight text-slate-900 dark:text-white",
       )}
     >
-      <span className={gradientTextStyle}>Task</span>
-      Mate
+      <h1>
+        <span className={gradientTextStyle}>Task</span>
+        Mate
+      </h1>
     </Link>
   );
 }

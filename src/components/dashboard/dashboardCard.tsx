@@ -47,7 +47,7 @@ export default function DashboardCard({
           >
             {title}
           </h3>
-          <div className="text-lg dark:text-slate-400">{content}</div>
+          <div className="text-lg dark:text-slate-300">{content}</div>
         </>
       )}
     </Link>

@@ -7,7 +7,7 @@ export const basicFontFamilyBold = Poppins({
 });
 
 export const buttonStyle =
-  "rounded-full bg-amber-400 hover:bg-amber-300 p-2 transform transition focus:outline-none font-medium backface-visibility-hidden text-md dark:text-gray-100 dark:bg-amber-600 dark:hover:bg-amber-500 text-slate-900";
+  "rounded-full bg-amber-400 hover:bg-amber-300 p-2 transform transition focus:outline-none font-medium backface-visibility-hidden text-md dark:text-gray-100 dark:bg-amber-700 dark:hover:bg-amber-800 text-slate-900";
 
 export const disabledButtonStyle =
   "rounded-full bg-amber-400 p-2 focus:outline-none active:bg-opacity-60 font-medium backface-visibility-hidden text-md dark:text-gray-100 dark:bg-amber-600 bg-gray-300";
