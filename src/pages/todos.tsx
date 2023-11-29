@@ -277,7 +277,7 @@ const Todos: NextPage = () => {
               setShowNoTodosSelectedAlert={setShowNoTodosSelectedAlert}
               showNoTodosSelectedAlert={showNoTodosSelectedAlert}
             /> */}
-            <div className="items-top flex max-w-md flex-row items-center justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
+            <div className="items-top flex max-w-sm flex-row items-center justify-center gap-2 px-5 lg:max-w-2xl lg:flex-row lg:px-0">
               <Link
                 href="/addTodo"
                 className={classNames(buttonStyle)}
