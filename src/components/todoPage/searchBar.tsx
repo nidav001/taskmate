@@ -13,7 +13,7 @@ export default function SearchBar() {
       <input
         type="search"
         id="todo-search"
-        className={classNames(inputStyle, "pl-10")}
+        className={classNames(inputStyle, "w-52 pl-10")}
         placeholder="Suche..."
         defaultValue={search}
         onChange={(e) => setSearch(e.target.value)}
