@@ -13,21 +13,6 @@ import CollaboratorCombobox from "../shared/collaboratorComcobox";
 import GenericModal from "../shared/genericModal";
 import Snackbar from "../shared/snackbar";
 
-const funnyMessages = [
-  "Endlich geschafft 🥹",
-  "Schneller als gedacht 😘",
-  "Super 😍",
-  "Weiter so 😘",
-  "Hammer 🤩",
-  "Gut gemacht 😍",
-  "Nicht so schnell, der Server kommt nicht hinterher 🥵",
-  "Beeindruckend 😳",
-  "Das nächste Todo wartet schon 🫡",
-  "Du coole Socke 😎",
-  "Ganz stark 💪",
-  "Liebe dich 😘",
-];
-
 type ToolbarProps = {
   showFinalizeAlert: boolean;
   handleOnClickFinalize: () => void;

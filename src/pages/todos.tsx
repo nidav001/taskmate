@@ -13,6 +13,7 @@ import { resetServerContext, type DropResult } from "react-beautiful-dnd";
 import CollaboratorCombobox from "../components/shared/collaboratorComcobox";
 import CustomHead from "../components/shared/customHead";
 import TopNaviagtion from "../components/shared/navigation/topNavigation";
+import Snackbar from "../components/shared/snackbar";
 import SearchBar from "../components/todoPage/searchBar";
 import TodoViewBase from "../components/todoPage/todoViewBase";
 import useColumnStore from "../hooks/columnStore";
@@ -20,6 +21,7 @@ import useSearchStore from "../hooks/searchStore";
 import useTodoStore from "../hooks/todoStore";
 import useViewStore from "../hooks/viewStore";
 import serverProps from "../lib/serverProps";
+import { SnackbarCheckIcon } from "../resources/icons";
 import {
   basicIcon,
   buttonStyle,
@@ -248,6 +250,21 @@ const Todos: NextPage = () => {
     }
   }
 
+  const funnyMessages = [
+    "Endlich geschafft 🥹",
+    "Schneller als gedacht 😘",
+    "Super 😍",
+    "Weiter so 😘",
+    "Hammer 🤩",
+    "Gut gemacht 😍",
+    "Nicht so schnell, der Server kommt nicht hinterher 🥵",
+    "Beeindruckend 😳",
+    "Das nächste Todo wartet schon 🫡",
+    "Du coole Socke 😎",
+    "Ganz stark 💪",
+    "Liebe dich 😘",
+  ];
+
   return (
     <>
       <CustomHead title="Todos" />
@@ -310,6 +327,12 @@ const Todos: NextPage = () => {
                 Todos sind fertig
               </button>
             </Transition>
+            <Snackbar
+              showAlert={showFinalizeAlert}
+              message="Erledigt."
+              randomMessages={funnyMessages}
+              icon={<SnackbarCheckIcon />}
+            />
           </div>
         </main>
       </div>
